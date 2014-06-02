@@ -1,19 +1,24 @@
-scalaVersion in ThisBuild := "2.11.0"
-
 organization := "com.github.krasserm"
 
 name := "streamz"
 
 version := "0.1-SNAPSHOT"
 
-resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
+scalaVersion in ThisBuild := "2.11.0"
 
-scalacOptions ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions")
+resolvers in ThisBuild += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
-lazy val root = (project.in(file("."))).aggregate(common, akkaCamel, akkaPersistence)
+scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions")
 
-lazy val common = project.in(file("common"))
+libraryDependencies in ThisBuild ++= Seq(
+  "com.typesafe.akka" %% "akka-testkit" % Version.akka      % "test",
+  "org.scalatest"     %% "scalatest"    % Version.scalatest % "test"
+)
 
-lazy val akkaCamel = project.in(file("akka-camel")).dependsOn(common)
+lazy val root = (project.in(file("."))).aggregate(util, akkaCamel, akkaPersistence)
 
-lazy val akkaPersistence = project.in(file("akka-persistence")).dependsOn(common)
+lazy val util = project.in(file("streamz-util"))
+
+lazy val akkaCamel = project.in(file("streamz-akka-camel")).dependsOn(util)
+
+lazy val akkaPersistence = project.in(file("streamz-akka-persistence")).dependsOn(util)
