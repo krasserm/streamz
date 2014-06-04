@@ -31,7 +31,8 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
         state = state + p
       case "snap" =>
         saveSnapshot(state)
-        probe ! "snapped"
+      case SaveSnapshotSuccess(md) =>
+        probe ! md
     }
   }
 
@@ -61,8 +62,9 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
       p ! Persistent("a")
       p ! Persistent("b")
       p ! "snap"
-      expectMsg("snapped")
-      snapshot[String]("p4").runLog.run should be(Seq(Snapshot(SnapshotMetadata("p4", 0L, 0L), "")))
+
+      val metadata = expectMsgPF() { case md: SnapshotMetadata => md }
+      snapshot[String]("p4").runLog.run should be(Seq(Snapshot(metadata, "ab")))
     }
     "produce a zero snapshot if there's no snapshot stored" in {
       snapshot[String]("p5").runLog.run should be(Seq(Snapshot(SnapshotMetadata("p5", 0L, 0L), "")))
@@ -77,7 +79,7 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
       p ! "snap"
       p ! Persistent("c")
       p ! Persistent("d")
-      expectMsg("snapped")
+      expectMsgPF() { case md: SnapshotMetadata => md }
 
       val c = for {
         s @ Snapshot(meta, data) <- snapshot[String]("p6")
