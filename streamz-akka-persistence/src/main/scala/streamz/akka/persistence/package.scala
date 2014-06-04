@@ -62,8 +62,8 @@ package object persistence {
   }
 
   implicit class PersistenceSyntax[O](p: Process[Task,O]) {
-    def journal(uri: String)(implicit system: ActorSystem):Process[Task,Unit] =
-      p.to(journaler(uri))
+    def journal(pid: String)(implicit system: ActorSystem):Process[Task,Unit] =
+      p.to(journaler(pid))
   }
 
   private class JournalWriter(override val processorId: String) extends Processor {
