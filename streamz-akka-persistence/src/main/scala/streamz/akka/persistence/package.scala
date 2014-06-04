@@ -1,7 +1,5 @@
 package streamz.akka
 
-import scala.reflect.ClassTag
-
 import akka.actor._
 import akka.persistence._
 
@@ -12,22 +10,41 @@ import scalaz.concurrent._
 import scalaz.stream._
 
 package object persistence {
+  /**
+   * Produces a discrete stream of [[Persistent]] messages that are written by a [[Processor]] identified
+   * by `pid`.
+   *
+   * @param pid processor id.
+   * @param from start sequence number.
+   */
   def replay(pid: String, from: Long = 1L)(implicit system: ActorSystem): Process[Task, Persistent] =
     io.resource[ActorRef, Persistent]
     { Task.delay(system.actorOf(Props(new PersistentReader(pid, from)))) }
     { r => Task.delay(system.stop(r)) }
     { r => Task.async(cb => r ! PersistentReader.Read(cb)) }
 
+  /**
+   * Produces the most recent [[Snapshot]] that has been taken by a [[Processor]] identified by `pid`. If
+   * the processor hasn't taken any snapshot yet or the loaded snapshot is not of type `O` then the produced
+   * [[Snapshot.data]] value is `Monoid[O].zero`.
+   *
+   * @param pid processor id.
+   */
   def snapshot[O](pid:String)(implicit system: ActorSystem, M: Monoid[O]): Process[Task,Snapshot[O]] = {
     io.resource[ActorRef,Snapshot[O]]
     { Task.delay(system.actorOf(Props(new akka.persistence.SnapshotReader))) }
     { r => Task.delay(r ! akka.actor.PoisonPill) }
     { r => Task.async[Option[SelectedSnapshot]](cb => r ! SnapshotReader.Read(pid,cb)).map {
-      case Some(ss) => Snapshot(ss.metadata, ss.snapshot.asInstanceOf[O]) // FIXME: do not use asInstanceOf
+      case Some(ss) => Snapshot(ss.metadata, ss.snapshot.asInstanceOf[O]) // FIXME: check type
       case None     => Snapshot(SnapshotMetadata(pid, 0L, 0L), M.zero)
     }}.once
   }
 
+  /**
+   * A sink that writes to `system`'s journal using `pid` as processor id.
+   *
+   * @param pid processor id.
+   */
   def journaler[I](pid: String)(implicit system: ActorSystem): Sink[Task,I] = {
     io.resource
     { Task.delay(system.actorOf(Props(new JournalWriter(pid)))) }

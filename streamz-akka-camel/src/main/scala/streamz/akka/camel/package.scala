@@ -18,6 +18,12 @@ import scalaz.stream._
 import streamz.util._
 
 package object camel {
+  /**
+   * Produces a discrete stream of message bodies received at the Camel endpoint identified by `uri`.
+   * If needed, received message bodies are converted to type `O` using a Camel type converter.
+   *
+   * @param uri Camel endpoint URI.
+   */
   def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Process[Task,O] = {
     import QueueActor._
 
@@ -57,6 +63,11 @@ package object camel {
     { case (b, _) => Task.async { cb => b ! Dequeue(cb) }}
   }
 
+  /**
+   * A sink that initiates an in-only message exchange with the Camel endpoint identified by `uri`.
+   *
+   * @param uri Camel endpoint URI.
+   */
   def sender[I](uri: String)(implicit system: ActorSystem): Sink[Task,I] = {
     io.resource
     { Task.delay(system.actorOf(Props(new ProducerEndpoint(uri) with Oneway))) }
@@ -64,6 +75,12 @@ package object camel {
     { p => Task.delay(i => Task.delay(p ! i)) }
   }
 
+  /**
+   * A channel that initiates an in-out message exchange with the Camel endpoint identified by `uri`.
+   * If needed, received out message bodies are converted to type `O` using a Camel type converter.
+   *
+   * @param uri Camel endpoint URI.
+   */
   def requestor[I,O](uri: String, timeout: FiniteDuration = 10.seconds)(implicit system: ActorSystem, CT: ClassTag[O]): Channel[Task,I,O] = {
     import system.dispatcher
 
