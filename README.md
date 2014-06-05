@@ -3,6 +3,14 @@ Streamz
 
 Streamz is a [scalaz-stream](https://github.com/scalaz/scalaz-stream) combinator library for [Akka Persistence](http://doc.akka.io/docs/akka/2.3.3/scala/persistence.html) and [Apache Camel](http://camel.apache.org/). It supports the composition of ``scalaz.stream.Process`` instances from Camel endpoints, Persistence journals and snapshot stores.
 
+Dependencies
+------------
+
+    resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.0.1"
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.0.1"
+
 Combinators for Apache Camel
 ----------------------------
 
