@@ -1,8 +1,8 @@
-organization := "com.github.krasserm"
-
 name := "streamz"
 
-version := "0.1-SNAPSHOT"
+organization in ThisBuild := "com.github.krasserm"
+
+version in ThisBuild := "0.1-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.11.0"
 
