@@ -6,9 +6,12 @@ Streamz is a [scalaz-stream](https://github.com/scalaz/scalaz-stream) combinator
 Dependencies
 ------------
 
+    resolvers += "scalaz at bintray" at "http://dl.bintray.com/scalaz/releases"
+
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.0.1"
+
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.0.1"
 
 Combinators for Apache Camel
