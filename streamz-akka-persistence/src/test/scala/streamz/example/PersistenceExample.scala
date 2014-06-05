@@ -15,8 +15,8 @@ object PersistenceExample {
   val p2: Process[Task, Persistent] = replay("processor-1", from = 3L)
   val p3: Process[Task, String] = p1.scan("")((acc, p) => acc + p.payload)
   val p4: Process[Task,String] = for {
-    s @ Snapshot(meta, data) <- snapshot[String]("processor-1")
-    state <- replay(meta.processorId, s.nextSequenceNr).scan(data)((acc, p) => acc + p.payload)
-  } yield state
+    s @ Snapshot(md, data) <- snapshot[String]("processor-1")
+    currentState           <- replay(md.processorId, s.nextSequenceNr).scan(data)((acc, p) => acc + p.payload)
+  } yield currentState
   val p5: Process[Task,Unit] = Process("a", "b", "c").journal("processor-2")
 }
