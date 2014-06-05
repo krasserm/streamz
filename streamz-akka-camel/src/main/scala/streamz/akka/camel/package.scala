@@ -1,6 +1,5 @@
 package streamz.akka
 
-import scala.collection.mutable.Queue
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
@@ -8,9 +7,6 @@ import akka.actor._
 import akka.camel._
 import akka.pattern.ask
 import akka.util.Timeout
-
-import scalaz._
-import Scalaz._
 
 import scalaz.concurrent._
 import scalaz.stream._
@@ -25,42 +21,20 @@ package object camel {
    * @param uri Camel endpoint URI.
    */
   def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Process[Task,O] = {
-    import QueueActor._
-
-    object QueueActor {
-      case class Enqueue(o: O)
-      case class Dequeue(callback: Throwable \/ O => Unit)
-    }
-
-    class QueueActor extends akka.actor.Actor {
-      var callback: Option[Throwable \/ O => Unit] = None
-      val messages: Queue[O] = Queue.empty
-
+    class ConsumerEndpoint(val endpointUri: String, queue: scalaz.stream.async.mutable.Queue[O]) extends Consumer {
       def receive = {
-        case Enqueue(o) => callback match {
-          case Some(cb) => cb(o.right); callback = None
-          case None => messages.enqueue(o)
-        }
-        case Dequeue(cb: (Throwable \/ O => Unit)) =>
-          if (messages.isEmpty) callback = Some(cb)
-          else cb(messages.dequeue.right)
+        case msg: CamelMessage => queue.enqueue(msg.bodyAs(CT, camelContext))
       }
     }
 
-    class ConsumerEndpoint(val endpointUri: String, queue: ActorRef) extends Consumer {
-      def receive = {
-        case msg: CamelMessage => queue ! Enqueue(msg.bodyAs(CT, camelContext))
-      }
-    }
-
-    io.resource[(ActorRef, ActorRef), O]
+    io.resource
     { Task.delay {
-        val queue = system.actorOf(Props(new QueueActor))
+        val (queue, process) = async.queue[O] // TODO: re-use system.dispatcher
         val endpoint = system.actorOf(Props(new ConsumerEndpoint(uri, queue)))
-        (queue, endpoint)
+        (queue, process, endpoint)
     }}
-    { case (b, e) => Task.delay { e ! PoisonPill; b ! PoisonPill }}
-    { case (b, _) => Task.async { cb => b ! Dequeue(cb) }}
+    { case (q, p, e) => Task.delay { e ! PoisonPill; q.close }}
+    { case (_, p, _) => p.toTask }
   }
 
   /**
