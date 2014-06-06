@@ -64,7 +64,7 @@ The ``request`` combinator initiates in-out message exchanges with a Camel endpo
 val p4: Process[Task,Int] = p1.request[Int]("bean:service?method=length")
 ```
    
-These combinators can be used in combination with all available [Camel endpoints](http://camel.apache.org/components.html) and all ``scalaz.stream.Process`` combinators. 
+These combinators can be used in combination with all available [Camel endpoints](http://camel.apache.org/components.html) and all ``scalaz.stream.Process`` combinators. A more concrete example how to process files from an FTP server is [here](https://github.com/krasserm/streamz/blob/master/streamz-akka-camel/src/test/scala/streamz/example/FtpExample.scala).
 
 Combinators for Akka Persistence
 --------------------------------
