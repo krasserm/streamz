@@ -15,10 +15,12 @@ libraryDependencies in ThisBuild ++= Seq(
   "org.scalatest"     %% "scalatest"    % Version.scalatest % "test"
 )
 
-lazy val root = (project.in(file("."))).aggregate(util, akkaCamel, akkaPersistence)
+lazy val root = project.in(file(".")).aggregate(util, akkaCamel, akkaPersistence, akkaStream)
 
 lazy val util = project.in(file("streamz-util"))
 
 lazy val akkaCamel = project.in(file("streamz-akka-camel")).dependsOn(util)
 
 lazy val akkaPersistence = project.in(file("streamz-akka-persistence")).dependsOn(util)
+
+lazy val akkaStream = project.in(file("streamz-akka-stream")).dependsOn(util)
