@@ -4,15 +4,15 @@ organization in ThisBuild := "com.github.krasserm"
 
 version in ThisBuild := "0.1-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.11.0"
+scalaVersion in ThisBuild := "2.11.2"
 
 resolvers in ThisBuild += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions")
 
 libraryDependencies in ThisBuild ++= Seq(
-  "com.typesafe.akka" %% "akka-testkit" % Version.akka      % "test",
-  "org.scalatest"     %% "scalatest"    % Version.scalatest % "test"
+  "com.typesafe.akka" %% "akka-testkit" % Version.Akka      % "test",
+  "org.scalatest"     %% "scalatest"    % Version.Scalatest % "test"
 )
 
 lazy val root = project.in(file(".")).aggregate(util, akkaCamel, akkaPersistence, akkaStream)

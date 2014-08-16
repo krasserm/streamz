@@ -69,11 +69,10 @@ These combinators can be used in combination with all available [Camel endpoints
 Combinators for Akka Persistence
 --------------------------------
 
-A discrete stream of ``Persistent`` messages (that are written by an ``akka.persistence.Processor`` or ``akka.persistence.EventsourcedProcessor`` elsewhere) can be created with ``replay``: 
+A discrete stream of persistent events (that are written by an ``akka.persistence.PersistentActor``) can be created with ``replay``: 
 
 ```scala
 import akka.actor.ActorSystem
-import akka.persistence.Persistent
 import scalaz.concurrent.Task
 import scalaz.std.string._
 import scalaz.stream.Process
@@ -82,37 +81,45 @@ import streamz.akka.persistence._
 
 implicit val system = ActorSystem("example")
 
-// replay "processor-1" messages starting from scratch (= sequence number 1)
-val p1: Process[Task, Persistent] = replay("processor-1")
+// replay "processor-1" events starting from scratch (= sequence number 1)
+val p1: Process[Task, Event[Any]] = replay("processor-1")
 
-// replay "processor-1" messages starting from sequence number 3
-val p2: Process[Task, Persistent] = replay("processor-1", from = 3L)
+// replay "processor-1" events starting from sequence number 3
+val p2: Process[Task, Event[Any]] = replay("processor-1", from = 3L)
 ```
 
-The created ``Process[Task,Persistent]`` does not only replay already journaled messages but also emits new messages that ``processor-1`` is going to write. Assuming journaled messages  ``Persistent("a", 1L)``, ``Persistent("b", 2L)``, ``Persistent("c", 3L)``, ``Persistent("d", 4L)``
+where `Event` is defined as
  
-- ``p1`` produces ``Persistent("a", 1L)``, ``Persistent("b", 2L)``, ``Persistent("c", 3L)``, ``Persistent("d", 4L)``, ... and 
-- ``p2`` produces ``Persistent("c", 3L)``, ``Persistent("d", 4L)``, ... 
+```scala
+package streamz.akka.persistence
+
+case class Event[A](persistenceId: String, sequenceNr: Long, data: A)
+```
+
+The created ``Process[Task,  Event[Any]]`` does not only replay already journaled events but also emits new events that ``processor-1`` is going to write. Assuming journaled events  ``Event("processor-1", 1L, "a")``, ``Event("processor-1", 2L, "b")``, ``Event("processor-1", 3L, "c")``, ``Event("processor-1", 4L, "d")``
+ 
+- ``p1`` produces ``Event("processor-1", 1L, "a")``, ``Event("processor-1", 2L, "b")``, ``Event("processor-1", 3L, "c")``, ``Event("processor-1", 4L, "d")``, ... and 
+- ``p2`` produces ``Event("processor-1", 3L, "c")``, ``Event("processor-1", 4L, "d")``, ... 
 
 State can be accumulated with with scalaz-stream's ``scan``
 
 ```scala
-val p3: Process[Task, String] = p1.scan("")((acc, p) => acc + p.payload)
+val p3: Process[Task, String] = p1.scan("")((acc, evt) => acc + evt.data)
 ```
 
 so that ``p3`` produces ``""``, ``"a"``, ``"ab"``, ``"abc"``, ``"abcd"``, ... . State accumulation starting from a snapshot can be done with ``snapshot``:
  
 ```scala
-val p4: Process[Task,String] = for {
+val p4: Process[Task, String] = for {
   s @ Snapshot(md, data) <- snapshot[String]("processor-1")
-  currentState <- replay(md.processorId, s.nextSequenceNr).scan(data)((acc, p) => acc + p.payload)
+  currentState <- replay(md.persistenceId, s.nextSequenceNr).scan(data)((acc, evt) => acc + evt.data)
 } yield currentState
 ```
 
-Additionally assuming that a snapshot ``"ab"`` has already been written by ``processor-1`` (after messages ``Persistent("a", 1L)`` and ``Persistent("b", 2L)``), ``p4`` produces ``"ab"``, ``"abc"``, ``"abcd"``, ... . Finally, writing to an Akka Persistence journal from a stream can done with ``journal``:
+Additionally assuming that a snapshot ``"ab"`` has already been written by ``processor-1`` (after events ``Event("processor-1", 1L, "a")`` and ``Event("processor-1", 2L, "b")``), ``p4`` produces ``"ab"``, ``"abc"``, ``"abcd"``, ... . Finally, writing to an Akka Persistence journal from a stream can done with ``journal``:
 
 ```scala
-val p5: Process[Task,Unit] = Process("a", "b", "c").journal("processor-2")
+val p5: Process[Task, Unit] = Process("a", "b", "c").journal("processor-2")
 ```
 
 Status

@@ -1,17 +1,12 @@
 package streamz.akka
 
-import akka.actor.{ActorRef, ActorRefFactory, Props}
-import akka.stream.actor.ActorConsumer.{RequestStrategy, OnNext, OnComplete, MaxInFlightRequestStrategy}
+import akka.actor.{ActorRef, ActorRefFactory}
+import akka.stream.actor.ActorConsumer._
 import akka.stream.actor.ActorProducer
-import akka.stream.actor.ActorProducer.{Cancel, Request}
 import org.reactivestreams.api.Producer
 
-import scala.collection.immutable.Queue
-import scalaz.\/
 import scalaz.concurrent.Task
 import scalaz.stream._
-
-import scalaz.syntax.id._
 
 package object stream {
   type RequestStrategyFactory = InFlight => RequestStrategy
@@ -38,6 +33,6 @@ package object stream {
     io.resource[ActorRef, I => Task[Unit]](
       Task.delay[ActorRef](adapterActor))(
       adapterActor => Task.delay(adapterActor ! OnComplete))( // on error?
-      adapterActor => Task.delay[I=>Task[Unit]](i => Task.async[Unit](callback => adapterActor ! OnNext(i, callback))))
+      adapterActor => Task.delay[I => Task[Unit]](i => Task.async[Unit](callback => adapterActor ! OnNext(i, callback))))
   }
 }

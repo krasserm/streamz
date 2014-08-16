@@ -8,7 +8,7 @@ import akka.stream.actor.ActorProducer
 import akka.stream.actor.ActorProducer.Request
 
 import scalaz.\/
-import scalaz.syntax.id._
+import scalaz.syntax.either._
 
 private[stream] class AdapterProducer[A](strategyFactory: RequestStrategyFactory) extends ActorProducer[A] with InFlight {
 

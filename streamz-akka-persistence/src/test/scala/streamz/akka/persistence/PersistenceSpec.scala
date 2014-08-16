@@ -23,44 +23,48 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
       .foreach(FileUtils.deleteDirectory)
   }
 
-  class TestProcessor(override val processorId: String, probe: ActorRef = testActor) extends Processor {
+  class TestPersistentActor(val persistenceId: String, probe: ActorRef = testActor) extends PersistentActor {
     var state: String = ""
 
-    def receive = {
-      case Persistent(p: String, snr) =>
-        state = state + p
+    override def receiveRecover = {
+      case p: String => state += p
+    }
+
+    override def receiveCommand = {
       case "snap" =>
         saveSnapshot(state)
       case SaveSnapshotSuccess(md) =>
         probe ! md
+      case p: String =>
+        persist(p) {  state += _ }
     }
   }
 
   "A replayer" must {
     "produce a discrete stream of journaled messages" in {
-      val p = system.actorOf(Props(new TestProcessor("p1")))
-      1 to 3 foreach { i => p ! Persistent(i) }
-      replay("p1").map(p => (p.payload, p.sequenceNr)).take(3).runLog.run should be(Seq((1, 1L), (2, 2L), (3, 3L)))
+      val p = system.actorOf(Props(new TestPersistentActor("p1")))
+      1 to 3 foreach { i => p ! i.toString }
+      replay("p1").take(3).runLog.run should be(Seq(Event("p1", 1L, "1"), Event("p1", 2L, "2"), Event("p1", 3L, "3")))
     }
     "produce a discrete stream of journaled messages from user-defined sequence number" in {
-      val p = system.actorOf(Props(new TestProcessor("p2")))
-      1 to 3 foreach { i => p ! Persistent(i) }
-      replay("p2", 2L).map(p => (p.payload, p.sequenceNr)).take(2).runLog.run should be(Seq((2, 2L), (3, 3L)))
+      val p = system.actorOf(Props(new TestPersistentActor("p2")))
+      1 to 3 foreach { i => p ! i.toString }
+      replay("p2", 2L).take(2).runLog.run should be(Seq(Event("p2", 2L, "2"), Event("p2", 3L, "3")))
     }
   }
 
   "A journal" must {
     "journal a stream of messages" in {
       Process("a", "b", "c").journal("p3").run.run
-      replay("p3").map(p => (p.payload, p.sequenceNr)).take(3).runLog.run should be(Seq(("a", 1L), ("b", 2L), ("c", 3L)))
+      replay("p3").map(p => (p.data, p.sequenceNr)).take(3).runLog.run should be(Seq(("a", 1L), ("b", 2L), ("c", 3L)))
     }
   }
 
   "A snapshot loader" must {
     "produce the most recent snapshot" in {
-      val p = system.actorOf(Props(new TestProcessor("p4")))
-      p ! Persistent("a")
-      p ! Persistent("b")
+      val p = system.actorOf(Props(new TestPersistentActor("p4")))
+      p ! "a"
+      p ! "b"
       p ! "snap"
 
       val metadata = expectMsgPF() { case md: SnapshotMetadata => md }
@@ -73,17 +77,17 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
 
   "A composition of snapshot and replay" must {
     "produce a discrete stream of updated states" in {
-      val p = system.actorOf(Props(new TestProcessor("p6")))
-      p ! Persistent("a")
-      p ! Persistent("b")
+      val p = system.actorOf(Props(new TestPersistentActor("p6")))
+      p ! "a"
+      p ! "b"
       p ! "snap"
-      p ! Persistent("c")
-      p ! Persistent("d")
+      p ! "c"
+      p ! "d"
       expectMsgPF() { case md: SnapshotMetadata => md }
 
       val c = for {
         s @ Snapshot(meta, data) <- snapshot[String]("p6")
-        state <- replay(meta.processorId, s.nextSequenceNr).map(_.payload).scan(data)((acc,p) => acc + p)
+        state <- replay(meta.persistenceId, s.nextSequenceNr).map(_.data).scan(data)((acc,p) => acc + p)
       } yield state
 
       c.take(3).runLog.run should be(Seq("ab", "abc", "abcd"))

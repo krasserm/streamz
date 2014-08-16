@@ -23,15 +23,15 @@ package object camel {
   def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Process[Task,O] = {
     class ConsumerEndpoint(val endpointUri: String, queue: scalaz.stream.async.mutable.Queue[O]) extends Consumer {
       def receive = {
-        case msg: CamelMessage => queue.enqueue(msg.bodyAs(CT, camelContext))
+        case msg: CamelMessage => queue.enqueueOne(msg.bodyAs(CT, camelContext)).run
       }
     }
 
     io.resource
     { Task.delay {
-        val (queue, process) = async.queue[O] // TODO: re-use system.dispatcher
+        val queue = async.unboundedQueue[O] // TODO: re-use system.dispatcher
         val endpoint = system.actorOf(Props(new ConsumerEndpoint(uri, queue)))
-        (queue, process, endpoint)
+        (queue, queue.dequeue, endpoint)
     }}
     { case (q, p, e) => Task.delay { e ! PoisonPill; q.close }}
     { case (_, p, _) => p.toTask }
