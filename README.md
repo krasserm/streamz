@@ -1,7 +1,7 @@
 Streamz
 =======
 
-Streamz is a [scalaz-stream](https://github.com/scalaz/scalaz-stream) combinator library for [Akka Persistence](http://doc.akka.io/docs/akka/2.3.3/scala/persistence.html) and [Apache Camel](http://camel.apache.org/). It supports the composition of ``scalaz.stream.Process`` instances from Camel endpoints, Persistence journals and snapshot stores.
+Streamz is a [scalaz-stream](https://github.com/scalaz/scalaz-stream) combinator library for [Apache Camel](http://camel.apache.org/), [Akka Persistence](http://doc.akka.io/docs/akka/2.3.5/scala/persistence.html) and [Akka Stream](http://akka.io/docs/#akka-streams-and-http). It supports the composition of ``scalaz.stream.Process`` instances from Apache Camel endpoints, Akka Streams as well as Akka Persistence journals and snapshot stores.
 
 Dependencies
 ------------
@@ -45,7 +45,7 @@ val p: Process[Task,Unit] =
   t.run
 ```
 
-An implicit ``ActorSystem`` must be in scope  because the combinator implementation depends on [Akka Camel](http://doc.akka.io/docs/akka/2.3.3/scala/camel.html). A discrete stream starting from a Camel endpoint can be created with ``receive`` where its type parameter is used to convert received message bodies to given type using a Camel type converter, if needed:
+An implicit ``ActorSystem`` must be in scope  because the combinator implementation depends on [Akka Camel](http://doc.akka.io/docs/akka/2.3.5/scala/camel.html). A discrete stream starting from a Camel endpoint can be created with ``receive`` where its type parameter is used to convert received message bodies to given type using a Camel type converter, if needed:
 
 ```scala
 val p1: Process[Task,String] = receive[String]("seda:q1")
@@ -121,6 +121,38 @@ Additionally assuming that a snapshot ``"ab"`` has already been written by ``pro
 ```scala
 val p5: Process[Task, Unit] = Process("a", "b", "c").journal("processor-2")
 ```
+
+Combinators for Akka Stream
+---------------------------
+
+### `Process` to `Flow`
+
+```scala
+import akka.actor.ActorSystem
+import akka.stream.scaladsl.Flow
+import akka.stream.{FlowMaterializer, MaterializerSettings}
+
+import scalaz.concurrent.Task
+import scalaz.stream._
+
+import streamz.akka.stream._
+
+implicit val system = ActorSystem("example")
+val materializer = FlowMaterializer(MaterializerSettings())
+
+// 1. Create Process
+val p: Process[Task, Int] = Process(1 to 20: _*)
+// 2. Create Adapter
+val (process, producer) = asProducer(p)
+// 3. Create Flow from returned Producer & materialize (to create demand)
+val produced = Flow(producer).foreach(println).onComplete(materializer)(_ => system.shutdown())
+// 4. run returned process
+process.run.run
+```
+
+### `Flow` to `Process` 
+
+Coming soon.
 
 Status
 ------
