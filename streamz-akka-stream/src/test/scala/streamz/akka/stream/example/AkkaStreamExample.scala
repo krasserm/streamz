@@ -9,16 +9,31 @@ import scalaz.stream._
 
 import streamz.akka.stream._
 
-object AkkaStreamExample extends App {
-  implicit val system = ActorSystem(getClass.getSimpleName.filter(Character.isLetter))
+object AkkaStreamExample1 extends App {
+  implicit val system = ActorSystem("example")
   val materializer = FlowMaterializer(MaterializerSettings())
 
-  // 1. Create Process
-  val p: Process[Task, Int] = Process(1 to 20: _*)
-  // 2. Create Adapter
-  val (process, producer) = asProducer(p)
-  // 3. Create Flow from returned Producer & materialize (to create demand)
+  // Create process
+  val p1: Process[Task, Int] = Process.emitAll(1 to 20)
+  // Compose process with (managed) flow
+  val p2: Process[Task, Unit] = p1.produce() { flow: Flow[Int] =>
+    // Customize flow (done when running process)
+    flow.foreach(println).onComplete(materializer)(_ => system.shutdown())
+  }
+  // Run process to feed flow
+  p2.run.run
+}
+
+object AkkaStreamExample2 extends App {
+  implicit val system = ActorSystem("example")
+  val materializer = FlowMaterializer(MaterializerSettings())
+
+  // Create process
+  val p1: Process[Task, Int] = Process.emitAll(1 to 20)
+  // Create producer (= process adapter)
+  val (p2, producer) = p1.producer()
+  // Create (un-managed) flow from producer & materialize (to create demand)
   val produced = Flow(producer).foreach(println).onComplete(materializer)(_ => system.shutdown())
-  // 4. run returned process
-  process.run.run
+  // Run process to feed flow
+  p2.run.run
 }

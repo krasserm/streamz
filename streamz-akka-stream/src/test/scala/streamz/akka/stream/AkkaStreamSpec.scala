@@ -30,7 +30,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
       "return a Producer and a Process that produces the elements of the input-Process in a normal Flow" in {
         val input: Process[Task, Int] = Process(1 to 1000: _*)
 
-        val (process, producer) = asProducer(input)
+        val (process, producer) = input.producer()
         val produced = toList(Flow(producer))
         process.run.run
 
@@ -41,7 +41,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
       "return a Producer and a Process that produces the elements of the input-Process in a normal Flow" in {
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
-        val (process, producer) = asProducer(input.map(sleep()))
+        val (process, producer) = input.map(sleep()).producer()
         val produced = toList(Flow(producer))
         process.run.run
 
@@ -52,7 +52,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
       "return a Producer and a Process that produces the elements of the input-Process in a slow Flow" in {
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
-        val (process, producer) = asProducer(input)
+        val (process, producer) = input.producer()
         val produced = toList(Flow(producer).map(sleep()))
         process.run.run
 
@@ -66,7 +66,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
         val strategyFactory = maxInFlightStrategyFactory(maxInFlight)
         val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterProducer[Int]] -> TestAdapterProducer.props(strategyFactory)))
 
-        val (process, producer) = asProducer(input, strategyFactory = maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
+        val (process, producer) = input.producer(strategyFactory = maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
         val produced = toList(Flow(producer)
           .map(sleep())
           .map(check(currentInFlight(mockActorFactory) should be <= maxInFlight)))
