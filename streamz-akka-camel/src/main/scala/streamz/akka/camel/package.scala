@@ -1,5 +1,6 @@
 package streamz.akka
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
@@ -8,10 +9,11 @@ import akka.camel._
 import akka.pattern.ask
 import akka.util.Timeout
 
+import scalaz._
+import Scalaz._
+
 import scalaz.concurrent._
 import scalaz.stream._
-
-import streamz.util._
 
 package object camel {
   /**
@@ -45,7 +47,7 @@ package object camel {
   def sender[I](uri: String)(implicit system: ActorSystem): Sink[Task,I] = {
     io.resource
     { Task.delay(system.actorOf(Props(new ProducerEndpoint(uri) with Oneway))) }
-    { p => Task.delay(p ! akka.actor.PoisonPill) }
+    { p => Task.delay(p ! PoisonPill) }
     { p => Task.delay(i => Task.delay(p ! i)) }
   }
 
@@ -63,7 +65,7 @@ package object camel {
 
     io.resource
     { Task.delay(system.actorOf(Props(new ProducerEndpoint(uri)))) }
-    { p => Task.delay(p ! akka.actor.PoisonPill) }
+    { p => Task.delay(p ! PoisonPill) }
     { p => Task.delay(i => p.ask(i).mapTo[CamelMessage].map(_.bodyAs[O])) }
   }
 
@@ -76,6 +78,15 @@ package object camel {
 
     def sendW(uri: String)(implicit system: ActorSystem): Process[Task,O] = {
       self.flatMap(o => Process.tell(o) ++ Process.emitO(o)).drainW(sender[O](uri))
+    }
+  }
+
+  private implicit def scalaFuture2scalazTask[T](sf: scala.concurrent.Future[T])(implicit ec: ExecutionContext): Task[T] = {
+    Task.async { cb =>
+      sf.onComplete {
+        case scala.util.Success(v) => cb(v.right)
+        case scala.util.Failure(e) => cb(e.left)
+      }
     }
   }
 

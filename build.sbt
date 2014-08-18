@@ -11,16 +11,15 @@ resolvers in ThisBuild += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions")
 
 libraryDependencies in ThisBuild ++= Seq(
-  "com.typesafe.akka" %% "akka-testkit" % Version.Akka      % "test",
-  "org.scalatest"     %% "scalatest"    % Version.Scalatest % "test"
+  "org.scalaz.stream" %% "scalaz-stream" % Version.ScalazStream,
+  "com.typesafe.akka" %% "akka-testkit"  % Version.Akka          % "test",
+  "org.scalatest"     %% "scalatest"     % Version.Scalatest     % "test"
 )
 
-lazy val root = project.in(file(".")).aggregate(util, akkaCamel, akkaPersistence, akkaStream)
+lazy val root = project.in(file(".")).aggregate(akkaCamel, akkaPersistence, akkaStream)
 
-lazy val util = project.in(file("streamz-util"))
+lazy val akkaCamel = project.in(file("streamz-akka-camel"))
 
-lazy val akkaCamel = project.in(file("streamz-akka-camel")).dependsOn(util)
+lazy val akkaPersistence = project.in(file("streamz-akka-persistence"))
 
-lazy val akkaPersistence = project.in(file("streamz-akka-persistence")).dependsOn(util)
-
-lazy val akkaStream = project.in(file("streamz-akka-stream")).dependsOn(util)
+lazy val akkaStream = project.in(file("streamz-akka-stream"))
