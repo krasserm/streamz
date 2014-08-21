@@ -1,7 +1,11 @@
 Streamz
 =======
 
-Streamz is a [scalaz-stream](https://github.com/scalaz/scalaz-stream) combinator library for [Apache Camel](http://camel.apache.org/), [Akka Persistence](http://doc.akka.io/docs/akka/2.3.5/scala/persistence.html) and [Akka Stream](http://akka.io/docs/#akka-streams-and-http). It supports the composition of ``scalaz.stream.Process`` instances from Apache Camel endpoints, Akka Stream flows as well as Akka Persistence journals and snapshot stores.
+Streamz is a resource combinator library for [scalaz-stream](https://github.com/scalaz/scalaz-stream). It allows ``scalaz.stream.Process`` instances to consume from and produce to
+
+- [Apache Camel](http://camel.apache.org/) endpoints
+- [Akka Persistence](http://doc.akka.io/docs/akka/2.3.5/scala/persistence.html) journals and snapshot stores and
+- [Akka Stream](http://akka.io/docs/#akka-streams-and-http) flows (reactive streams) with full back-pressure support.
 
 Dependencies
 ------------
@@ -16,8 +20,6 @@ Dependencies
 
 Combinators for Apache Camel
 ----------------------------
-
-Example: 
 
 ```scala
 import akka.actor.ActorSystem
@@ -125,9 +127,7 @@ val p5: Process[Task, Unit] = Process("a", "b", "c").journal("processor-2")
 Combinators for Akka Stream
 ---------------------------
 
-### `Process` to `Flow`
-
-#### Example 1 (managed flow)
+The following examples use these imports and definitions:
 
 ```scala
 import akka.actor.ActorSystem
@@ -141,7 +141,11 @@ import streamz.akka.stream._
 
 implicit val system = ActorSystem("example")
 val materializer = FlowMaterializer(MaterializerSettings())
+```
 
+### `Process` to managed `Flow`
+
+```scala
 // Create process
 val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Compose process with (managed) flow
@@ -153,21 +157,9 @@ val p2: Process[Task, Unit] = p1.produce() { flow: Flow[Int] =>
 p2.run.run
 ```
 
-#### Example 2 (un-managed flow)
+### `Process` to un-managed `Flow`
 
 ```scala
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.Flow
-import akka.stream.{FlowMaterializer, MaterializerSettings}
-
-import scalaz.concurrent.Task
-import scalaz.stream._
-
-import streamz.akka.stream._
-
-implicit val system = ActorSystem("example")
-val materializer = FlowMaterializer(MaterializerSettings())
-
 // Create process
 val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Create producer (= process adapter)
@@ -180,9 +172,11 @@ p2.run.run
 
 ### `Flow` to `Process` 
 
-Coming soon.
-
-Status
-------
-
-Experimental preview.
+```scala
+// Create flow
+val f1: Flow[Int] = Flow(1 to 20)
+// Create process that consumes from flow
+val p1: Process[Task, Int] = consume(f1)
+// Run process and flow
+p1.runLog.run.foreach(println)
+```

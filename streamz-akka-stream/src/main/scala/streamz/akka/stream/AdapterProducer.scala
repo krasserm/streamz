@@ -56,7 +56,8 @@ private[stream] class AdapterProducer[A](strategyFactory: RequestStrategyFactory
     ackCallback = None
   }
 
-  private def enqueueElement(element: Option[A]): Unit = elements = elements.enqueue(element)
+  private def enqueueElement(element: Option[A]): Unit =
+    elements = elements.enqueue(element)
 
   private def safeAckCallback(c: AcknowledgeCallback): Unit = {
     assert(!ackCallback.isDefined)

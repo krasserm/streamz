@@ -7,7 +7,7 @@ import Scalaz._
 
 import streamz.akka.persistence.Event
 
-class EventReader(pid: String, from: Long) extends akka.actor.Actor {
+class EventReader(pid: String, from: Long) extends Actor {
   import EventReader._
   import BufferedView._
 
