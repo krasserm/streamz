@@ -14,9 +14,14 @@ Dependencies
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.0.1"
+    // transitively depends on akka-camel 2.3.5
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.1"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.0.1"
+    // transitively depends on akka-persistence-experimental 2.3.5
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.1"
+
+    // transitively depends on akka-stream-experimental 0.6
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.1"
 
 Combinators for Apache Camel
 ----------------------------
@@ -127,7 +132,7 @@ val p5: Process[Task, Unit] = Process("a", "b", "c").journal("processor-2")
 Combinators for Akka Stream
 ---------------------------
 
-The following examples use these imports and definitions:
+The following examples use these imports and definitions (full source code [here](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/AkkaStreamExample.scala)):
 
 ```scala
 import akka.actor.ActorSystem
@@ -140,43 +145,43 @@ import scalaz.stream._
 import streamz.akka.stream._
 
 implicit val system = ActorSystem("example")
-val materializer = FlowMaterializer(MaterializerSettings())
+implicit val materializer = FlowMaterializer(MaterializerSettings())
 ```
 
-### `Process` to managed `Flow`
+### `Process` publishes to managed `Flow`
 
 ```scala
 // Create process
 val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Compose process with (managed) flow
-val p2: Process[Task, Unit] = p1.produce() { flow: Flow[Int] =>
+val p2: Process[Task, Unit] = p1.publish() { flow: Flow[Int] =>
   // Customize flow (done when running process)
-  flow.foreach(println).onComplete(materializer)(_ => system.shutdown())
+  flow.foreach(println)
 }
-// Run process to feed flow
+// Run process
 p2.run.run
 ```
 
-### `Process` to un-managed `Flow`
+### `Process` publishes to un-managed `Flow`
 
 ```scala
 // Create process
 val p1: Process[Task, Int] = Process.emitAll(1 to 20)
-// Create producer (= process adapter)
-val (p2, producer) = p1.producer()
-// Create (un-managed) flow from producer & materialize (to create demand)
-val produced = Flow(producer).foreach(println).onComplete(materializer)(_ => system.shutdown())
-// Run process to feed flow
+// Create publisher (= process adapter)
+val (p2, publisher) = p1.publisher()
+// Create (un-managed) flow from publisher
+Flow(publisher).foreach(println)
+// Run process
 p2.run.run
 ```
 
-### `Flow` to `Process` 
+### `Process` subscribes to `Flow`  
 
 ```scala
 // Create flow
 val f1: Flow[Int] = Flow(1 to 20)
-// Create process that consumes from flow
-val p1: Process[Task, Int] = consume(f1)
-// Run process and flow
+// Create process that subscribes to the flow
+val p1: Process[Task, Int] = subscribe(f1)
+// Run process
 p1.runLog.run.foreach(println)
 ```

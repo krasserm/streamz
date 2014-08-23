@@ -3,14 +3,14 @@ package streamz.akka.stream
 import scala.collection.immutable.Queue
 
 import akka.actor.Props
-import akka.stream.actor.ActorConsumer.{OnComplete, OnNext}
-import akka.stream.actor.ActorProducer
-import akka.stream.actor.ActorProducer.Request
+import akka.stream.actor.ActorSubscriberMessage.{OnComplete, OnNext}
+import akka.stream.actor.ActorPublisher
+import akka.stream.actor.ActorPublisherMessage.Request
 
 import scalaz.\/
 import scalaz.syntax.either._
 
-private[stream] class AdapterProducer[A](strategyFactory: RequestStrategyFactory) extends ActorProducer[A] with InFlight {
+private[stream] class AdapterPublisher[A](strategyFactory: RequestStrategyFactory) extends ActorPublisher[A] with InFlight {
 
   type AcknowledgeCallback = \/[Throwable, Unit] => Unit
   final val AckSuccess = ().right
@@ -73,6 +73,6 @@ private[stream] class AdapterProducer[A](strategyFactory: RequestStrategyFactory
   private val requestStrategy = strategyFactory(this)
 }
 
-private[stream] object AdapterProducer {
-  def props[A](strategyFactory: RequestStrategyFactory): Props = Props(new AdapterProducer[A](strategyFactory))
+private[stream] object AdapterPublisher {
+  def props[A](strategyFactory: RequestStrategyFactory): Props = Props(new AdapterPublisher[A](strategyFactory))
 }

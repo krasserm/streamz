@@ -4,19 +4,19 @@ import scala.collection.immutable.Queue
 
 import akka.actor.Props
 
-import TestAdapterProducer._
+import TestAdapterPublisher._
 
 
-class TestAdapterProducer[I](strategyFactory: RequestStrategyFactory) extends AdapterProducer[I](strategyFactory) {
+class TestAdapterPublisher[I](strategyFactory: RequestStrategyFactory) extends AdapterPublisher[I](strategyFactory) {
   override def receive = super.receive.orElse {
     case GetState => sender() ! State(elements, currentDemand)
   }
 }
 
-object TestAdapterProducer {
+object TestAdapterPublisher {
   case object GetState
 
   case class State[I](elements: Queue[Option[I]], currentDemand: Int)
 
-  def props[I](strategyFactory: RequestStrategyFactory): Props = Props(new TestAdapterProducer[I](strategyFactory))
+  def props[I](strategyFactory: RequestStrategyFactory): Props = Props(new TestAdapterPublisher[I](strategyFactory))
 }

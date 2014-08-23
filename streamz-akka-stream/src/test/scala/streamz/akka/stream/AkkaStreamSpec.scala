@@ -8,80 +8,94 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import akka.actor.ActorSystem
 import akka.pattern.ask
-import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit}
 import akka.stream.scaladsl.Flow
 import akka.stream.{FlowMaterializer, MaterializerSettings}
+import akka.testkit._
 
 import scalaz.concurrent.Task
 import scalaz.stream.Process
 
-import streamz.akka.stream.TestAdapterProducer.{GetState, State}
+import streamz.akka.stream.TestAdapterPublisher.{GetState, State}
 
-
-class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimpleName)) with ImplicitSender with DefaultTimeout
-    with WordSpecLike with Matchers with BeforeAndAfterAll {
+class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimpleName)) with ImplicitSender with DefaultTimeout with WordSpecLike with Matchers with BeforeAndAfterAll {
+  implicit val materializer = FlowMaterializer(MaterializerSettings())
 
   import system.dispatcher
 
-  val materializer = FlowMaterializer(MaterializerSettings())
-
-  "stream.asProducer" when {
+  "stream.publisher" when {
     "invoked with a normal input-Process" must {
-      "return a Producer and a Process that produces the elements of the input-Process in a normal Flow" in {
+      "return a Publisher and a Process that publishes the elements of the input-Process in a normal Flow" in {
         val input: Process[Task, Int] = Process(1 to 1000: _*)
 
-        val (process, producer) = input.producer()
-        val produced = toList(Flow(producer))
+        val (process, publisher) = input.publisher()
+        val published = toList(Flow(publisher))
         process.run.run
 
-        result(produced) should be (input.runLog.run)
+        result(published) should be (input.runLog.run)
       }
     } 
     "invoked with a slow input-Process" must {
-      "return a Producer and a Process that produces the elements of the input-Process in a normal Flow" in {
+      "return a Publisher and a Process that  publishes the elements of the input-Process in a normal Flow" in {
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
-        val (process, producer) = input.map(sleep()).producer()
-        val produced = toList(Flow(producer))
+        val (process, publisher) = input.map(sleep()).publisher()
+        val published = toList(Flow(publisher))
         process.run.run
 
-        result(produced) should be (input.runLog.run)
+        result(published) should be (input.runLog.run)
       }
     }
     "invoked with a normal input-Process" must {
-      "return a Producer and a Process that produces the elements of the input-Process in a slow Flow" in {
+      "return a Publisher and a Process that  publishes the elements of the input-Process in a slow Flow" in {
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
-        val (process, producer) = input.producer()
-        val produced = toList(Flow(producer).map(sleep()))
+        val (process, publisher) = input.publisher()
+        val published = toList(Flow(publisher).map(sleep()))
         process.run.run
 
-        result(produced) should be (input.runLog.run)
+        result(published) should be (input.runLog.run)
       }
     }
     "invoked with a normal input-Process and a MaxInFlightRequestStrategy" must {
-      "return a Producer and a Process that produces the elements of the input-Process in a slow Flow with max elements in flight" in {
+      "return a Publisher and a Process that  publishes the elements of the input-Process in a slow Flow with max elements in flight" in {
         val input: Process[Task, Int] = Process(1 to 50: _*)
         val maxInFlight = Random.nextInt(4) + 1
         val strategyFactory = maxInFlightStrategyFactory(maxInFlight)
-        val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterProducer[Int]] -> TestAdapterProducer.props(strategyFactory)))
+        val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterPublisher[Int]] -> TestAdapterPublisher.props(strategyFactory)))
 
-        val (process, producer) = input.producer(strategyFactory = maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
-        val produced = toList(Flow(producer)
+        val (process, publisher) = input.publisher(strategyFactory = maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
+        val published = toList(Flow(publisher)
           .map(sleep())
           .map(check(currentInFlight(mockActorFactory) should be <= maxInFlight)))
         process.run.run
 
-        result(produced).foreach(_.get)
+        result(published).foreach(_.get)
       }
     }
   }
 
+  "stream.publish" must {
+    "publish to a managed flow" in {
+      val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish() { _.foreach(testActor ! _) }
+      process.run.run
+      expectMsg(1)
+      expectMsg(2)
+      expectMsg(3)
+    }
+  }
+
+  "stream.subscribe" must {
+    "subscribe to a flow" in {
+      val process = subscribe(Flow(1 to 3))
+      process.runLog.run should be(Seq(1, 2, 3))
+    }
+  }
+
   private def toList[A](flow: Flow[A])(implicit executionContext: ExecutionContext): Future[List[A]] =
-    flow.fold[List[A]](Nil)(_:+_).toFuture(materializer)
+    flow.fold[List[A]](Nil)(_:+_).toFuture
 
   private def currentInFlight(mockActorFactory: MockActorRefFactory): Int = {
-    result((mockActorFactory.createdActor[AdapterProducer[Int]] ? GetState).mapTo[State[_]]).elements.size
+    result((mockActorFactory.createdActor[AdapterPublisher[Int]] ? GetState).mapTo[State[_]]).elements.size
   }
 
   private def sleep[A](pause: FiniteDuration = 10.millis)(a: A): A = check(Thread.sleep(pause.toMillis))(a).get

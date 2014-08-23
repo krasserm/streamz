@@ -1,14 +1,14 @@
 package streamz.akka.stream
 
-import akka.stream.actor.ActorConsumer
+import akka.stream.actor._
 
 import scala.collection.immutable.Queue
 import scalaz._
 import Scalaz._
 import scalaz.stream.Cause.{End, Terminated}
 
-class AdapterConsumer[A](strategyFactory: RequestStrategyFactory) extends ActorConsumer with InFlight {
-  import ActorConsumer._
+class AdapterSubscriber[A](strategyFactory: RequestStrategyFactory) extends ActorSubscriber with InFlight {
+  import ActorSubscriberMessage._
 
   val requestStrategy = strategyFactory(this)
   var callback: Option[Throwable \/ A => Unit] = None
@@ -37,12 +37,12 @@ class AdapterConsumer[A](strategyFactory: RequestStrategyFactory) extends ActorC
       elements = elements.enqueue(None)
     case OnError(cause) =>
       callback.foreach(_.apply(cause.left))
-    case r: AdapterConsumer.Read[A] =>
+    case r: AdapterSubscriber.Read[A] =>
       callback = Some(r.callback)
       sendDownstream()
   }
 }
 
-object AdapterConsumer {
+object AdapterSubscriber {
   case class Read[A](callback: Throwable \/ A => Unit)
 }
