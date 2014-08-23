@@ -1,7 +1,7 @@
 Streamz
 =======
 
-Streamz is a resource combinator library for [scalaz-stream](https://github.com/scalaz/scalaz-stream). It allows ``scalaz.stream.Process`` instances to consume from and produce to
+Streamz is a resource combinator library for [scalaz-stream](https://github.com/scalaz/scalaz-stream). It allows [`Process`](http://docs.typelevel.org/api/scalaz-stream/stable/latest/doc/#scalaz.stream.Process) instances to consume from and produce to
 
 - [Apache Camel](http://camel.apache.org/) endpoints
 - [Akka Persistence](http://doc.akka.io/docs/akka/2.3.5/scala/persistence.html) journals and snapshot stores and
@@ -71,7 +71,7 @@ The ``request`` combinator initiates in-out message exchanges with a Camel endpo
 val p4: Process[Task,Int] = p1.request[Int]("bean:service?method=length")
 ```
    
-These combinators can be used in combination with all available [Camel endpoints](http://camel.apache.org/components.html) and all ``scalaz.stream.Process`` combinators. A more concrete example how to process files from an FTP server is [here](https://github.com/krasserm/streamz/blob/master/streamz-akka-camel/src/test/scala/streamz/example/FtpExample.scala).
+These combinators are compatible with all available [Camel endpoints](http://camel.apache.org/components.html) and all [`Process`](http://docs.typelevel.org/api/scalaz-stream/stable/latest/doc/#scalaz.stream.Process) combinators (and now supersede the [scalaz-camel](https://github.com/krasserm/scalaz-camel) project). A more concrete example how to process files from an FTP server is available [here](https://github.com/krasserm/streamz/blob/master/streamz-akka-camel/src/test/scala/streamz/example/FtpExample.scala).
 
 Combinators for Akka Persistence
 --------------------------------
