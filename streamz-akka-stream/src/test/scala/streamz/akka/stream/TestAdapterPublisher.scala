@@ -1,22 +1,34 @@
 package streamz.akka.stream
 
-import scala.collection.immutable.Queue
+import akka.actor.{Actor, Props}
 
-import akka.actor.Props
-
-import TestAdapterPublisher._
+import TestAdapter._
 
 
-class TestAdapterPublisher[I](strategyFactory: RequestStrategyFactory) extends AdapterPublisher[I](strategyFactory) {
-  override def receive = super.receive.orElse {
-    case GetState => sender() ! State(elements, currentDemand)
+trait TestAdapter extends Actor with InFlight {
+
+  abstract override def receive: Receive = super.receive.orElse {
+    case GetInFlight => sender() ! inFlight
   }
 }
 
+object TestAdapter {
+  case object GetInFlight
+}
+
+class TestAdapterPublisher[I](strategyFactory: RequestStrategyFactory)
+  extends AdapterPublisher[I](strategyFactory) with TestAdapter {
+
+  override protected[stream] def stopMe() = ()
+}
+
 object TestAdapterPublisher {
-  case object GetState
+  def props[I](args: Seq[Any]): Props = Props(new TestAdapterPublisher[I](args(0).asInstanceOf[RequestStrategyFactory]))
+}
 
-  case class State[I](elements: Queue[Option[I]], currentDemand: Int)
+class TestAdapterSubscriber[I](strategyFactory: RequestStrategyFactory)
+  extends AdapterSubscriber[I](strategyFactory) with TestAdapter
 
-  def props[I](strategyFactory: RequestStrategyFactory): Props = Props(new TestAdapterPublisher[I](strategyFactory))
+object TestAdapterSubscriber {
+  def props[I](args: Seq[Any]): Props = Props(new TestAdapterSubscriber[I](args(0).asInstanceOf[RequestStrategyFactory]))
 }

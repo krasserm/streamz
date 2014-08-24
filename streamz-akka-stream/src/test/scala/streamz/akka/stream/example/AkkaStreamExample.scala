@@ -33,7 +33,7 @@ object ProcessToManagedFlow extends App {
   p2.run.run
 }
 
-object ProcessToUnmanagedFlow extends App {
+object ProcessToUnManagedFlow extends App {
   import Context._
 
   // Create process

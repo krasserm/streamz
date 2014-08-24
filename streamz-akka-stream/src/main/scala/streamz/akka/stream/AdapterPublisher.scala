@@ -1,49 +1,48 @@
 package streamz.akka.stream
 
-import scala.collection.immutable.Queue
-
-import akka.actor.Props
-import akka.stream.actor.ActorSubscriberMessage.{OnComplete, OnNext}
+import akka.actor.{PoisonPill, Props}
+import akka.stream.actor.ActorSubscriberMessage.{OnError, OnComplete, OnNext}
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.Request
 
 import scalaz.\/
 import scalaz.syntax.either._
 
-private[stream] class AdapterPublisher[A](strategyFactory: RequestStrategyFactory) extends ActorPublisher[A] with InFlight {
+private[stream] class AdapterPublisher[A](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory)
+  with ActorPublisher[A] {
+
+  override type Receiver = ActorPublisher[A]
 
   type AcknowledgeCallback = \/[Throwable, Unit] => Unit
   final val AckSuccess = ().right
 
-  var elements: Queue[Option[A]] = Queue.empty
   var ackCallback: Option[AcknowledgeCallback] = None
   var currentDemand: Int = 0
 
-  override def inFlight = elements.size
-
-  override def receive = {
-    case _: Request =>
-      handleRequest()
-
+  override def receiveElement = {
     case OnNext((element: A, callback: AcknowledgeCallback)) =>
-      enqueueElement(Some(element))
-      safeAckCallback(callback)
-      handleRequest()
+      enqueueSender(_.onNext(element))
+      saveAckCallback(callback)
+
+    case OnError(ex) =>
+      enqueueSender { publisher => publisher.onError(ex); stopMe() }
 
     case OnComplete =>
-      enqueueElement(None)
-      handleRequest()
+      enqueueSender { publisher => publisher.onComplete(); stopMe() }
+  }
+  // allow override in test
+  protected[stream] def stopMe() = self ! PoisonPill
+
+  private def saveAckCallback(c: AcknowledgeCallback): Unit = {
+    assert(!ackCallback.isDefined)
+    ackCallback = Some(c)
   }
 
-  private def handleRequest() {
-    sendElementsDownstream()
-    requestDemandUpstream()
+  override def receiveDemand = {
+    case _: Request =>
   }
 
-  private def sendElementsDownstream(): Unit =
-    while (totalDemand > 0 && elements.nonEmpty) dequeueElement().fold(onComplete())(onNext)
-
-  private def requestDemandUpstream() {
+  protected override def requestUpstream() {
     currentDemand += requestStrategy.requestDemand(currentDemand)
     if(currentDemand > 0 && ackCallback.isDefined) {
       acknowledgeSuccess()
@@ -56,23 +55,12 @@ private[stream] class AdapterPublisher[A](strategyFactory: RequestStrategyFactor
     ackCallback = None
   }
 
-  private def enqueueElement(element: Option[A]): Unit =
-    elements = elements.enqueue(element)
+  override protected def receiver = if(totalDemand>0) Some(this) else None
 
-  private def safeAckCallback(c: AcknowledgeCallback): Unit = {
-    assert(!ackCallback.isDefined)
-    ackCallback = Some(c)
-  }
-
-  private def dequeueElement(): Option[A] = {
-    val (queued, newElements) = elements.dequeue
-    elements = newElements
-    queued
-  }
-
-  private val requestStrategy = strategyFactory(this)
+  override protected def reduceDemand() = () // done by ActorPublisher
 }
 
 private[stream] object AdapterPublisher {
-  def props[A](strategyFactory: RequestStrategyFactory): Props = Props(new AdapterPublisher[A](strategyFactory))
+  def props[A](strategyFactory: RequestStrategyFactory): Props =
+    Props(classOf[AdapterPublisher[A]], strategyFactory) // allows override in test
 }
