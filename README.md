@@ -7,6 +7,8 @@ Streamz is a resource combinator library for [scalaz-stream](https://github.com/
 - [Akka Persistence](http://doc.akka.io/docs/akka/2.3.5/scala/persistence.html) journals and snapshot stores and
 - [Akka Stream](http://akka.io/docs/#akka-streams-and-http) flows (reactive streams) with full back-pressure support.
 
+This project is in **early preview** state.
+
 Dependencies
 ------------
 
