@@ -8,8 +8,8 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import akka.actor.ActorSystem
 import akka.pattern.ask
-import akka.stream.scaladsl.Flow
-import akka.stream.{FlowMaterializer, MaterializerSettings}
+import akka.stream.scaladsl2._
+import akka.stream.MaterializerSettings
 import akka.testkit._
 
 import scalaz.concurrent.Task
@@ -18,7 +18,7 @@ import scalaz.stream.Process
 import streamz.akka.stream.TestAdapterPublisher.{GetState, State}
 
 class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimpleName)) with ImplicitSender with DefaultTimeout with WordSpecLike with Matchers with BeforeAndAfterAll {
-  implicit val materializer = FlowMaterializer(MaterializerSettings())
+  implicit val materializer = FlowMaterializer(MaterializerSettings(system))
 
   import system.dispatcher
 
@@ -28,7 +28,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
         val input: Process[Task, Int] = Process(1 to 1000: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Flow(publisher))
+        val published = toList(FlowFrom(publisher))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -39,7 +39,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.map(sleep()).publisher()
-        val published = toList(Flow(publisher))
+        val published = toList(FlowFrom(publisher))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -50,7 +50,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Flow(publisher).map(sleep()))
+        val published = toList(FlowFrom(publisher).map(sleep()))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -64,7 +64,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
         val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterPublisher[Int]] -> TestAdapterPublisher.props(strategyFactory)))
 
         val (process, publisher) = input.publisher(strategyFactory = maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
-        val published = toList(Flow(publisher)
+        val published = toList(FlowFrom(publisher)
           .map(sleep())
           .map(check(currentInFlight(mockActorFactory) should be <= maxInFlight)))
         process.run.run
@@ -76,7 +76,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
 
   "stream.publish" must {
     "publish to a managed flow" in {
-      val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish() { _.foreach(testActor ! _) }
+      val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish()(_.withSink(ForeachSink(testActor ! _)).run())
       process.run.run
       expectMsg(1)
       expectMsg(2)
@@ -86,13 +86,16 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
 
   "stream.subscribe" must {
     "subscribe to a flow" in {
-      val process = subscribe(Flow(1 to 3))
+      val process = subscribe(FlowFrom(1 to 3))
       process.runLog.run should be(Seq(1, 2, 3))
     }
   }
 
-  private def toList[A](flow: Flow[A])(implicit executionContext: ExecutionContext): Future[List[A]] =
-    flow.fold[List[A]](Nil)(_:+_).toFuture
+  private def toList[I, O](flow: FlowWithSource[I, O])(implicit executionContext: ExecutionContext): Future[List[O]] = {
+    val sink = FoldSink[List[O], O](Nil)(_ :+ _)
+    val materializedFlow = flow.withSink(sink).run()
+    sink.future(materializedFlow)
+  }
 
   private def currentInFlight(mockActorFactory: MockActorRefFactory): Int = {
     result((mockActorFactory.createdActor[AdapterPublisher[Int]] ? GetState).mapTo[State[_]]).elements.size
