@@ -22,7 +22,7 @@ Dependencies
     // transitively depends on akka-persistence-experimental 2.3.5
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.1"
 
-    // transitively depends on akka-stream-experimental 0.6
+    // transitively depends on akka-stream-experimental 0.7
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.1"
 
 Combinators for Apache Camel
@@ -138,8 +138,8 @@ The following examples use these imports and definitions (full source code [here
 
 ```scala
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.Flow
-import akka.stream.{FlowMaterializer, MaterializerSettings}
+import akka.stream.scaladsl2.{FlowFrom, ForeachSink, FlowWithSource, FlowMaterializer}
+import akka.stream.MaterializerSettings
 
 import scalaz.concurrent.Task
 import scalaz.stream._
@@ -147,7 +147,7 @@ import scalaz.stream._
 import streamz.akka.stream._
 
 implicit val system = ActorSystem("example")
-implicit val materializer = FlowMaterializer(MaterializerSettings())
+implicit val materializer = FlowMaterializer(MaterializerSettings(system))
 ```
 
 ### `Process` publishes to managed `Flow`
@@ -156,9 +156,9 @@ implicit val materializer = FlowMaterializer(MaterializerSettings())
 // Create process
 val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Compose process with (managed) flow
-val p2: Process[Task, Unit] = p1.publish() { flow: Flow[Int] =>
+val p2: Process[Task, Unit] = p1.publish() { flow: FlowWithSource[Int, Int] =>
   // Customize flow (done when running process)
-  flow.foreach(println)
+  flow.withSink(ForeachSink(println)).run()
 }
 // Run process
 p2.run.run
@@ -172,16 +172,16 @@ val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Create publisher (= process adapter)
 val (p2, publisher) = p1.publisher()
 // Create (un-managed) flow from publisher
-Flow(publisher).foreach(println)
+FlowFrom(publisher).withSink(ForeachSink(println)).run()
 // Run process
 p2.run.run
 ```
 
-### `Process` subscribes to `Flow`  
+### `Process` subscribes to `Flow`
 
 ```scala
 // Create flow
-val f1: Flow[Int] = Flow(1 to 20)
+val f1: FlowWithSource[Int, Int] = FlowFrom(1 to 20)
 // Create process that subscribes to the flow
 val p1: Process[Task, Int] = subscribe(f1)
 // Run process
