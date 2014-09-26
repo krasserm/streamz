@@ -150,21 +150,32 @@ implicit val system = ActorSystem("example")
 implicit val materializer = FlowMaterializer(MaterializerSettings(system))
 ```
 
-### `Process` publishes to managed `Flow`
+### `Process` publishes to managed flow
+
+A `Process` can publish its values to an internally created (i.e. *managed*) `FlowWithSource`.
+This flow can be customized by providing a function that turns it into a `RunnableFlow`.
+To get to the result of an attached `Sink` another function taking the `MaterializedFlow`
+as input can optionally be provided.
 
 ```scala
 // Create process
 val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Compose process with (managed) flow
-val p2: Process[Task, Unit] = p1.publish() { flow: FlowWithSource[Int, Int] =>
+val sink = ForeachSink(println)
+val p2: Process[Task, Unit] = p1.publish()
   // Customize flow (done when running process)
-  flow.withSink(ForeachSink(println)).run()
-}
+  { flow => flow.withSink(sink) }
+  // get result from sink (here used for cleanup)
+  { materialized => sink.future(materialized).onComplete(_ => system.shutdown()) }
+
 // Run process
 p2.run.run
 ```
 
-### `Process` publishes to un-managed `Flow`
+### `Process` publishes to un-managed flow
+
+Instead of using a managed flow `publisher` creates a plain `Publisher` than can
+be used for creating custom (*un-managed*) flows.
 
 ```scala
 // Create process
@@ -172,18 +183,23 @@ val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Create publisher (= process adapter)
 val (p2, publisher) = p1.publisher()
 // Create (un-managed) flow from publisher
-FlowFrom(publisher).withSink(ForeachSink(println)).run()
+private val sink = ForeachSink[Int](println)
+val m = FlowFrom(publisher).withSink(sink).run()
 // Run process
 p2.run.run
+// use sink's result for cleanup
+sink.future(m).onComplete(_ => system.shutdown())
 ```
 
-### `Process` subscribes to `Flow`
+### `Process` subscribes to flow
+
+A `FlowWithSource` can publish its values to a `Process` by using `toProcess`
 
 ```scala
 // Create flow
 val f1: FlowWithSource[Int, Int] = FlowFrom(1 to 20)
 // Create process that subscribes to the flow
-val p1: Process[Task, Int] = subscribe(f1)
+val p1: Process[Task, Int] = f1.toProcess()
 // Run process
-p1.runLog.run.foreach(println)
+p1.map(println).run.run
 ```

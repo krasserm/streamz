@@ -76,7 +76,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
 
   "stream.publish" must {
     "publish to a managed flow" in {
-      val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish()(_.withSink(ForeachSink(testActor ! _)).run())
+      val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish()(_.withSink(ForeachSink(testActor ! _)))()
       process.run.run
       expectMsg(1)
       expectMsg(2)
@@ -86,7 +86,7 @@ class AkkaStreamSpec extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimp
 
   "stream.subscribe" must {
     "subscribe to a flow" in {
-      val process = subscribe(FlowFrom(1 to 3))
+      val process = FlowFrom(1 to 3).toProcess()
       process.runLog.run should be(Seq(1, 2, 3))
     }
   }

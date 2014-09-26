@@ -40,12 +40,13 @@ package object stream { outer =>
   /**
    * Creates a process that publishes to the managed flow which is passed as argument to `f`.
    */
-  def publish[A](process: Process[Task, A],
-                 strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
-                 name: Option[String] = None)
-                (f: FlowWithSource[A, A] => Unit)
-                (implicit actorRefFactory: ActorRefFactory): Process[Task, Unit] =
-    process.to(adapterSink(AdapterPublisher.props[A](strategyFactory), name, f))
+  def publish[I, O](process: Process[Task, I],
+                    strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+                    name: Option[String] = None)
+                   (f: FlowWithSource[I, I] => RunnableFlow[I, O])
+                   (m: MaterializedFlow => Unit = _ => ())
+                   (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Process[Task, Unit] =
+    process.to(adapterSink(AdapterPublisher.props[I](strategyFactory), name, f, m))
 
   /**
    * Creates a process and a publisher from which un-managed downstream flows can be constructed.
@@ -59,24 +60,36 @@ package object stream { outer =>
     (process.to(adapterSink[O](adapter)), ActorPublisher[O](adapter))
   }
 
-  implicit class StreamSyntax[A](self: Process[Task,A]) {
-    def publish(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10), name: Option[String] = None)
-               (f: FlowWithSource[A, A] => Unit)
-               (implicit actorRefFactory: ActorRefFactory): Process[Task, Unit] =
-      outer.publish(self, strategyFactory)(f)(actorRefFactory)
+  implicit class ProcessSyntax[I](self: Process[Task,I]) {
+    def publish[O](strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10), name: Option[String] = None)
+                  (f: FlowWithSource[I, I] => RunnableFlow[I,O])
+                  (m: MaterializedFlow => Unit = _ => ())
+                  (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Process[Task, Unit] =
+      outer.publish(self, strategyFactory)(f)(m)
 
     def publisher(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10), name: Option[String] = None)
-                 (implicit actorRefFactory: ActorRefFactory): (Process[Task, Unit], Publisher[A]) =
+                 (implicit actorRefFactory: ActorRefFactory): (Process[Task, Unit], Publisher[I]) =
       outer.publisher(self, strategyFactory, name)(actorRefFactory)
   }
 
-  private def adapterSink[A](adapterProps: Props, name: Option[String] = None, f: FlowWithSource[A, A] => Unit)
-                            (implicit actorRefFactory: ActorRefFactory): Sink[Task, A] = adapterSink {
-    val adapter = name.fold(actorRefFactory.actorOf(adapterProps))(actorRefFactory.actorOf(adapterProps, _))
-    val publisher = ActorPublisher[A](adapter)
-    f(FlowFrom(publisher))
-    adapter
+  implicit class FlowSyntax[I, O](self: FlowWithSource[I, O]) {
+    def toProcess(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10))
+                 (implicit actorRefFactory: ActorRefFactory, flowMaterializer: FlowMaterializer): Process[Task, O] =
+      outer.subscribe(self, strategyFactory)
   }
+
+  private def adapterSink[I, O](adapterProps: Props,
+                                name: Option[String] = None,
+                                f: FlowWithSource[I, I] => RunnableFlow[I, O],
+                                m: MaterializedFlow => Unit)
+                               (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Sink[Task, I] =
+    adapterSink {
+      val adapter = name.fold(actorRefFactory.actorOf(adapterProps))(actorRefFactory.actorOf(adapterProps, _))
+      val publisher = ActorPublisher[I](adapter)
+      val materializedFlow = f(FlowFrom(publisher)).run()
+      m(materializedFlow)
+      adapter
+    }
 
   private def adapterSink[I](adapter: => ActorRef): Sink[Task,I] =
     io.resource[ActorRef, I => Task[Unit]]
