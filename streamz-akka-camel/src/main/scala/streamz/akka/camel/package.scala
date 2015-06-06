@@ -13,6 +13,8 @@ import scalaz._
 import Scalaz._
 
 import scalaz.concurrent._
+import scalaz.stream.Cause.{EarlyCause, Error, End}
+import scalaz.stream.Process.{Await, Emit, Step, Halt}
 import scalaz.stream._
 
 package object camel {
@@ -36,7 +38,24 @@ package object camel {
         (queue, queue.dequeue, endpoint)
     }}
     { case (q, p, e) => Task.delay { e ! PoisonPill; q.close }}
-    { case (_, p, _) => p.toTask }
+    { case (_, p, _) => toTask(p) }
+  }
+
+  // Copied from scalaz-stream 0.6 Process
+  private def toTask[A](p: Process[Task, A]): Task[A] = {
+    def go(p: Process[Task, A]): Task[A] = p.step match {
+      case Step(Emit(os), cont) =>
+        if (os.isEmpty) go(cont.continue) else Task.now(os.head)
+      case Step(Await(rq, rcv), cont) =>
+        rq.attempt.flatMap { r =>
+          go(rcv(EarlyCause.fromTaskResult(r)).run +: cont)
+        }
+      case Halt(End) => Task.fail(Cause.Terminated(End))
+      case Halt(Cause.Kill) => Task.fail(Cause.Terminated(Cause.Kill))
+      case Halt(Error(rsn)) => Task.fail(rsn)
+    }
+
+    go(p)
   }
 
   /**

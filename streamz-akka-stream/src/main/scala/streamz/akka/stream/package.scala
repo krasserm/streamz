@@ -114,7 +114,7 @@ package object stream { outer =>
     }
 
   private def adapterSink[I](adapter: => ActorRef): Sink[Task,I] = {
-    io.resource[ActorRef, I => Task[Unit]]
+    io.resource[Task, ActorRef, I => Task[Unit]]
     { Task.delay[ActorRef](adapter) }
     { adapterActor => Task.delay(()) }
     { adapterActor => Task.delay(i => Task.async[Unit](callback => adapterActor ! OnNext(i, callback))) }
