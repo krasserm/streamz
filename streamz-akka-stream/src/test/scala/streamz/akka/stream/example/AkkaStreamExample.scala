@@ -1,8 +1,8 @@
 package streamz.akka.stream.example
 
 import akka.actor.ActorSystem
-import akka.stream.scaladsl2._
-import akka.stream.MaterializerSettings
+import akka.stream.scaladsl._
+import akka.stream.ActorFlowMaterializer
 
 import scala.concurrent.ExecutionContext
 import scalaz.concurrent.Task
@@ -13,7 +13,7 @@ import streamz.akka.stream._
 object Context {
   implicit val system = ActorSystem("example")
   implicit val executionContext: ExecutionContext = system.dispatcher
-  implicit val materializer = FlowMaterializer(MaterializerSettings(system))
+  implicit val materializer = ActorFlowMaterializer()
 }
 
 object ProcessToManagedFlow extends App {
@@ -22,12 +22,12 @@ object ProcessToManagedFlow extends App {
   // Create process
   val p1: Process[Task, Int] = Process.emitAll(1 to 20)
   // Compose process with (managed) flow
-  val sink = ForeachSink(println)
+  val sink = Sink.foreach(println)
   val p2: Process[Task, Unit] = p1.publish()
     // Customize flow (done when running process)
-    { flow => flow.withSink(sink) }
+    { flow => flow.toMat(sink)(Keep.right) }
     // get result from sink (here used for cleanup)
-    { materialized => sink.future(materialized).onComplete(_ => system.shutdown()) }
+    { materialized => materialized.onComplete(_ => system.shutdown()) }
 
   // Run process
   p2.run.run
@@ -41,19 +41,19 @@ object ProcessToUnManagedFlow extends App {
   // Create publisher (= process adapter)
   val (p2, publisher) = p1.publisher()
   // Create (un-managed) flow from publisher
-  private val sink = ForeachSink[Int](println)
-  val m = FlowFrom(publisher).withSink(sink).run()
+  private val sink = Sink.foreach(println)
+  val m = Source(publisher).runWith(sink)
   // Run process
   p2.run.run
   // use sink's result for cleanup
-  sink.future(m).onComplete(_ => system.shutdown())
+  m.onComplete(_ => system.shutdown())
 }
 
 object FlowToProcess extends App {
   import Context._
 
   // Create flow
-  val f1: FlowWithSource[Int, Int] = FlowFrom(1 to 20)
+  val f1: Source[Int, Unit] = Source(1 to 20)
   // Create process that subscribes to the flow
   val p1: Process[Task, Int] = f1.toProcess()
   // Run process
@@ -65,10 +65,10 @@ object FlowToProcess extends App {
 object FlowToProcessToManagedFlow extends App {
   import Context._
 
-  val f1: FlowWithSource[Int, Int] = FlowFrom(1 to 20)
+  val f1: Source[Int, Unit] = Source(1 to 20)
   val p1: Process[Task, Int] = subscribe(f1)
   val p2: Process[Task, Unit] = p1.publish() { flow =>
-    flow.map(println).withSink(OnCompleteSink(_ => system.shutdown())) // use sink for cleanup
+    flow.map(println).to(Sink.onComplete(_ => system.shutdown())) // use sink for cleanup
   }() // and ignore sink's "result"
   p2.run.run
 }

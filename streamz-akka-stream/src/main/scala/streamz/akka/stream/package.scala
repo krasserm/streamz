@@ -1,12 +1,14 @@
 package streamz.akka
 
 import akka.actor._
+import akka.stream.FlowMaterializer
 import akka.stream.actor._
 import akka.stream.actor.ActorSubscriberMessage._
-import akka.stream.scaladsl2._
+import akka.stream.scaladsl._
 
 import org.reactivestreams.Publisher
 
+import scala.reflect.ClassTag
 import scalaz.concurrent.Task
 import scalaz.stream.Process.Halt
 import scalaz.stream.Sink
@@ -26,16 +28,15 @@ package object stream { outer =>
   /**
    * Creates a process that subscribes to the specified `flow`.
    */
-  def subscribe[I, O](flow: FlowWithSource[I, O],
-                      strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
-                      name: Option[String] = None)
-                     (implicit actorRefFactory: ActorRefFactory, flowMaterializer: FlowMaterializer): Process[Task, O] =
+  def subscribe[I, O : ClassTag, Mat](flow: Source[O, Mat],
+                                      strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+                                      name: Option[String] = None)
+                                     (implicit actorRefFactory: ActorRefFactory, flowMaterializer: FlowMaterializer): Process[Task, O] =
     io.resource
     { Task.delay[ActorRef] {
-      val adapterActor = name.fold
-        { actorRefFactory.actorOf(AdapterSubscriber.props(strategyFactory)) }
-        { actorRefFactory.actorOf(AdapterSubscriber.props(strategyFactory), _) }
-      flow.withSink(SubscriberSink(ActorSubscriber(adapterActor))).run()
+      val adapterProps = AdapterSubscriber.props[O](strategyFactory)
+      val adapterActor = name.fold(actorRefFactory.actorOf(adapterProps))(actorRefFactory.actorOf(adapterProps, _))
+      flow.runWith(Sink(ActorSubscriber(adapterActor)))
       adapterActor
     }}
     { adapterActor => Task.delay(adapterActor ! PoisonPill) }
@@ -44,21 +45,25 @@ package object stream { outer =>
   /**
    * Creates a process that publishes to the managed flow which is passed as argument to `f`.
    */
-  def publish[I, O](process: Process[Task, I],
-                    strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
-                    name: Option[String] = None)
-                   (f: FlowWithSource[I, I] => RunnableFlow[I, O])
-                   (m: MaterializedFlow => Unit = _ => ())
-                   (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Process[Task, Unit] =
-    process.to(adapterSink(AdapterPublisher.props[I](strategyFactory), name, f, m))
+  def publish[I : ClassTag, Mat, O](process: Process[Task, I],
+                                    strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+                                    name: Option[String] = None)
+                                   (f: Source[I, Unit] => RunnableFlow[Mat])
+                                   (m: Mat => Unit = (_: Mat) => ())
+                                   (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Process[Task, Unit] =
+  {
+    val (processWithAdapterSink, publisherSink) = publisher(process, strategyFactory, name)
+    m(f(Source(publisherSink)).run())
+    processWithAdapterSink
+  }
 
   /**
    * Creates a process and a publisher from which un-managed downstream flows can be constructed.
    */
-  def publisher[O](process: Process[Task, O],
-                   strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
-                   name: Option[String] = None)
-                  (implicit actorRefFactory: ActorRefFactory): (Process[Task, Unit], Publisher[O]) = {
+  def publisher[O : ClassTag](process: Process[Task, O],
+                              strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+                              name: Option[String] = None)
+                             (implicit actorRefFactory: ActorRefFactory): (Process[Task, Unit], Publisher[O]) = {
     val adapterProps = AdapterPublisher.props[O](strategyFactory)
     val adapter = name.fold(actorRefFactory.actorOf(adapterProps))(actorRefFactory.actorOf(adapterProps, _))
     (process.onHalt {
@@ -71,38 +76,40 @@ package object stream { outer =>
       case cause@Cause.Error(ex) =>
         adapter ! OnError(ex)
         Halt(cause)
-    }.to(adapterSink[O](adapter)), ActorPublisher[O](adapter))
+    }.to(adapterSink[O](adapter)), ActorPublisher(adapter))
   }
 
-  implicit class ProcessSyntax[I](self: Process[Task,I]) {
-    def publish[O](strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10), name: Option[String] = None)
-                  (f: FlowWithSource[I, I] => RunnableFlow[I,O])
-                  (m: MaterializedFlow => Unit = _ => ())
-                  (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Process[Task, Unit] =
+  implicit class ProcessSyntax[I : ClassTag](self: Process[Task,I]) {
+    def publish[O, Mat](strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+                        name: Option[String] = None)
+                       (f: Source[I, Unit] => RunnableFlow[Mat])
+                       (m: Mat => Unit = (_: Mat) => ())
+                       (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Process[Task, Unit] =
       outer.publish(self, strategyFactory)(f)(m)
 
-    def publisher(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10), name: Option[String] = None)
+    def publisher(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+                  name: Option[String] = None)
                  (implicit actorRefFactory: ActorRefFactory): (Process[Task, Unit], Publisher[I]) =
-      outer.publisher(self, strategyFactory, name)(actorRefFactory)
+      outer.publisher(self, strategyFactory, name)
   }
 
-  implicit class FlowSyntax[I, O](self: FlowWithSource[I, O]) {
+  implicit class FlowSyntax[I, Mat, O : ClassTag](self: Source[O, Mat]) {
     def toProcess(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
                   name: Option[String] = None)
                  (implicit actorRefFactory: ActorRefFactory, flowMaterializer: FlowMaterializer): Process[Task, O] =
       outer.subscribe(self, strategyFactory, name)
   }
 
-  private def adapterSink[I, O](adapterProps: Props,
-                                name: Option[String] = None,
-                                f: FlowWithSource[I, I] => RunnableFlow[I, O],
-                                m: MaterializedFlow => Unit)
-                               (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Sink[Task, I] =
+  private def adapterSink[I, Mat, O](adapterProps: Props,
+                                     name: Option[String] = None,
+                                     f: Source[I, Unit] => RunnableFlow[Mat],
+                                     m: Mat => Unit)
+                                    (implicit actorRefFactory: ActorRefFactory, materializer: FlowMaterializer): Sink[Task, I] =
     adapterSink {
       val adapter = name.fold(actorRefFactory.actorOf(adapterProps))(actorRefFactory.actorOf(adapterProps, _))
       val publisher = ActorPublisher[I](adapter)
-      val materializedFlow = f(FlowFrom(publisher)).run()
-      m(materializedFlow)
+      val materialized = f(Source(publisher)).run()
+      m(materialized)
       adapter
     }
 
@@ -112,5 +119,4 @@ package object stream { outer =>
     { adapterActor => Task.delay(()) }
     { adapterActor => Task.delay(i => Task.async[Unit](callback => adapterActor ! OnNext(i, callback))) }
   }
-
 }

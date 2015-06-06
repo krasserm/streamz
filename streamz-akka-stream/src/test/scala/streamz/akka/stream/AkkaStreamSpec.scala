@@ -2,22 +2,18 @@ package streamz.akka.stream
 
 import java.util.concurrent.{TimeUnit, CountDownLatch}
 
-import org.reactivestreams.Publisher
-
-import scala.collection.immutable
 import scala.reflect._
 import scala.util.Random
 import scala.util.control.NoStackTrace
-import scala.concurrent.{Promise, ExecutionContext, Future, Await}
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import akka.actor._
 import akka.pattern.{AskTimeoutException, ask}
-import akka.stream.impl2.ActorBasedFlowMaterializer
-import akka.stream.scaladsl2.{FoldSink => _, _}
-import akka.stream.{Transformer, MaterializerSettings}
+import akka.stream.scaladsl._
+import akka.stream.ActorFlowMaterializer
 import akka.testkit._
 
 import scalaz.concurrent.Task
@@ -30,7 +26,7 @@ class AkkaStreamSpec
     extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimpleName)) with ImplicitSender with DefaultTimeout
     with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  implicit val materializer = FlowMaterializer(MaterializerSettings(system))
+  implicit val materializer = ActorFlowMaterializer()
   import system.dispatcher
 
   "Process.publisher" when {
@@ -39,7 +35,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(FlowFrom(publisher))
+        val published = toList(Source(publisher))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -54,7 +50,7 @@ class AkkaStreamSpec
 
         identify(actorName) should not be None
 
-        val published = toList(FlowFrom(publisher))
+        val published = toList(Source(publisher))
         process.run.run
         result(published)
 
@@ -67,7 +63,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*).map(exceptionOn(expectedException)(_ > failAfter))
 
         val (process, publisher) = input.publisher()
-        val published = toList(FlowFrom(publisher).take(failAfter))
+        val published = toList(Source(publisher).take(failAfter))
         process.take(failAfter).run.run
 
         result(published) should be (input.take(failAfter).runLog.run)
@@ -78,7 +74,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process.fail(expectedException)
 
         val (process, publisher) = input.publisher()
-        val published = toList(FlowFrom(publisher))
+        val published = toList(Source(publisher))
         process.run.attemptRun
 
         the[Exception] thrownBy result(published) should be (expectedException)
@@ -89,7 +85,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.map(sleep()).publisher()
-        val published = toList(FlowFrom(publisher))
+        val published = toList(Source(publisher))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -100,7 +96,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(FlowFrom(publisher).map(sleep()))
+        val published = toList(Source(publisher).map(sleep()))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -110,14 +106,13 @@ class AkkaStreamSpec
       "return a Publisher and a Process that publishes the elements of the input-Process in a slow Flow with the given max elements in flight" in {
         val input: Process[Task, Int] = Process(1 to 50: _*)
         val maxInFlight = Random.nextInt(4) + 1
-        val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterPublisher[Int]] -> TestAdapterPublisher.props))
+        val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterPublisher[Int]] -> TestAdapterPublisher.props[Int]))
 
         val (process, publisher) = input.publisher(maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
-        val published = toList(FlowFrom(publisher)
+        val published = toList(Source(publisher)
           .map(sleep())
           .map(_ => currentInFlight[AdapterPublisher[Int]](mockActorFactory)))
         process.run.run
-
         result(published).map(result).foreach(_ should be <= maxInFlight)
       }
     }
@@ -126,7 +121,7 @@ class AkkaStreamSpec
   "stream.subscribe" when {
     "invoked on a normal Flow" must {
       "return a Process that produces elements of the Flow" in {
-        val input = FlowFrom(1 to 50)
+        val input = Source(1 to 50)
 
         val process = input.toProcess()
 
@@ -137,9 +132,9 @@ class AkkaStreamSpec
       "create an actor under this name that is stopped after the stream is finished" in {
         val actorName = "subscriber"
         val finished = new CountDownLatch(1)
-        val input = FlowFrom(1 to 50)
+        val input = Source(1 to 50)
 
-        val process = input.toProcess(name = Some(actorName)).runLog.runAsync(_ => finished.countDown())
+        input.toProcess(name = Some(actorName)).runLog.runAsync(_ => finished.countDown())
 
         identify(actorName) should not be None
         waitFor(finished)
@@ -148,7 +143,7 @@ class AkkaStreamSpec
     }
     "invoked on a erroneous Flow" must {
       "return a Process that fails with the same exception as the Flow" in {
-        val input = FlowFrom[Int](() => throw expectedException)
+        val input = Source[Int](() => throw expectedException)
 
         val process = input.toProcess()
 
@@ -158,7 +153,7 @@ class AkkaStreamSpec
     "invoked on a erroneous Flow" must {
       "return a Process that when slowed down produces all valid elements of the Flow and fails afterwards" in {
         val failAfter = 20
-        val input = FlowFrom(1 to 50).map(exceptionOn(expectedException)(_ > failAfter))
+        val input = Source(1 to 50).map(exceptionOn(expectedException)(_ > failAfter))
 
         val process: Process[Task, Int] = input.toProcess().map(sleep()).map(effect(testActor ! _))
 
@@ -168,9 +163,9 @@ class AkkaStreamSpec
     }
     "invoked with a normal Flow and a MaxInFlightRequestStrategy" must {
       "return a Process that when slowed has the given max elements in flight" in {
-        val input = FlowFrom(1 to 50)
+        val input = Source(1 to 50)
         val maxInFlight = Random.nextInt(4) + 1
-        val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterSubscriber[Int]] -> TestAdapterSubscriber.props))
+        val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterSubscriber[Int]] -> TestAdapterSubscriber.props[Int]))
 
         val process = input.toProcess(maxInFlightStrategyFactory(maxInFlight))(mockActorFactory, materializer)
         val slowProcess = process
@@ -184,7 +179,7 @@ class AkkaStreamSpec
 
   "stream.publish" must {
     "publish to a managed flow" in {
-      val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish()(_.withSink(ForeachSink(testActor ! _)))()
+      val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish()(_.to(Sink.foreach(testActor ! _)))()
       process.run.run
       expectMsg(1)
       expectMsg(2)
@@ -194,16 +189,13 @@ class AkkaStreamSpec
 
   "stream.subscribe" must {
     "subscribe to a flow" in {
-      val process = FlowFrom(1 to 3).toProcess()
+      val process = Source(1 to 3).toProcess()
       process.runLog.run should be(Seq(1, 2, 3))
     }
   }
 
-  private def toList[I, O](flow: FlowWithSource[I, O])(implicit executionContext: ExecutionContext): Future[List[O]] = {
-    val sink = FoldSink[List[O], O](Nil)(_ :+ _)
-    val materializedFlow = flow.withSink(sink).run()
-    sink.future(materializedFlow)
-  }
+  private def toList[O, Mat](publisher: Source[O, Mat])(implicit executionContext: ExecutionContext): Future[List[O]] =
+    publisher.runWith(Sink.fold[List[O], O](Nil)(_ :+ _))
 
   private def currentInFlight[A : ClassTag](mockActorFactory: MockActorRefFactory): Future[Int] =
     (mockActorFactory.createdActor[A] ? GetInFlight).mapTo[Int]
@@ -230,30 +222,4 @@ class AkkaStreamSpec
   private val expectedException = new Exception with NoStackTrace
 
   override protected def afterAll() = shutdown(system)
-}
-
-final case class FoldSink[U, Out](zero: U)(f: (U, Out) ⇒ U) extends SinkWithKey[Out, Future[U]] {
-  override def attach(flowPublisher: Publisher[Out], materializer: ActorBasedFlowMaterializer, flowName: String): Future[U] = {
-    val promise = Promise[U]()
-
-    FlowFrom(flowPublisher).transform("fold", () ⇒ new Transformer[Out, U] {
-      var state: U = zero
-      override def onNext(in: Out): immutable.Seq[U] = {
-        state = f(state, in)
-        Nil
-      }
-      override def onTermination(end: Option[Throwable]) = {
-        end match {
-          case None    ⇒ promise.success(state)
-          case Some(e) ⇒ promise.failure(e)
-        }
-        Nil
-      }
-
-      override def onError(cause: Throwable) = ()
-    }).consume()(materializer.withNamePrefix(flowName))
-
-    promise.future
-  }
-  def future(m: MaterializedSink): Future[U] = m.getSinkFor(this)
 }
