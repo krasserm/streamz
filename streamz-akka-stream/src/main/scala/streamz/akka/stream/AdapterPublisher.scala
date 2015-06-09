@@ -5,10 +5,11 @@ import akka.stream.actor.ActorSubscriberMessage.{OnError, OnComplete, OnNext}
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.Request
 
+import scala.reflect.{classTag, ClassTag}
 import scalaz.\/
 import scalaz.syntax.either._
 
-private[stream] class AdapterPublisher[A](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory)
+private[stream] class AdapterPublisher[A : ClassTag](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory)
   with ActorPublisher[A] {
 
   override type Receiver = ActorPublisher[A]
@@ -34,7 +35,7 @@ private[stream] class AdapterPublisher[A](strategyFactory: RequestStrategyFactor
   protected[stream] def stopMe() = self ! PoisonPill
 
   private def saveAckCallback(c: AcknowledgeCallback): Unit = {
-    assert(!ackCallback.isDefined)
+    assert(ackCallback.isEmpty)
     ackCallback = Some(c)
   }
 
@@ -61,6 +62,6 @@ private[stream] class AdapterPublisher[A](strategyFactory: RequestStrategyFactor
 }
 
 private[stream] object AdapterPublisher {
-  def props[A](strategyFactory: RequestStrategyFactory): Props =
-    Props(classOf[AdapterPublisher[A]], strategyFactory) // allows override in test
+  def props[A : ClassTag](strategyFactory: RequestStrategyFactory): Props =
+    Props(classOf[AdapterPublisher[A]], strategyFactory, classTag[A]) // allows override in test
 }

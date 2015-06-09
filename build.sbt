@@ -4,11 +4,11 @@ organization in ThisBuild := "com.github.krasserm"
 
 version in ThisBuild := "0.3-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.11.2"
+scalaVersion in ThisBuild := "2.11.6"
 
 resolvers in ThisBuild += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
-scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions")
+scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
 
 libraryDependencies in ThisBuild ++= Seq(
   "org.scalaz.stream" %% "scalaz-stream" % Version.ScalazStream,

@@ -4,11 +4,12 @@ import akka.actor.Props
 import akka.stream.actor._
 import akka.stream.actor.ActorSubscriberMessage.{OnError, OnComplete, OnNext}
 
+import scala.reflect.{classTag, ClassTag}
 import scalaz.\/
 import scalaz.syntax.either._
 import scalaz.stream.Cause.{End, Terminated, Error}
 
-class AdapterSubscriber[A](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory)
+class AdapterSubscriber[A : ClassTag](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory)
     with ActorSubscriber {
   import AdapterSubscriber._
 
@@ -35,6 +36,6 @@ object AdapterSubscriber {
   type Callback[A] = Throwable \/ A => Unit
   case class Request[A](callback: Callback[A])
 
-  def props[A](strategyFactory: RequestStrategyFactory): Props =
-    Props(classOf[AdapterSubscriber[A]], strategyFactory) // allows override in test
+  def props[A: ClassTag](strategyFactory: RequestStrategyFactory): Props =
+    Props(classOf[AdapterSubscriber[A]], strategyFactory, classTag[A]) // allows override in test
 }

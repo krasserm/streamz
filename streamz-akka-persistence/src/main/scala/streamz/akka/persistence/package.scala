@@ -18,7 +18,7 @@ package object persistence {
    * @param from start sequence number.
    */
   def replay(pid: String, from: Long = 1L)(implicit system: ActorSystem): Process[Task, Event[Any]] =
-    io.resource[ActorRef, Event[Any]]
+    io.resource[Task, ActorRef, Event[Any]]
     { Task.delay(system.actorOf(Props(new EventReader(pid, from)))) }
     { r => Task.delay(system.stop(r)) }
     { r => Task.async(cb => r ! EventReader.Read(cb)) }
@@ -31,7 +31,7 @@ package object persistence {
    * @param pid processor id.
    */
   def snapshot[O](pid:String)(implicit system: ActorSystem, M: Monoid[O]): Process[Task, Snapshot[O]] = {
-    io.resource[ActorRef,Snapshot[O]]
+    io.resource[Task, ActorRef, Snapshot[O]]
     { Task.delay(system.actorOf(Props(new akka.persistence.SnapshotReader))) }
     { r => Task.delay(r ! akka.actor.PoisonPill) }
     { r => Task.async[Option[SelectedSnapshot]](cb => r ! SnapshotReader.Read(pid,cb)).map {
