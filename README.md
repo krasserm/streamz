@@ -136,35 +136,37 @@ The following examples use these imports and definitions (full source code [here
 
 ```scala
 import akka.actor.ActorSystem
-import akka.stream.scaladsl2.{FlowFrom, ForeachSink, FlowWithSource, FlowMaterializer}
-import akka.stream.MaterializerSettings
+import akka.stream.scaladsl._
+import akka.stream.ActorFlowMaterializer
 
+import scala.concurrent.ExecutionContext
 import scalaz.concurrent.Task
 import scalaz.stream._
 
 import streamz.akka.stream._
 
 implicit val system = ActorSystem("example")
-implicit val materializer = FlowMaterializer(MaterializerSettings(system))
+implicit val executionContext: ExecutionContext = system.dispatcher
+implicit val materializer = ActorFlowMaterializer()
 ```
 
 ### `Process` publishes to managed flow
 
-A `Process` can publish its values to an internally created (i.e. *managed*) `FlowWithSource`.
+A `Process` can publish its values to an internally created (i.e. *managed*) `Source`.
 This flow can be customized by providing a function that turns it into a `RunnableFlow`.
-To get to the result of an attached `Sink` another function taking the `MaterializedFlow`
+To get to the materialized result of the flow another function taking this result
 as input can optionally be provided.
 
 ```scala
 // Create process
 val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Compose process with (managed) flow
-val sink = ForeachSink(println)
+val sink = Sink.foreach(println)
 val p2: Process[Task, Unit] = p1.publish()
   // Customize flow (done when running process)
-  { flow => flow.withSink(sink) }
-  // get result from sink (here used for cleanup)
-  { materialized => sink.future(materialized).onComplete(_ => system.shutdown()) }
+  { source => source.toMat(sink)(Keep.right) }
+  // get matrialized result (here used for cleanup)
+  { materialized => materialized.onComplete(_ => system.shutdown()) }
 
 // Run process
 p2.run.run
@@ -181,23 +183,25 @@ val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 // Create publisher (= process adapter)
 val (p2, publisher) = p1.publisher()
 // Create (un-managed) flow from publisher
-private val sink = ForeachSink[Int](println)
-val m = FlowFrom(publisher).withSink(sink).run()
+private val sink = Sink.foreach(println)
+val m = Source(publisher).runWith(sink)
 // Run process
 p2.run.run
-// use sink's result for cleanup
-sink.future(m).onComplete(_ => system.shutdown())
+// use materialized result for cleanup
+m.onComplete(_ => system.shutdown())
 ```
 
 ### `Process` subscribes to flow
 
-A `FlowWithSource` can publish its values to a `Process` by using `toProcess`
+A `Source` can publish its values to a `Process` by using `toProcess`
 
 ```scala
 // Create flow
-val f1: FlowWithSource[Int, Int] = FlowFrom(1 to 20)
+val f1: Source[Int, Unit] = Source(1 to 20)
 // Create process that subscribes to the flow
 val p1: Process[Task, Int] = f1.toProcess()
 // Run process
 p1.map(println).run.run
+// When p1 is done, f1 must be done as well
+system.shutdown()
 ```

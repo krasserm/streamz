@@ -24,8 +24,8 @@ object ProcessToManagedFlow extends App {
   // Compose process with (managed) flow
   val sink = Sink.foreach(println)
   val p2: Process[Task, Unit] = p1.publish()
-    // Customize flow (done when running process)
-    { flow => flow.toMat(sink)(Keep.right) }
+    // Customize Source (done when running process)
+    { source => source.toMat(sink)(Keep.right) }
     // get result from sink (here used for cleanup)
     { materialized => materialized.onComplete(_ => system.shutdown()) }
 
@@ -45,7 +45,7 @@ object ProcessToUnManagedFlow extends App {
   val m = Source(publisher).runWith(sink)
   // Run process
   p2.run.run
-  // use sink's result for cleanup
+  // use materialized result for cleanup
   m.onComplete(_ => system.shutdown())
 }
 
