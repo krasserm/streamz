@@ -4,7 +4,7 @@ Streamz
 Streamz is a resource combinator library for [scalaz-stream](https://github.com/scalaz/scalaz-stream). It allows [`Process`](http://docs.typelevel.org/api/scalaz-stream/stable/latest/doc/#scalaz.stream.Process) instances to consume from and produce to
 
 - [Apache Camel](http://camel.apache.org/) endpoints
-- [Akka Persistence](http://doc.akka.io/docs/akka/2.3.5/scala/persistence.html) journals and snapshot stores and
+- [Akka Persistence](http://doc.akka.io/docs/akka/2.3.11/scala/persistence.html) journals and snapshot stores and
 - [Akka Stream](http://akka.io/docs/#akka-streams-and-http) flows (reactive streams) with full back-pressure support.
 
 Dependencies
@@ -52,7 +52,7 @@ val p: Process[Task,Unit] =
   t.run
 ```
 
-An implicit ``ActorSystem`` must be in scope  because the combinator implementation depends on [Akka Camel](http://doc.akka.io/docs/akka/2.3.5/scala/camel.html). A discrete stream starting from a Camel endpoint can be created with ``receive`` where its type parameter is used to convert received message bodies to given type using a Camel type converter, if needed:
+An implicit ``ActorSystem`` must be in scope  because the combinator implementation depends on [Akka Camel](http://doc.akka.io/docs/akka/2.3.11/scala/camel.html). A discrete stream starting from a Camel endpoint can be created with ``receive`` where its type parameter is used to convert received message bodies to given type using a Camel type converter, if needed:
 
 ```scala
 val p1: Process[Task,String] = receive[String]("seda:q1")
