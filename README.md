@@ -14,14 +14,14 @@ Dependencies
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    // transitively depends on akka-camel 2.3.5
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.2"
+    // transitively depends on akka-camel 2.3.11
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.3"
 
-    // transitively depends on akka-persistence-experimental 2.3.5
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.2"
+    // transitively depends on akka-persistence-experimental 2.3.11
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.3"
 
-    // transitively depends on akka-stream-experimental 0.8
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.2"
+    // transitively depends on akka-stream-experimental 1.0-RC3
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.3"
 
 Combinators for Apache Camel
 ----------------------------
