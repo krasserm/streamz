@@ -2,7 +2,7 @@ package streamz.akka.stream.example
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl._
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 
 import scala.concurrent.ExecutionContext
 import scalaz.concurrent.Task
@@ -13,7 +13,7 @@ import streamz.akka.stream._
 object Context {
   implicit val system = ActorSystem("example")
   implicit val executionContext: ExecutionContext = system.dispatcher
-  implicit val materializer = ActorFlowMaterializer()
+  implicit val materializer = ActorMaterializer()
 }
 
 object ProcessToManagedFlow extends App {

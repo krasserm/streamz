@@ -13,7 +13,7 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import akka.actor._
 import akka.pattern.{AskTimeoutException, ask}
 import akka.stream.scaladsl._
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import akka.testkit._
 
 import scalaz.concurrent.Task
@@ -26,7 +26,7 @@ class AkkaStreamSpec
     extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimpleName)) with ImplicitSender with DefaultTimeout
     with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  implicit val materializer = ActorFlowMaterializer()
+  implicit val materializer = ActorMaterializer()
   import system.dispatcher
 
   "Process.publisher" when {
