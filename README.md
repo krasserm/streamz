@@ -14,13 +14,13 @@ Dependencies
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    // transitively depends on akka-camel 2.3.11
+    // transitively depends on akka-camel 2.3.13
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.3"
 
-    // transitively depends on akka-persistence-experimental 2.3.11
+    // transitively depends on akka-persistence-experimental 2.3.13
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.3"
 
-    // transitively depends on akka-stream-experimental 1.0-RC3
+    // transitively depends on akka-stream-experimental 1.0
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.3"
 
 Combinators for Apache Camel
@@ -137,7 +137,7 @@ The following examples use these imports and definitions (full source code [here
 ```scala
 import akka.actor.ActorSystem
 import akka.stream.scaladsl._
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 
 import scala.concurrent.ExecutionContext
 import scalaz.concurrent.Task
@@ -147,13 +147,13 @@ import streamz.akka.stream._
 
 implicit val system = ActorSystem("example")
 implicit val executionContext: ExecutionContext = system.dispatcher
-implicit val materializer = ActorFlowMaterializer()
+implicit val materializer = ActorMaterializer()
 ```
 
 ### `Process` publishes to managed flow
 
 A `Process` can publish its values to an internally created (i.e. *managed*) `Source`.
-This flow can be customized by providing a function that turns it into a `RunnableFlow`.
+This flow can be customized by providing a function that turns it into a `RunnableGraph`.
 To get to the materialized result of the flow another function taking this result
 as input can optionally be provided.
 
