@@ -15,7 +15,7 @@ import org.scalatest._
 
 class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll {
   override protected def afterAll(): Unit = {
-    system.shutdown()
+    system.terminate()
     List(
       "akka.persistence.journal.leveldb.dir",
       "akka.persistence.snapshot-store.local.dir")
