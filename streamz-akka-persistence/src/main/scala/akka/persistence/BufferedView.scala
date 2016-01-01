@@ -1,5 +1,7 @@
 package akka.persistence
 
+import akka.persistence.JournalProtocol.RecoverySuccess
+
 import scala.concurrent.duration.FiniteDuration
 
 import akka.actor._
@@ -62,13 +64,16 @@ class BufferedView(val persistenceId: String, publisherSettings: BufferedViewSet
 
   def receive = filling
 
-  override def onReplaySuccess(receive: Receive, await: Boolean): Unit = {
-    super.onReplaySuccess(receive, await)
-    self ! Filled
+  protected[akka] override def aroundReceive(receive: Receive, message: Any): Unit = {
+    super.aroundReceive(receive, message)
+    message match {
+      case RecoverySuccess(_) => self ! Filled
+      case _                  =>
+    }
   }
 
-  override def onReplayFailure(receive: Receive, await: Boolean, cause: Throwable): Unit = {
-    super.onReplayFailure(receive, await, cause)
+  override protected def onReplayError(cause: Throwable): Unit = {
+    super.onReplayError(cause)
     self ! Filled
   }
 

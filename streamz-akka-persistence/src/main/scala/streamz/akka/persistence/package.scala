@@ -63,7 +63,7 @@ package object persistence {
     import JournalWriter._
 
     def receiveCommand = {
-      case Stop(cb) => defer(cb) { cb =>
+      case Stop(cb) => deferAsync(cb) { cb =>
         // ensures that actor is stopped after Stop has
         // been looped through journal i.e. all previous
         // messages have been persisted
@@ -79,10 +79,9 @@ package object persistence {
       case _ =>
     }
 
-    override def preStart(): Unit =
-      // recover last sequence number
-      // but do not replay messages
-      self ! Recover(replayMax = 0L)
+    // recover last sequence number
+    // but do not replay messages
+    override def recovery = Recovery(toSequenceNr = 0L)
   }
 
   private object JournalWriter {

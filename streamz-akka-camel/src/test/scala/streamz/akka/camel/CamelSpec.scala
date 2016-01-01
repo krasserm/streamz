@@ -24,7 +24,7 @@ class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matc
 
   override protected def afterAll(): Unit = {
     consumerTemplate.stop()
-    system.shutdown()
+    system.terminate()
   }
 
   class Service {

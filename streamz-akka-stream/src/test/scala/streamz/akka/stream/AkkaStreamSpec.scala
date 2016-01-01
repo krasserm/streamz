@@ -2,6 +2,8 @@ package streamz.akka.stream
 
 import java.util.concurrent.{TimeUnit, CountDownLatch}
 
+import org.scalatest.concurrent.Eventually
+
 import scala.reflect._
 import scala.util.Random
 import scala.util.control.NoStackTrace
@@ -24,7 +26,7 @@ import streamz.akka.stream.TestAdapter.GetInFlight
 
 class AkkaStreamSpec
     extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimpleName)) with ImplicitSender with DefaultTimeout
-    with WordSpecLike with Matchers with BeforeAndAfterAll {
+    with WordSpecLike with Matchers with Eventually with BeforeAndAfterAll {
 
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
@@ -35,7 +37,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher))
+        val published = toList(Source.fromPublisher(publisher))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -50,7 +52,7 @@ class AkkaStreamSpec
 
         identify(actorName) should not be None
 
-        val published = toList(Source(publisher))
+        val published = toList(Source.fromPublisher(publisher))
         process.run.run
         result(published)
 
@@ -63,7 +65,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*).map(exceptionOn(expectedException)(_ > failAfter))
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher).take(failAfter))
+        val published = toList(Source.fromPublisher(publisher).take(failAfter))
         process.take(failAfter).run.run
 
         result(published) should be (input.take(failAfter).runLog.run)
@@ -74,7 +76,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process.fail(expectedException)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher))
+        val published = toList(Source.fromPublisher(publisher))
         process.run.attemptRun
 
         the[Exception] thrownBy result(published) should be (expectedException)
@@ -85,7 +87,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.map(sleep()).publisher()
-        val published = toList(Source(publisher))
+        val published = toList(Source.fromPublisher(publisher))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -96,7 +98,7 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher).map(sleep()))
+        val published = toList(Source.fromPublisher(publisher).map(sleep()))
         process.run.run
 
         result(published) should be (input.runLog.run)
@@ -109,7 +111,7 @@ class AkkaStreamSpec
         val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterPublisher[Int]] -> TestAdapterPublisher.props[Int]))
 
         val (process, publisher) = input.publisher(maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
-        val published = toList(Source(publisher)
+        val published = toList(Source.fromPublisher(publisher)
           .map(sleep())
           .map(_ => currentInFlight[AdapterPublisher[Int]](mockActorFactory)))
         process.run.run
@@ -136,14 +138,14 @@ class AkkaStreamSpec
 
         input.toProcess(name = Some(actorName)).runLog.runAsync(_ => finished.countDown())
 
-        identify(actorName) should not be None
+        eventually(identify(actorName) should not be None)
         waitFor(finished)
-        identify(actorName) should be (None)
+        eventually(identify(actorName) should be (None))
       }
     }
     "invoked on a erroneous Flow" must {
       "return a Process that fails with the same exception as the Flow" in {
-        val input = Source[Int](() => throw expectedException)
+        val input = Source.failed[Int](expectedException)
 
         val process = input.toProcess()
 
