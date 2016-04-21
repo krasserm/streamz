@@ -44,19 +44,19 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
     "produce a discrete stream of journaled messages" in {
       val p = system.actorOf(Props(new TestPersistentActor("p1")))
       1 to 3 foreach { i => p ! i.toString }
-      replay("p1").take(3).runLog.run should be(Seq(Event("p1", 1L, "1"), Event("p1", 2L, "2"), Event("p1", 3L, "3")))
+      replay("p1").take(3).runLog.unsafePerformSync should be(Seq(Event("p1", 1L, "1"), Event("p1", 2L, "2"), Event("p1", 3L, "3")))
     }
     "produce a discrete stream of journaled messages from user-defined sequence number" in {
       val p = system.actorOf(Props(new TestPersistentActor("p2")))
       1 to 3 foreach { i => p ! i.toString }
-      replay("p2", 2L).take(2).runLog.run should be(Seq(Event("p2", 2L, "2"), Event("p2", 3L, "3")))
+      replay("p2", 2L).take(2).runLog.unsafePerformSync should be(Seq(Event("p2", 2L, "2"), Event("p2", 3L, "3")))
     }
   }
 
   "A journal" must {
     "journal a stream of messages" in {
-      Process("a", "b", "c").journal("p3").run.run
-      replay("p3").map(p => (p.data, p.sequenceNr)).take(3).runLog.run should be(Seq(("a", 1L), ("b", 2L), ("c", 3L)))
+      Process("a", "b", "c").journal("p3").run.unsafePerformSync
+      replay("p3").map(p => (p.data, p.sequenceNr)).take(3).runLog.unsafePerformSync should be(Seq(("a", 1L), ("b", 2L), ("c", 3L)))
     }
   }
 
@@ -68,10 +68,10 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
       p ! "snap"
 
       val metadata = expectMsgPF() { case md: SnapshotMetadata => md }
-      snapshot[String]("p4").runLog.run should be(Seq(Snapshot(metadata, "ab")))
+      snapshot[String]("p4").runLog.unsafePerformSync should be(Seq(Snapshot(metadata, "ab")))
     }
     "produce a zero snapshot if there's no snapshot stored" in {
-      snapshot[String]("p5").runLog.run should be(Seq(Snapshot(SnapshotMetadata("p5", 0L, 0L), "")))
+      snapshot[String]("p5").runLog.unsafePerformSync should be(Seq(Snapshot(SnapshotMetadata("p5", 0L, 0L), "")))
     }
   }
 
@@ -90,7 +90,7 @@ class PersistenceSpec extends TestKit(ActorSystem("test")) with WordSpecLike wit
         state <- replay(meta.persistenceId, s.nextSequenceNr).map(_.data).scan(data)((acc,p) => acc + p)
       } yield state
 
-      c.take(3).runLog.run should be(Seq("ab", "abc", "abcd"))
+      c.take(3).runLog.unsafePerformSync should be(Seq("ab", "abc", "abcd"))
     }
   }
 }
