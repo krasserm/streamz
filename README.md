@@ -166,7 +166,7 @@ val p2: Process[Task, Unit] = p1.publish()
   // Customize flow (done when running process)
   { source => source.toMat(sink)(Keep.right) }
   // get matrialized result (here used for cleanup)
-  { materialized => materialized.onComplete(_ => system.shutdown()) }
+  { materialized => materialized.onComplete(_ => system.terminate()) }
 
 // Run process
 p2.run.run
@@ -184,11 +184,11 @@ val p1: Process[Task, Int] = Process.emitAll(1 to 20)
 val (p2, publisher) = p1.publisher()
 // Create (un-managed) flow from publisher
 private val sink = Sink.foreach(println)
-val m = Source(publisher).runWith(sink)
+val m = Source.fromPublisher(publisher).runWith(sink)
 // Run process
 p2.run.run
 // use materialized result for cleanup
-m.onComplete(_ => system.shutdown())
+m.onComplete(_ => system.terminate())
 ```
 
 ### `Process` subscribes to flow
@@ -203,5 +203,5 @@ val p1: Process[Task, Int] = f1.toProcess()
 // Run process
 p1.map(println).run.run
 // When p1 is done, f1 must be done as well
-system.shutdown()
+system.terminate()
 ```

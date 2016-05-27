@@ -27,7 +27,7 @@ package object camel {
   def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Process[Task,O] = {
     class ConsumerEndpoint(val endpointUri: String, queue: scalaz.stream.async.mutable.Queue[O]) extends Consumer {
       def receive = {
-        case msg: CamelMessage => queue.enqueueOne(msg.bodyAs(CT, camelContext)).run
+        case msg: CamelMessage => queue.enqueueOne(msg.bodyAs(CT, camelContext)).unsafePerformSync
       }
     }
 
@@ -46,7 +46,7 @@ package object camel {
     def go(p: Process[Task, A]): Task[A] = p.step match {
       case Step(Emit(os), cont) =>
         if (os.isEmpty) go(cont.continue) else Task.now(os.head)
-      case Step(Await(rq, rcv), cont) =>
+      case Step(Await(rq, rcv, preempt), cont) =>
         rq.attempt.flatMap { r =>
           go(rcv(EarlyCause.fromTaskResult(r)).run +: cont)
         }
@@ -95,8 +95,8 @@ package object camel {
     def send(uri:String)(implicit system: ActorSystem): Process[Task,Unit] =
       self.to(sender[O](uri))
 
-    def sendW(uri: String)(implicit system: ActorSystem): Process[Task,O] = {
-      self.flatMap(o => Process.tell(o) ++ Process.emitO(o)).drainW(sender[O](uri))
+    def sendW(uri: String)(implicit system: ActorSystem): Process[Task, O] = {
+      self.flatMap(o => Process.tell(o) ++ Process.emitO(o)).observeW(sender[O](uri)).stripW
     }
   }
 

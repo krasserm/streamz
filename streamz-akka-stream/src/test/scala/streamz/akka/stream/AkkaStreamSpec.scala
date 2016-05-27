@@ -2,6 +2,8 @@ package streamz.akka.stream
 
 import java.util.concurrent.{TimeUnit, CountDownLatch}
 
+import org.scalatest.concurrent.Eventually
+
 import scala.reflect._
 import scala.util.Random
 import scala.util.control.NoStackTrace
@@ -24,7 +26,7 @@ import streamz.akka.stream.TestAdapter.GetInFlight
 
 class AkkaStreamSpec
     extends TestKit(ActorSystem(classOf[AkkaStreamSpec].getSimpleName)) with ImplicitSender with DefaultTimeout
-    with WordSpecLike with Matchers with BeforeAndAfterAll {
+    with WordSpecLike with Matchers with Eventually with BeforeAndAfterAll {
 
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
@@ -35,10 +37,10 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher))
-        process.run.run
+        val published = toList(Source.fromPublisher(publisher))
+        process.run.unsafePerformSync
 
-        result(published) should be (input.runLog.run)
+        result(published) should be (input.runLog.unsafePerformSync)
       }
     } 
     "invoked with an actor-name" must {
@@ -50,8 +52,8 @@ class AkkaStreamSpec
 
         identify(actorName) should not be None
 
-        val published = toList(Source(publisher))
-        process.run.run
+        val published = toList(Source.fromPublisher(publisher))
+        process.run.unsafePerformSync
         result(published)
 
         identify(actorName) should be (None)
@@ -63,10 +65,10 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*).map(exceptionOn(expectedException)(_ > failAfter))
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher).take(failAfter))
-        process.take(failAfter).run.run
+        val published = toList(Source.fromPublisher(publisher).take(failAfter))
+        process.take(failAfter).run.unsafePerformSync
 
-        result(published) should be (input.take(failAfter).runLog.run)
+        result(published) should be (input.take(failAfter).runLog.unsafePerformSync)
       }
     }
     "invoked on an erroneous input-Process" must {
@@ -74,8 +76,8 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process.fail(expectedException)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher))
-        process.run.attemptRun
+        val published = toList(Source.fromPublisher(publisher))
+        process.run.unsafePerformSyncAttempt
 
         the[Exception] thrownBy result(published) should be (expectedException)
       }
@@ -85,10 +87,10 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.map(sleep()).publisher()
-        val published = toList(Source(publisher))
-        process.run.run
+        val published = toList(Source.fromPublisher(publisher))
+        process.run.unsafePerformSync
 
-        result(published) should be (input.runLog.run)
+        result(published) should be (input.runLog.unsafePerformSync)
       }
     }
     "invoked on a normal input-Process" must {
@@ -96,10 +98,10 @@ class AkkaStreamSpec
         val input: Process[Task, Int] = Process(1 to 50: _*)
 
         val (process, publisher) = input.publisher()
-        val published = toList(Source(publisher).map(sleep()))
-        process.run.run
+        val published = toList(Source.fromPublisher(publisher).map(sleep()))
+        process.run.unsafePerformSync
 
-        result(published) should be (input.runLog.run)
+        result(published) should be (input.runLog.unsafePerformSync)
       }
     }
     "invoked on a normal input-Process with a MaxInFlightRequestStrategy" must {
@@ -109,10 +111,10 @@ class AkkaStreamSpec
         val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterPublisher[Int]] -> TestAdapterPublisher.props[Int]))
 
         val (process, publisher) = input.publisher(maxInFlightStrategyFactory(maxInFlight))(mockActorFactory)
-        val published = toList(Source(publisher)
+        val published = toList(Source.fromPublisher(publisher)
           .map(sleep())
           .map(_ => currentInFlight[AdapterPublisher[Int]](mockActorFactory)))
-        process.run.run
+        process.run.unsafePerformSync
         result(published).map(result).foreach(_ should be <= maxInFlight)
       }
     }
@@ -125,7 +127,7 @@ class AkkaStreamSpec
 
         val process = input.toProcess()
 
-        process.runLog.run should be(result(toList(input)))
+        process.runLog.unsafePerformSync should be(result(toList(input)))
       }
     }
     "invoked with an actor-name" must {
@@ -134,20 +136,20 @@ class AkkaStreamSpec
         val finished = new CountDownLatch(1)
         val input = Source(1 to 50)
 
-        input.toProcess(name = Some(actorName)).runLog.runAsync(_ => finished.countDown())
+        input.toProcess(name = Some(actorName)).runLog.unsafePerformAsync(_ => finished.countDown())
 
-        identify(actorName) should not be None
+        eventually(identify(actorName) should not be None)
         waitFor(finished)
-        identify(actorName) should be (None)
+        eventually(identify(actorName) should be (None))
       }
     }
     "invoked on a erroneous Flow" must {
       "return a Process that fails with the same exception as the Flow" in {
-        val input = Source[Int](() => throw expectedException)
+        val input = Source.failed[Int](expectedException)
 
         val process = input.toProcess()
 
-        process.run.attemptRun should be (expectedException.left)
+        process.run.unsafePerformSyncAttempt should be (expectedException.left)
       }
     }
     "invoked on a erroneous Flow" must {
@@ -157,7 +159,7 @@ class AkkaStreamSpec
 
         val process: Process[Task, Int] = input.toProcess().map(sleep()).map(effect(testActor ! _))
 
-        process.run.attemptRun should be (expectedException.left)
+        process.run.unsafePerformSyncAttempt should be (expectedException.left)
         (1 to failAfter).foreach(i => expectMsg(i))
       }
     }
@@ -172,7 +174,7 @@ class AkkaStreamSpec
           .map(sleep())
           .map(_ => currentInFlight[AdapterSubscriber[Int]](mockActorFactory))
 
-        slowProcess.runLog.run.map(result).foreach(_ should be <= maxInFlight)
+        slowProcess.runLog.unsafePerformSync.map(result).foreach(_ should be <= maxInFlight)
       }
     }
   }
@@ -180,7 +182,7 @@ class AkkaStreamSpec
   "stream.publish" must {
     "publish to a managed flow" in {
       val process: Process[Task, Unit] = Process.emitAll(1 to 3).publish()(_.to(Sink.foreach(testActor ! _)))()
-      process.run.run
+      process.run.unsafePerformSync
       expectMsg(1)
       expectMsg(2)
       expectMsg(3)
@@ -190,7 +192,7 @@ class AkkaStreamSpec
   "stream.subscribe" must {
     "subscribe to a flow" in {
       val process = Source(1 to 3).toProcess()
-      process.runLog.run should be(Seq(1, 2, 3))
+      process.runLog.unsafePerformSync should be(Seq(1, 2, 3))
     }
   }
 
