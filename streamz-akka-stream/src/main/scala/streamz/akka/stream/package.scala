@@ -48,7 +48,7 @@ package object stream { outer =>
   def publish[I : ClassTag, Mat, O](process: Process[Task, I],
                                     strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
                                     name: Option[String] = None)
-                                   (f: Source[I, Unit] => RunnableGraph[Mat])
+                                   (f: Source[I, akka.NotUsed] => RunnableGraph[Mat])
                                    (m: Mat => Unit = (_: Mat) => ())
                                    (implicit actorRefFactory: ActorRefFactory, materializer: Materializer): Process[Task, Unit] =
   {
@@ -82,7 +82,7 @@ package object stream { outer =>
   implicit class ProcessSyntax[I : ClassTag](self: Process[Task,I]) {
     def publish[O, Mat](strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
                         name: Option[String] = None)
-                       (f: Source[I, Unit] => RunnableGraph[Mat])
+                       (f: Source[I, akka.NotUsed] => RunnableGraph[Mat])
                        (m: Mat => Unit = (_: Mat) => ())
                        (implicit actorRefFactory: ActorRefFactory, materializer: Materializer): Process[Task, Unit] =
       outer.publish(self, strategyFactory)(f)(m)
@@ -102,7 +102,7 @@ package object stream { outer =>
 
   private def adapterSink[I, Mat, O](adapterProps: Props,
                                      name: Option[String] = None,
-                                     f: Source[I, Unit] => RunnableGraph[Mat],
+                                     f: Source[I, akka.NotUsed] => RunnableGraph[Mat],
                                      m: Mat => Unit)
                                     (implicit actorRefFactory: ActorRefFactory, materializer: Materializer): Sink[Task, I] =
     adapterSink {

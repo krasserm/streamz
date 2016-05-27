@@ -34,13 +34,13 @@ class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matc
   "A receiver" must {
     "produce a discrete stream" in {
       1 to 3 foreach { i => producerTemplate.sendBody("seda:q0", i) }
-      receive[Int]("seda:q0").take(3).runLog.run should be(Seq(1, 2, 3))
+      receive[Int]("seda:q0").take(3).runLog.unsafePerformSync should be(Seq(1, 2, 3))
     }
   }
 
   "A terminal sender" must {
     "send to an endpoint" in {
-      receive[Int]("seda:q1").send("seda:q2").take(3).run.runAsync {
+      receive[Int]("seda:q1").send("seda:q2").take(3).run.unsafePerformAsync {
         case \/-(r) => testActor ! "done"
         case -\/(e) =>
       }
@@ -55,7 +55,7 @@ class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matc
 
   "An intermediate sender" must {
     "send to an endpoint and continue with the sent message" in {
-      receive[Int]("seda:q3").sendW("seda:q4").take(3).runLog.runAsync {
+      receive[Int]("seda:q3").sendW("seda:q4").take(3).runLog.unsafePerformAsync {
         case \/-(r) => testActor ! r
         case -\/(e) =>
       }
@@ -71,11 +71,11 @@ class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matc
   "A requestor" must {
     "request from an endpoint and continue with the response message" in {
       registry.put("service", new Service)
-      Process(1, 2, 3).request[Int]("bean:service?method=plusOne").runLog.run should be(Seq(2, 3, 4))
+      Process(1, 2, 3).request[Int]("bean:service?method=plusOne").runLog.unsafePerformSync should be(Seq(2, 3, 4))
     }
     "convert response message types using a Camel type converter" in {
       registry.put("service", new Service)
-      Process("1", "2", "3").request[Int]("bean:service?method=plusOne").runLog.run should be(Seq(2, 3, 4))
+      Process("1", "2", "3").request[Int]("bean:service?method=plusOne").runLog.unsafePerformSync should be(Seq(2, 3, 4))
     }
   }
 }

@@ -31,7 +31,7 @@ object FtpExample extends App {
     .to(io.stdOutLines)
 
   // side effects here ...
-  printUpper.run.run
+  printUpper.run.unsafePerformSync
 
 
   // To process files from a local directory, change the enpointUri to

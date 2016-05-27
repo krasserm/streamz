@@ -27,7 +27,7 @@ package object camel {
   def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Process[Task,O] = {
     class ConsumerEndpoint(val endpointUri: String, queue: scalaz.stream.async.mutable.Queue[O]) extends Consumer {
       def receive = {
-        case msg: CamelMessage => queue.enqueueOne(msg.bodyAs(CT, camelContext)).run
+        case msg: CamelMessage => queue.enqueueOne(msg.bodyAs(CT, camelContext)).unsafePerformSync
       }
     }
 

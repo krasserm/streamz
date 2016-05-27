@@ -1,8 +1,8 @@
 object Version {
-  val Akka = "2.4.1"
-  val AkkaStream = "2.0.1"
+  val Akka = "2.4.6"
+  val AkkaStream = "2.4.6"
   val CommonsIO = "2.4"
-  val Scalaz = "7.2.0"
-  val ScalazStream = "0.8"
+  val Scalaz = "7.2.2"
+  val ScalazStream = "0.8a"
   val Scalatest = "2.2.4"
 }
