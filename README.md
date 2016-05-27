@@ -14,14 +14,14 @@ Dependencies
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    // transitively depends on akka-camel 2.3.13
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.3.1"
+    // transitively depends on akka-camel 2.4.6
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.3.2"
 
-    // transitively depends on akka-persistence-experimental 2.3.13
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.3.1"
+    // transitively depends on akka-persistence-experimental 2.4.6
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-persistence" % "0.3.2"
 
-    // transitively depends on akka-stream-experimental 1.0
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.3.1"
+    // transitively depends on akka-stream-experimental 2.4.6
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.3.2"
 
 Combinators for Apache Camel
 ----------------------------
@@ -49,7 +49,7 @@ val p: Process[Task,Unit] =
   val t: Task[Unit] = p.run
 
   // run task (side effects only here) ...
-  t.run
+  t.unsafePerformSync
 ```
 
 An implicit ``ActorSystem`` must be in scope  because the combinator implementation depends on [Akka Camel](http://doc.akka.io/docs/akka/2.3.11/scala/camel.html). A discrete stream starting from a Camel endpoint can be created with ``receive`` where its type parameter is used to convert received message bodies to given type using a Camel type converter, if needed:
@@ -169,7 +169,7 @@ val p2: Process[Task, Unit] = p1.publish()
   { materialized => materialized.onComplete(_ => system.terminate()) }
 
 // Run process
-p2.run.run
+p2.run.unsafePerformSync
 ```
 
 ### `Process` publishes to un-managed flow
@@ -186,7 +186,7 @@ val (p2, publisher) = p1.publisher()
 private val sink = Sink.foreach(println)
 val m = Source.fromPublisher(publisher).runWith(sink)
 // Run process
-p2.run.run
+p2.run.unsafePerformSync
 // use materialized result for cleanup
 m.onComplete(_ => system.terminate())
 ```
@@ -197,11 +197,11 @@ A `Source` can publish its values to a `Process` by using `toProcess`
 
 ```scala
 // Create flow
-val f1: Source[Int, Unit] = Source(1 to 20)
+val f1: Source[Int, akka.NotUsed] = Source(1 to 20)
 // Create process that subscribes to the flow
 val p1: Process[Task, Int] = f1.toProcess()
 // Run process
-p1.map(println).run.run
+p1.map(println).run.unsafePerformSync
 // When p1 is done, f1 must be done as well
 system.terminate()
 ```
