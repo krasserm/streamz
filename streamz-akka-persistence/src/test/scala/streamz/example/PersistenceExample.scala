@@ -2,20 +2,19 @@ package streamz.example
 
 import akka.actor.ActorSystem
 
-import scalaz.concurrent.Task
 import scalaz.std.string._
-import scalaz.stream.Process
-
+import fs2.Stream
+import fs2.Task
 import streamz.akka.persistence._
 
 object PersistenceExample {
   implicit val system = ActorSystem("example")
-  val p1: Process[Task, Event[Any]] = replay("processor-1")
-  val p2: Process[Task, Event[Any]] = replay("processor-1", from = 3L)
-  val p3: Process[Task, String] = p1.scan("")((acc, evt) => acc + evt.data)
-  val p4: Process[Task, String] = for {
+  val s1: Stream[Task, Event[Any]] = replay("processor-1")
+  val s2: Stream[Task, Event[Any]] = replay("processor-1", from = 3L)
+  val s3: Stream[Task, String] = s1.scan("")((acc, evt) => acc + evt.data)
+  val s4: Stream[Task, String] = for {
     s @ Snapshot(md, data) <- snapshot[String]("processor-1")
     currentState           <- replay(md.persistenceId, s.nextSequenceNr).scan(data)((acc, evt) => acc + evt.data)
   } yield currentState
-  val p5: Process[Task, Unit] = Process("a", "b", "c").journal("processor-2")
+  val s5: Stream[Task, Unit] = Stream("a", "b", "c").journal("processor-2")
 }

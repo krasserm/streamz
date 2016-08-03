@@ -11,7 +11,7 @@ resolvers in ThisBuild += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
 
 libraryDependencies in ThisBuild ++= Seq(
-  "org.scalaz.stream" %% "scalaz-stream" % Version.ScalazStream,
+  "co.fs2"            %% "fs2-core"      % Version.ScalazStream,
   "com.typesafe.akka" %% "akka-testkit"  % Version.Akka          % "test",
   "org.scalatest"     %% "scalatest"     % Version.Scalatest     % "test"
 )

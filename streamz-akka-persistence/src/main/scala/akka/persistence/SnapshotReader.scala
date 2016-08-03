@@ -3,18 +3,15 @@ package akka.persistence
 import akka.actor._
 import akka.persistence.SnapshotProtocol._
 
-import scalaz._
-import Scalaz._
-
 class SnapshotReader extends Actor {
   import SnapshotReader._
 
   val store = Persistence(context.system).snapshotStoreFor(null)
-  var callback: Option[Throwable \/ Option[SelectedSnapshot] => Unit] = None
+  var callback: Option[Either[Throwable, Option[SelectedSnapshot]] => Unit] = None
 
   def receive = {
     case LoadSnapshotResult(sso,_) =>
-      callback.foreach(_.apply(sso.right))
+      callback.foreach(_.apply(Right(sso)))
       callback = None
     case Read(pid, cb) =>
       callback = Some(cb)
@@ -23,5 +20,5 @@ class SnapshotReader extends Actor {
 }
 
 object SnapshotReader {
-  case class Read(pid: String, callback: Throwable \/ Option[SelectedSnapshot] => Unit)
+  case class Read(pid: String, callback: Either[Throwable, Option[SelectedSnapshot]] => Unit)
 }
