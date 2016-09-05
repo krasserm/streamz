@@ -80,9 +80,8 @@ package object stream { outer =>
         stream.flatMap(pusher).onError { ex =>
           adapter ! OnError(ex)
           Stream(())
-        }.onComplete {
-          adapter ! OnComplete
-          Stream(())
+        }.onFinalize[Task] {
+          Task.delay(adapter ! OnComplete)
         }
       }
 
