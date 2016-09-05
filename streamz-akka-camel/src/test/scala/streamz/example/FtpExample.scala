@@ -3,8 +3,10 @@ package streamz.example
 import java.io.InputStream
 
 import akka.actor.ActorSystem
+
 import fs2.Task
 import fs2.{Stream, text}
+
 import streamz.akka.camel._
 
 object FtpExample extends App {

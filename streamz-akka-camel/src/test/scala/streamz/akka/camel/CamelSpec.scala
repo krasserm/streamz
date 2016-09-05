@@ -9,7 +9,6 @@ import fs2.Stream
 import org.apache.camel.impl.SimpleRegistry
 import org.scalatest._
 
-
 class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll {
   val registry = new SimpleRegistry
   val extension = CamelExtension(system)

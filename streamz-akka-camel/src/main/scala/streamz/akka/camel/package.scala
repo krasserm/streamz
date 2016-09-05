@@ -1,12 +1,12 @@
 package streamz.akka
 
-import akka.pattern.ask
 import akka.actor._
 import akka.camel._
+import akka.pattern.ask
 import akka.util.Timeout
+
 import fs2._
 import fs2.async.mutable
-import fs2.Task
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -21,15 +21,14 @@ package object camel {
    * @param uri Camel endpoint URI.
    */
   def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Stream[Task,O] = {
-    import system.dispatcher
-
     class ConsumerEndpoint(val endpointUri: String, queue: mutable.Queue[Task, O]) extends Consumer {
       def receive = {
-        case msg: CamelMessage =>
-          queue.enqueue1(msg.bodyAs(CT, camelContext)).unsafeRun
+        case msg: CamelMessage => queue.enqueue1(msg.bodyAs(CT, camelContext)).unsafeRun
       }
     }
     Stream.bracket[Task,(mutable.Queue[Task, O], ActorRef), O] {
+      import system.dispatcher
+      // TODO: back-pressure on Camel endpoint
       async.unboundedQueue[Task, O].map { queue =>
         val endpoint = system.actorOf(Props(new ConsumerEndpoint(uri, queue)))
         (queue, endpoint)
@@ -70,7 +69,7 @@ package object camel {
     Stream.bracket(
       Task.delay(system.actorOf(Props(new ProducerEndpoint(uri))))
     )(
-      p => s.flatMap(i => Stream.eval(scalaFuture2scalazTask(p.ask(i).mapTo[CamelMessage].map(_.bodyAs[O])))),
+      p => s.flatMap(i => Stream.eval(scalaFuture2Task(p.ask(i).mapTo[CamelMessage].map(_.bodyAs[O])))),
       p => Task.delay(p ! PoisonPill)
     )
   }
@@ -83,12 +82,12 @@ package object camel {
       self.through(sender[O](uri))
 
     def sendW(uri: String)(implicit system: ActorSystem): Stream[Task, O] = {
-      implicit val strategy = Strategy.fromExecutionContext(system.dispatcher)
+      import system.dispatcher
       self.observe(sender[O](uri))
     }
   }
 
-  private implicit def scalaFuture2scalazTask[T](sf: scala.concurrent.Future[T])(implicit ec: ExecutionContext): Task[T] = {
+  private implicit def scalaFuture2Task[T](sf: scala.concurrent.Future[T])(implicit ec: ExecutionContext): Task[T] = {
     Task.async { cb =>
       sf.onComplete {
         case scala.util.Success(v) => cb(Right(v))
@@ -97,7 +96,8 @@ package object camel {
     }
   }
 
-  private implicit def strategy(implicit ec: ExecutionContext): Strategy = Strategy.fromExecutionContext(ec)
+  private implicit def executionContext2Strategy(implicit ec: ExecutionContext): Strategy =
+    Strategy.fromExecutionContext(ec)
 
   private class ProducerEndpoint(val endpointUri: String) extends Producer
 }

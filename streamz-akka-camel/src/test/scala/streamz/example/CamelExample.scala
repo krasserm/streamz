@@ -14,12 +14,12 @@ object CamelExample {
   receive[String]("seda:q1")
     // in-only message exchange with endpoint and continue stream with in-message
     .sendW("seda:q3")
-    // in-only message exchange with endpoint and continue stream with out-message
+    // in-out message exchange with endpoint and continue stream with out-message
     .request[Int]("bean:service?method=length")
     // in-only message exchange with endpoint
     .send("seda:q2")
 
-  // create concurrent task from process
+  // create concurrent task from stream
   val t: Task[Unit] = s.run
 
   // run task (side effects only here) ...
