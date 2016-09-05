@@ -1,21 +1,17 @@
 package streamz.akka
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
-import scala.reflect.ClassTag
-
 import akka.actor._
 import akka.camel._
 import akka.pattern.ask
 import akka.util.Timeout
 
-import scalaz._
-import Scalaz._
+import fs2._
+import fs2.async.mutable
 
-import scalaz.concurrent._
-import scalaz.stream.Cause.{EarlyCause, Error, End}
-import scalaz.stream.Process.{Await, Emit, Step, Halt}
-import scalaz.stream._
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
+import scala.reflect.ClassTag
+
 
 package object camel {
   /**
@@ -24,38 +20,24 @@ package object camel {
    *
    * @param uri Camel endpoint URI.
    */
-  def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Process[Task,O] = {
-    class ConsumerEndpoint(val endpointUri: String, queue: scalaz.stream.async.mutable.Queue[O]) extends Consumer {
+  def receive[O](uri: String)(implicit system: ActorSystem, CT: ClassTag[O]): Stream[Task,O] = {
+    class ConsumerEndpoint(val endpointUri: String, queue: mutable.Queue[Task, O]) extends Consumer {
       def receive = {
-        case msg: CamelMessage => queue.enqueueOne(msg.bodyAs(CT, camelContext)).unsafePerformSync
+        case msg: CamelMessage => queue.enqueue1(msg.bodyAs(CT, camelContext)).unsafeRun
       }
     }
-
-    io.resource
-    { Task.delay {
-        val queue = async.unboundedQueue[O] // TODO: re-use system.dispatcher
+    Stream.bracket[Task,(mutable.Queue[Task, O], ActorRef), O] {
+      import system.dispatcher
+      // TODO: back-pressure on Camel endpoint
+      async.unboundedQueue[Task, O].map { queue =>
         val endpoint = system.actorOf(Props(new ConsumerEndpoint(uri, queue)))
-        (queue, queue.dequeue, endpoint)
-    }}
-    { case (q, p, e) => Task.delay { e ! PoisonPill; q.close }}
-    { case (_, p, _) => toTask(p) }
-  }
-
-  // Copied from scalaz-stream 0.6 Process
-  private def toTask[A](p: Process[Task, A]): Task[A] = {
-    def go(p: Process[Task, A]): Task[A] = p.step match {
-      case Step(Emit(os), cont) =>
-        if (os.isEmpty) go(cont.continue) else Task.now(os.head)
-      case Step(Await(rq, rcv, preempt), cont) =>
-        rq.attempt.flatMap { r =>
-          go(rcv(EarlyCause.fromTaskResult(r)).run +: cont)
-        }
-      case Halt(End) => Task.fail(Cause.Terminated(End))
-      case Halt(Cause.Kill) => Task.fail(Cause.Terminated(Cause.Kill))
-      case Halt(Error(rsn)) => Task.fail(rsn)
-    }
-
-    go(p)
+        (queue, endpoint)
+      }
+    }(
+      { case (q, _) => q.dequeue },
+      { case (_, e) => Task.delay(e ! PoisonPill) }
+      // TODO close queue? (https://github.com/functional-streams-for-scala/fs2/issues/433#issuecomment-193445929)
+    )
   }
 
   /**
@@ -63,11 +45,13 @@ package object camel {
    *
    * @param uri Camel endpoint URI.
    */
-  def sender[I](uri: String)(implicit system: ActorSystem): Sink[Task,I] = {
-    io.resource
-    { Task.delay(system.actorOf(Props(new ProducerEndpoint(uri) with Oneway))) }
-    { p => Task.delay(p ! PoisonPill) }
-    { p => Task.delay(i => Task.delay(p ! i)) }
+  def sender[I](uri: String)(implicit system: ActorSystem): Sink[Task, I] = { s =>
+    Stream.bracket(
+      Task.delay(system.actorOf(Props(new ProducerEndpoint(uri) with Oneway)))
+    )(
+      endpoint => s.map(i => endpoint ! i),
+      endpoint => Task.delay(endpoint ! PoisonPill)
+    )
   }
 
   /**
@@ -76,38 +60,44 @@ package object camel {
    *
    * @param uri Camel endpoint URI.
    */
-  def requestor[I,O](uri: String, timeout: FiniteDuration = 10.seconds)(implicit system: ActorSystem, CT: ClassTag[O]): Channel[Task,I,O] = {
-    import system.dispatcher
+  def requestor[I,O](uri: String, timeout: FiniteDuration = 10.seconds)(implicit system: ActorSystem, CT: ClassTag[O]): Pipe[Task,I,O] = { s =>
 
     implicit val t = Timeout(timeout)
     implicit val c = CamelExtension(system).context
+    implicit val ec = system.dispatcher
 
-    io.resource
-    { Task.delay(system.actorOf(Props(new ProducerEndpoint(uri)))) }
-    { p => Task.delay(p ! PoisonPill) }
-    { p => Task.delay(i => p.ask(i).mapTo[CamelMessage].map(_.bodyAs[O])) }
+    Stream.bracket(
+      Task.delay(system.actorOf(Props(new ProducerEndpoint(uri))))
+    )(
+      p => s.flatMap(i => Stream.eval(scalaFuture2Task(p.ask(i).mapTo[CamelMessage].map(_.bodyAs[O])))),
+      p => Task.delay(p ! PoisonPill)
+    )
   }
 
-  implicit class CamelSyntax[O](self: Process[Task,O]) {
-    def request[O2](uri: String, timeout: FiniteDuration = 10.seconds)(implicit system: ActorSystem, CT: ClassTag[O2]): Process[Task,O2] =
+  implicit class CamelSyntax[O](self: Stream[Task,O]) {
+    def request[O2](uri: String, timeout: FiniteDuration = 10.seconds)(implicit system: ActorSystem, CT: ClassTag[O2]): Stream[Task,O2] =
       self.through(requestor[O,O2](uri, timeout))
 
-    def send(uri:String)(implicit system: ActorSystem): Process[Task,Unit] =
-      self.to(sender[O](uri))
+    def send(uri:String)(implicit system: ActorSystem): Stream[Task,Unit] =
+      self.through(sender[O](uri))
 
-    def sendW(uri: String)(implicit system: ActorSystem): Process[Task, O] = {
-      self.flatMap(o => Process.tell(o) ++ Process.emitO(o)).observeW(sender[O](uri)).stripW
+    def sendW(uri: String)(implicit system: ActorSystem): Stream[Task, O] = {
+      import system.dispatcher
+      self.observe(sender[O](uri))
     }
   }
 
-  private implicit def scalaFuture2scalazTask[T](sf: scala.concurrent.Future[T])(implicit ec: ExecutionContext): Task[T] = {
+  private implicit def scalaFuture2Task[T](sf: scala.concurrent.Future[T])(implicit ec: ExecutionContext): Task[T] = {
     Task.async { cb =>
       sf.onComplete {
-        case scala.util.Success(v) => cb(v.right)
-        case scala.util.Failure(e) => cb(e.left)
+        case scala.util.Success(v) => cb(Right(v))
+        case scala.util.Failure(e) => cb(Left(e))
       }
     }
   }
+
+  private implicit def executionContext2Strategy(implicit ec: ExecutionContext): Strategy =
+    Strategy.fromExecutionContext(ec)
 
   private class ProducerEndpoint(val endpointUri: String) extends Producer
 }

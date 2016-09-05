@@ -4,8 +4,8 @@ import java.io.InputStream
 
 import akka.actor.ActorSystem
 
-import scalaz.concurrent.Task
-import scalaz.stream._
+import fs2.Task
+import fs2.{Stream, text}
 
 import streamz.akka.camel._
 
@@ -17,22 +17,25 @@ object FtpExample extends App {
   // list of configurable endpoints).
   val enpointUri ="ftp://ftp.example.com?antInclude=*.txt&idempotent=true"
 
-  val ftpLines: Process[Task,String] = for {
+  val ftpLines: Stream[Task, String] = for {
     // receive existing (and new) *.txt files from server
     is  <- receive[InputStream](enpointUri)
     // split each file into lines
-    line <- io.linesR(is)
+    line <- Stream.repeatEval(Task.delay(is.read()))
+      .takeWhile(_ != -1)
+      .map(_.toByte)
+      .through(text.utf8Decode)
+      .through(text.lines)
   } yield line
 
-  val printUpper: Process[Task,Unit] = ftpLines
+  val printUpper: Stream[Task,Unit] = ftpLines
     // convert lines to upper case
     .map(_.toUpperCase)
     // write lines from all files to stdout
-    .to(io.stdOutLines)
+    .map(println)
 
   // side effects here ...
-  printUpper.run.unsafePerformSync
-
+  printUpper.run.unsafeRun
 
   // To process files from a local directory, change the enpointUri to
   // "file:testdata?noop=true". After having started the process, add new text

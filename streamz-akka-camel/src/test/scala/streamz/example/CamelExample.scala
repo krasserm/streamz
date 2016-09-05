@@ -2,31 +2,31 @@ package streamz.example
 
 import akka.actor.ActorSystem
 
-import scalaz.concurrent.Task
-import scalaz.stream.Process
+import fs2.Task
+import fs2.Stream
 
 import streamz.akka.camel._
 
 object CamelExample {
   implicit val system = ActorSystem("example")
 
-  val p: Process[Task, Unit] = // receive from endpoint
+  val s: Stream[Task, Unit] = // receive from endpoint
   receive[String]("seda:q1")
     // in-only message exchange with endpoint and continue stream with in-message
     .sendW("seda:q3")
-    // in-only message exchange with endpoint and continue stream with out-message
+    // in-out message exchange with endpoint and continue stream with out-message
     .request[Int]("bean:service?method=length")
     // in-only message exchange with endpoint
     .send("seda:q2")
 
-  // create concurrent task from process
-  val t: Task[Unit] = p.run
+  // create concurrent task from stream
+  val t: Task[Unit] = s.run
 
   // run task (side effects only here) ...
-  t.unsafePerformSync
+  t.unsafeRun
 
-  val p1: Process[Task, String] = receive[String]("seda:q1")
-  val p2: Process[Task, Unit] = p1.send("seda:q2")
-  val p3: Process[Task, String] = p1.sendW("seda:q3")
-  val p4: Process[Task, Int] = p1.request[Int]("bean:service?method=length")
+  val s1: Stream[Task, String] = receive[String]("seda:q1")
+  val s2: Stream[Task, Unit] = s1.send("seda:q2")
+  val s3: Stream[Task, String] = s1.sendW("seda:q3")
+  val s4: Stream[Task, Int] = s1.request[Int]("bean:service?method=length")
 }

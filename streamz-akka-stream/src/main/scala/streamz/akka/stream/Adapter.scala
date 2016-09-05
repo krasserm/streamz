@@ -22,7 +22,8 @@ abstract class Adapter(strategyFactory: RequestStrategyFactory) extends Actor wi
     requestUpstream()
   }
 
-  private def sendDownstream(): Unit = while(sendNext().isDefined) ()
+  private def sendDownstream(): Unit =
+    while(sendNext().isDefined) ()
 
   private def sendNext(): Option[Unit] = for {
     (sender, newSenders) <- senders.dequeueOption
@@ -35,10 +36,10 @@ abstract class Adapter(strategyFactory: RequestStrategyFactory) extends Actor wi
 
   protected def receiver: Option[Receiver]
   protected def reduceDemand(): Unit
-
   protected def requestUpstream()
 
-  protected def enqueueSender(sender: Sender): Unit = senders = senders.enqueue(sender)
+  protected def enqueueSender(sender: Sender): Unit =
+    senders = senders.enqueue(sender)
 
   override def inFlight = senders.size
 }

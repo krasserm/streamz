@@ -1,14 +1,15 @@
 package streamz.akka.stream.example
 
 import akka.actor.ActorSystem
-import akka.stream.scaladsl._
 import akka.stream.ActorMaterializer
+import akka.stream.scaladsl._
 
-import scala.concurrent.ExecutionContext
-import scalaz.concurrent.Task
-import scalaz.stream._
+import fs2.Stream
+import fs2.Task
 
 import streamz.akka.stream._
+
+import scala.concurrent.ExecutionContext
 
 object Context {
   implicit val system = ActorSystem("example")
@@ -16,59 +17,58 @@ object Context {
   implicit val materializer = ActorMaterializer()
 }
 
-object ProcessToManagedFlow extends App {
+object StreamToSink extends App {
   import Context._
 
-  // Create process
-  val p1: Process[Task, Int] = Process.emitAll(1 to 20)
-  // Compose process with (managed) flow
-  val sink = Sink.foreach(println)
-  val p2: Process[Task, Unit] = p1.publish()
-    // Customize Source (done when running process)
-    { source => source.toMat(sink)(Keep.right) }
-    // get result from sink (here used for cleanup)
+  // Create stream
+  val s1: Stream[Task, Int] = Stream.emits(1 to 20)
+  // Compose stream with managed sink
+  val s2: Stream[Task, Unit] = s1.publish()
+    // Managed sink
+    { Sink.foreach(println) }
+    // Get materialized value from sink (here used for cleanup)
     { materialized => materialized.onComplete(_ => system.terminate()) }
 
-  // Run process
-  p2.run.unsafePerformSync
+  // Run stream
+  s2.run.unsafeRun
 }
 
-object ProcessToUnManagedFlow extends App {
+object StreamToUnmanagedPublisher extends App {
   import Context._
 
-  // Create process
-  val p1: Process[Task, Int] = Process.emitAll(1 to 20)
-  // Create publisher (= process adapter)
-  val (p2, publisher) = p1.publisher()
-  // Create (un-managed) flow from publisher
+  // Create stream
+  val s1: Stream[Task, Int] = Stream.emits(1 to 20)
+  // Create publisher (= stream adapter)
+  val (s2, publisher) = s1.publisher()
+  // Create (un-managed) graph from publisher
   private val sink = Sink.foreach(println)
   val m = Source.fromPublisher(publisher).runWith(sink)
-  // Run process
-  p2.run.unsafePerformSync
+  // Run stream
+  s2.run.unsafeRun
   // use materialized result for cleanup
   m.onComplete(_ => system.terminate())
 }
 
-object FlowToProcess extends App {
+object SourceToStream extends App {
   import Context._
 
-  // Create flow
+  // Create source
   val f1: Source[Int, akka.NotUsed] = Source(1 to 20)
-  // Create process that subscribes to the flow
-  val p1: Process[Task, Int] = f1.toProcess()
-  // Run process
-  p1.map(println).run.unsafePerformSync
-  // When p1 is done, f1 must be done as well
+  // Create stream that subscribes to the source
+  val s1: Stream[Task, Int] = f1.toStream()
+  // Run stream
+  s1.map(println).run.unsafeRun
+  // When s1 is done, f1 must be done as well
   system.terminate()
 }
 
-object FlowToProcessToManagedFlow extends App {
+object SourceToStreamToSink extends App {
   import Context._
 
   val f1: Source[Int, akka.NotUsed] = Source(1 to 20)
-  val p1: Process[Task, Int] = subscribe(f1)
-  val p2: Process[Task, Unit] = p1.publish() { flow =>
-    flow.map(println).to(Sink.onComplete(_ => system.terminate())) // use sink for cleanup
-  }() // and ignore sink's "result"
-  p2.run.unsafePerformSync
+  val s1: Stream[Task, Int] = subscribe(f1)
+  val s2: Stream[Task, Unit] = s1.publish() {
+    Flow[Int].map(println).to(Sink.onComplete(_ => system.terminate()))
+  }()
+  s2.run.unsafeRun
 }

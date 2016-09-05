@@ -4,8 +4,7 @@ import akka.actor._
 import akka.camel._
 import akka.testkit.TestKit
 
-import scalaz.{-\/, \/-}
-import scalaz.stream.Process
+import fs2.Stream
 
 import org.apache.camel.impl.SimpleRegistry
 import org.scalatest._
@@ -34,15 +33,15 @@ class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matc
   "A receiver" must {
     "produce a discrete stream" in {
       1 to 3 foreach { i => producerTemplate.sendBody("seda:q0", i) }
-      receive[Int]("seda:q0").take(3).runLog.unsafePerformSync should be(Seq(1, 2, 3))
+      receive[Int]("seda:q0").take(3).runLog.unsafeRun should be(Seq(1, 2, 3))
     }
   }
 
   "A terminal sender" must {
     "send to an endpoint" in {
-      receive[Int]("seda:q1").send("seda:q2").take(3).run.unsafePerformAsync {
-        case \/-(r) => testActor ! "done"
-        case -\/(e) =>
+      receive[Int]("seda:q1").send("seda:q2").take(3).run.unsafeRunAsync {
+        case Right(r) => testActor ! "done"
+        case Left(e) =>
       }
       1 to 2 foreach { i =>
         producerTemplate.sendBody("seda:q1", i)
@@ -55,9 +54,9 @@ class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matc
 
   "An intermediate sender" must {
     "send to an endpoint and continue with the sent message" in {
-      receive[Int]("seda:q3").sendW("seda:q4").take(3).runLog.unsafePerformAsync {
-        case \/-(r) => testActor ! r
-        case -\/(e) =>
+      receive[Int]("seda:q3").sendW("seda:q4").take(3).runLog.unsafeRunAsync {
+        case Right(r) => testActor ! r
+        case Left(e) =>
       }
       1 to 2 foreach { i =>
         producerTemplate.sendBody("seda:q3", i)
@@ -71,11 +70,11 @@ class CamelSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matc
   "A requestor" must {
     "request from an endpoint and continue with the response message" in {
       registry.put("service", new Service)
-      Process(1, 2, 3).request[Int]("bean:service?method=plusOne").runLog.unsafePerformSync should be(Seq(2, 3, 4))
+      Stream(1, 2, 3).request[Int]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq(2, 3, 4))
     }
     "convert response message types using a Camel type converter" in {
       registry.put("service", new Service)
-      Process("1", "2", "3").request[Int]("bean:service?method=plusOne").runLog.unsafePerformSync should be(Seq(2, 3, 4))
+      Stream("1", "2", "3").request[Int]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq(2, 3, 4))
     }
   }
 }

@@ -1,34 +1,35 @@
 package streamz.akka.stream
 
 import akka.actor.{PoisonPill, Props}
-import akka.stream.actor.ActorSubscriberMessage.{OnError, OnComplete, OnNext}
+import akka.stream.actor.ActorSubscriberMessage.{OnComplete, OnError, OnNext}
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.Request
+import streamz.akka.stream.AdapterPublisher.AcknowledgeCallback
 
-import scala.reflect.{classTag, ClassTag}
-import scalaz.\/
-import scalaz.syntax.either._
+import scala.reflect.{ClassTag, classTag}
 
 private[stream] class AdapterPublisher[A : ClassTag](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory)
   with ActorPublisher[A] {
 
   override type Receiver = ActorPublisher[A]
 
-  type AcknowledgeCallback = \/[Throwable, Unit] => Unit
-  final val AckSuccess = ().right
+  final val AckSuccess = Right(())
 
   var ackCallback: Option[AcknowledgeCallback] = None
   var currentDemand: Int = 0
+  private var endOfStream = false
 
   override def receiveElement = {
     case OnNext((element: A, callback: AcknowledgeCallback)) =>
       enqueueSender(_.onNext(element))
       saveAckCallback(callback)
 
-    case OnError(ex) =>
+    case OnError(ex) if !endOfStream =>
+      endOfStream = true
       enqueueSender { publisher => publisher.onError(ex); stopMe() }
 
-    case OnComplete =>
+    case OnComplete if !endOfStream =>
+      endOfStream = true
       enqueueSender { publisher => publisher.onComplete(); stopMe() }
   }
   // allow override in test
@@ -61,7 +62,9 @@ private[stream] class AdapterPublisher[A : ClassTag](strategyFactory: RequestStr
   override protected def reduceDemand() = () // done by ActorPublisher
 }
 
-private[stream] object AdapterPublisher {
+private[streamz] object AdapterPublisher {
+  type AcknowledgeCallback = Either[Throwable, Unit] => Unit
+
   def props[A : ClassTag](strategyFactory: RequestStrategyFactory): Props =
     Props(classOf[AdapterPublisher[A]], strategyFactory, classTag[A]) // allows override in test
 }
