@@ -2,7 +2,7 @@ name := "streamz"
 
 organization in ThisBuild := "com.github.krasserm"
 
-version in ThisBuild := "0.4-SNAPSHOT"
+version in ThisBuild := "0.4"
 
 scalaVersion in ThisBuild := "2.11.8"
 
