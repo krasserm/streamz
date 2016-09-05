@@ -9,8 +9,6 @@ Streamz is a resource combinator library for [fs2](https://github.com/functional
 Dependencies
 ------------
 
-    resolvers += "scalaz at bintray" at "http://dl.bintray.com/scalaz/releases"
-
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
     // transitively depends on akka-camel 2.4.9
