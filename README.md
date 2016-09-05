@@ -16,7 +16,7 @@ Dependencies
     // transitively depends on akka-camel 2.4.9
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.4"
 
-    // transitively depends on akka-stream-experimental 2.4.9
+    // transitively depends on akka-stream 2.4.9
     libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.4"
 
 Combinators for Apache Camel
@@ -72,9 +72,12 @@ These combinators are compatible with all available [Camel endpoints](http://cam
 Combinators for Akka Stream
 ---------------------------
 
+**These combinators are highly experimental at the moment. Expect major changes here.**
+
 The following examples use these imports and definitions (full source code [here](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/AkkaStreamExample.scala)):
 
 ```scala
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
@@ -84,6 +87,8 @@ import fs2.Task
 
 import scala.concurrent.ExecutionContext
 
+import streamz.akka.stream._
+
 implicit val system = ActorSystem("example")
 implicit val executionContext: ExecutionContext = system.dispatcher
 implicit val materializer = ActorMaterializer()
@@ -91,8 +96,8 @@ implicit val materializer = ActorMaterializer()
 
 ### `Stream` publishes to sink
 
-A `Stream` can publish to a `Sink`. The lifecycle of the sink is bound to the
-lifecycle of the stream i.e. the sink is materialized internally. 
+A `Stream` can publish to a `Sink`. The sink is materialized when the 
+stream is run. 
 
 ```scala
 // Create stream
@@ -110,25 +115,25 @@ s2.run.unsafeRun
 
 ### `Stream` subscribes to source
 
-A `Stream` can subscribe to a `Source`. The lifecycle of the source is bound to
-the lifecycle of the stream i.e. the source is materialized internally.
+A `Stream` can subscribe to a `Source`. The source is materialized when the 
+stream is run.
 
 ```scala
-  // Create source
-  val f1: Source[Int, akka.NotUsed] = Source(1 to 20)
-  // Create stream that subscribes to the source
-  val s1: Stream[Task, Int] = f1.toStream()
-  // Run stream
-  s1.map(println).run.unsafeRun
-  // When s1 is done, f1 is done as well
-  system.terminate()
+// Create source
+val f1: Source[Int, NotUsed] = Source(1 to 20)
+// Create stream that subscribes to the source
+val s1: Stream[Task, Int] = f1.subscribe()
+// Run stream
+s1.map(println).run.unsafeRun
+// When s1 is done, f1 must be done as well
+system.terminate()
 ```
 
 ### `Stream` subscribes to source and publishes to sink
 
 ```scala
 val f1: Source[Int, akka.NotUsed] = Source(1 to 20)
-val s1: Stream[Task, Int] = subscribe(f1)
+val s1: Stream[Task, Int] = f1.subscribe()
 val s2: Stream[Task, Unit] = s1.publish() {
 Flow[Int].map(println).to(Sink.onComplete(_ => system.terminate()))
 }()

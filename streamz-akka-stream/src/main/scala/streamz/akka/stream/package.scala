@@ -32,12 +32,12 @@ package object stream { outer =>
    */
   def subscribe[I, O : ClassTag, Mat](source: Source[O, Mat],
                                       strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
-                                      name: Option[String] = None, m: Mat => Unit = (_: Mat) => ())
+                                      name: Option[String] = None)
                                      (implicit actorRefFactory: ActorRefFactory, executionContext: ExecutionContext, materializer: Materializer): Stream[Task, O] = {
     Stream.bracket[Task, ActorRef, O] {
       val adapterProps = AdapterSubscriber.props[O](strategyFactory)
       val adapterActor = name.fold(actorRefFactory.actorOf(adapterProps))(actorRefFactory.actorOf(adapterProps, _))
-      m(source.toMat(Sink.fromSubscriber(ActorSubscriber(adapterActor)))(Keep.left).run())
+      source.toMat(Sink.fromSubscriber(ActorSubscriber(adapterActor)))(Keep.left).run()
       Task.delay(adapterActor)
     }(
       { adapterActor =>
@@ -66,8 +66,7 @@ package object stream { outer =>
   /**
    * Creates a stream and an un-managed publisher.
    */
-  @deprecated
-  def publisher[O : ClassTag](stream: Stream[Task, O],
+  private[stream] def publisher[O : ClassTag](stream: Stream[Task, O],
                               strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
                               name: Option[String] = None)
                              (implicit actorRefFactory: ActorRefFactory, executionContext: ExecutionContext): (Stream[Task, Unit], Publisher[O]) = {
@@ -96,18 +95,17 @@ package object stream { outer =>
                        (implicit actorRefFactory: ActorRefFactory, executionContext: ExecutionContext, materializer: Materializer): Stream[Task, Unit] =
       outer.publish(self, strategyFactory)(sink)(m)
 
-    @deprecated
-    def publisher(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+    private[stream] def publisher(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
                   name: Option[String] = None)
                  (implicit actorRefFactory: ActorRefFactory, executionContext: ExecutionContext): (Stream[Task, Unit], Publisher[I]) =
       outer.publisher(self, strategyFactory, name)
   }
 
   implicit class SourceSyntax[I, Mat, O : ClassTag](self: Source[O, Mat]) {
-    def toStream(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
-                 name: Option[String] = None, m: Mat => Unit = (_: Mat) => ())
-                (implicit actorRefFactory: ActorRefFactory, executionContext: ExecutionContext, materializer: Materializer): Stream[Task, O] =
-      outer.subscribe(self, strategyFactory, name, m)
+    def subscribe(strategyFactory: RequestStrategyFactory = maxInFlightStrategyFactory(10),
+                  name: Option[String] = None)
+                 (implicit actorRefFactory: ActorRefFactory, executionContext: ExecutionContext, materializer: Materializer): Stream[Task, O] =
+      outer.subscribe(self, strategyFactory, name)
   }
 
   implicit private def strategy(implicit executionContext: ExecutionContext): Strategy = Strategy.fromExecutionContext(executionContext)

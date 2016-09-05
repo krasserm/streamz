@@ -2,8 +2,6 @@ package streamz.akka.stream
 
 import java.util.concurrent.{TimeUnit, CountDownLatch}
 
-import org.scalatest.concurrent.Eventually
-
 import scala.reflect._
 import scala.util.Random
 import scala.util.control.NoStackTrace
@@ -11,6 +9,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import org.scalatest.concurrent.Eventually
 
 import akka.actor._
 import akka.pattern.{AskTimeoutException, ask}
@@ -124,7 +123,7 @@ class AkkaStreamSpec
       "return a Stream that produces elements of the Flow" in {
         val input = Source(1 to 50)
 
-        val process = input.toStream()
+        val process = input.subscribe()
 
         process.runLog.unsafeRun should be(result(toList(input)))
       }
@@ -135,7 +134,7 @@ class AkkaStreamSpec
         val finished = new CountDownLatch(1)
         val input = Source(1 to 50)
 
-        input.toStream(name = Some(actorName)).runLog.unsafeRunAsync(_ => finished.countDown())
+        input.subscribe(name = Some(actorName)).runLog.unsafeRunAsync(_ => finished.countDown())
 
         eventually(identify(actorName) should not be None)
         waitFor(finished)
@@ -146,7 +145,7 @@ class AkkaStreamSpec
       "return a Stream that fails with the same exception as the Flow" in {
         val input = Source.failed[Int](expectedException)
 
-        val process = input.toStream()
+        val process = input.subscribe()
 
         process.run.unsafeAttemptRun should be (Left(expectedException))
       }
@@ -156,7 +155,7 @@ class AkkaStreamSpec
         val failAfter = 20
         val input = Source(1 to 50).map(exceptionOn(expectedException)(_ > failAfter))
 
-        val process: Stream[Task, Int] = input.toStream().map(sleep()).map(effect(testActor ! _))
+        val process: Stream[Task, Int] = input.subscribe().map(sleep()).map(effect(testActor ! _))
 
         process.run.unsafeAttemptRun should be (Left(expectedException))
         (1 to failAfter).foreach(i => expectMsg(i))
@@ -168,7 +167,7 @@ class AkkaStreamSpec
         val maxInFlight = Random.nextInt(4) + 1
         val mockActorFactory = new MockActorRefFactory(Map(classOf[AdapterSubscriber[Int]] -> TestAdapterSubscriber.props[Int]))
 
-        val process = input.toStream(maxInFlightStrategyFactory(maxInFlight))(mockActorFactory, system.dispatcher, materializer)
+        val process = input.subscribe(maxInFlightStrategyFactory(maxInFlight))(mockActorFactory, system.dispatcher, materializer)
         val slowStream = process
           .map(sleep())
           .map(_ => currentInFlight[AdapterSubscriber[Int]](mockActorFactory))
@@ -190,7 +189,7 @@ class AkkaStreamSpec
 
   "stream.subscribe" must {
     "subscribe to a flow" in {
-      val process = Source(1 to 3).toStream()
+      val process = Source(1 to 3).subscribe()
       process.runLog.unsafeRun should be(Seq(1, 2, 3))
     }
   }
