@@ -6,8 +6,7 @@ import akka.stream.actor.ActorSubscriberMessage.{OnError, OnComplete, OnNext}
 
 import scala.reflect.{ClassTag, classTag}
 
-class AdapterSubscriber[A : ClassTag](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory)
-    with ActorSubscriber {
+class AdapterSubscriber[A : ClassTag](strategyFactory: RequestStrategyFactory) extends Adapter(strategyFactory) with ActorSubscriber {
   import AdapterSubscriber._
 
   override type Receiver = Callback[A]
@@ -27,7 +26,8 @@ class AdapterSubscriber[A : ClassTag](strategyFactory: RequestStrategyFactory) e
   }
 
   def receiveDemand: Receive = {
-    case Request(cb: Callback[A]) => callback = Some(cb)
+    case Request(cb: Callback[A]) =>
+      callback = Some(cb)
   }
 
   override protected def receiver = callback

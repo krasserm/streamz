@@ -180,7 +180,7 @@ class AkkaStreamSpec
 
   "stream.publish" must {
     "publish to a managed flow" in {
-      val process: Stream[Task, Unit] = Stream.emits(1 to 3).publish()(_.to(Sink.foreach(testActor ! _)))()
+      val process: Stream[Task, Unit] = Stream.emits(1 to 3).publish()(Sink.foreach(testActor ! _))()
       process.run.unsafeRun
       expectMsg(1)
       expectMsg(2)
