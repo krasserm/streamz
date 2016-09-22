@@ -133,7 +133,7 @@ system.terminate()
 val f1: Source[Int, akka.NotUsed] = Source(1 to 20)
 val s1: Stream[Task, Int] = f1.subscribe()
 val s2: Stream[Task, Unit] = s1.publish() {
-Flow[Int].map(println).to(Sink.onComplete(_ => system.terminate()))
+  Flow[Int].map(println).to(Sink.onComplete(_ => system.terminate()))
 }()
 s2.run.unsafeRun
 ```
