@@ -55,7 +55,7 @@ package object camel {
   }
 
   /**
-   * A channel that initiates an in-out message exchange with the Camel endpoint identified by `uri`.
+   * A pipe that initiates an in-out message exchange with the Camel endpoint identified by `uri`.
    * If needed, received out message bodies are converted to type `O` using a Camel type converter.
    *
    * @param uri Camel endpoint URI.
