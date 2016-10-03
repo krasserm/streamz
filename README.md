@@ -1,6 +1,8 @@
 Streamz
 =======
 
+[![Gitter](https://badges.gitter.im/krasserm/streamz.svg)](https://gitter.im/krasserm/streamz?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 Streamz is a resource combinator library for [FS2](https://github.com/functional-streams-for-scala/fs2). It supports 
 
 - conversion of [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) `Source`s, `Flow`s and `Sink`s to and from FS2 `Stream`s, `Pipe`s and `Sink`s, respectively.
