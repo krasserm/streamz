@@ -79,11 +79,11 @@ assert(fStream1.through(fPipe1).runLog.unsafeRun() == numbers.flatMap(f))
 
 `aSink1`, `aSource1` and `aFlow1` are materialized when the `Task`s of the FS2 streams that compose `fSink1`, `fStream1` and `fPipe1` are run. Their materialized value can be obtained via the `onMaterialization` callback that is a parameter of `toStream(onMaterialization: M => Unit)`, `toSink(onMaterialization: M => Unit)` and `toPipe(onMaterialization: M => Unit)` (not shown in the examples). 
 
-### Conversions from FS2 to Akka Stream to FS2 
+### Conversions from FS2 to Akka Stream 
 
 **Overview**:
 
-|From               |With          |To                                 |
+|From               |With         |To                                  |
 |-------------------|-------------|------------------------------------|
 |`Stream[F[_], O]`  |`toSource()` |`Graph[SourceShape[O], NotUsed]`    |
 |`Sink[F[_], I]`    |`toSink()`   |`Graph[SinkShape[I], Future[Done]]` |
