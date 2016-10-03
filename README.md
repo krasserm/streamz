@@ -49,7 +49,7 @@ implicit val materializer: ActorMaterializer = ActorMaterializer()(factory)
 |`Graph[SinkShape[I], M]`    |`toSink()`   |`Sink[Task, I]`    |
 |`Graph[FlowShape[I, O], M]` |`toPipe()`   |`Pipe[Task, I, O]` |
 
-**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala))):
+**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala)):
 
 ```scala
 import akka.stream.scaladsl.{Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource}
@@ -89,7 +89,7 @@ assert(fStream1.through(fPipe1).runLog.unsafeRun() == numbers.flatMap(f))
 |`Sink[F[_], I]`    |`toSink()`   |`Graph[SinkShape[I], Future[Done]]` |
 |`Pipe[F[_], I, O]` |`toFlow()`   |`Graph[FlowShape[I, O], NotUsed]`   |
 
-**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala))):
+**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala)):
 
 ```scala
 import akka.stream.scaladsl.{Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, Keep}
