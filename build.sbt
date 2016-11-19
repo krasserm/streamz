@@ -4,7 +4,9 @@ organization in ThisBuild := "com.github.krasserm"
 
 version in ThisBuild := "0.6-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.11.8"
+crossScalaVersions := Seq("2.11.8", "2.12.0")
+
+scalaVersion in ThisBuild := "2.12.0"
 
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
 
