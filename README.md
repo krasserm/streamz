@@ -1,6 +1,8 @@
 Streamz
 =======
 
+[![Gitter](https://badges.gitter.im/krasserm/streamz.svg)](https://gitter.im/krasserm/streamz?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 Streamz is a resource combinator library for [FS2](https://github.com/functional-streams-for-scala/fs2). It supports 
 
 - conversion of [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) `Source`s, `Flow`s and `Sink`s to and from FS2 `Stream`s, `Pipe`s and `Sink`s, respectively.
@@ -9,13 +11,15 @@ Streamz is a resource combinator library for [FS2](https://github.com/functional
 Dependencies
 ------------
 
+Streamz artifacts are available for Scala 2.11 and 2.12:
+
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    // transitively depends on akka-camel 2.4.11
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.5"
+    // transitively depends on akka-camel 2.4.13
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.5.1"
 
-    // transitively depends on akka-stream 2.4.11
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.5"
+    // transitively depends on akka-stream 2.4.13
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.5.1"
 
 Combinators for Akka Stream
 ---------------------------
@@ -49,7 +53,7 @@ implicit val materializer: ActorMaterializer = ActorMaterializer()(factory)
 |`Graph[SinkShape[I], M]`    |`toSink()`   |`Sink[Task, I]`    |
 |`Graph[FlowShape[I, O], M]` |`toPipe()`   |`Pipe[Task, I, O]` |
 
-**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala))):
+**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala)):
 
 ```scala
 import akka.stream.scaladsl.{Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource}
@@ -79,17 +83,17 @@ assert(fStream1.through(fPipe1).runLog.unsafeRun() == numbers.flatMap(f))
 
 `aSink1`, `aSource1` and `aFlow1` are materialized when the `Task`s of the FS2 streams that compose `fSink1`, `fStream1` and `fPipe1` are run. Their materialized value can be obtained via the `onMaterialization` callback that is a parameter of `toStream(onMaterialization: M => Unit)`, `toSink(onMaterialization: M => Unit)` and `toPipe(onMaterialization: M => Unit)` (not shown in the examples). 
 
-### Conversions from FS2 to Akka Stream to FS2 
+### Conversions from FS2 to Akka Stream 
 
 **Overview**:
 
-|From               |With          |To                                 |
+|From               |With         |To                                  |
 |-------------------|-------------|------------------------------------|
 |`Stream[F[_], O]`  |`toSource()` |`Graph[SourceShape[O], NotUsed]`    |
 |`Sink[F[_], I]`    |`toSink()`   |`Graph[SinkShape[I], Future[Done]]` |
 |`Pipe[F[_], I, O]` |`toFlow()`   |`Graph[FlowShape[I, O], NotUsed]`   |
 
-**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala))):
+**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala)):
 
 ```scala
 import akka.stream.scaladsl.{Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, Keep}
