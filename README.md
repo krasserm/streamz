@@ -11,13 +11,15 @@ Streamz is a resource combinator library for [FS2](https://github.com/functional
 Dependencies
 ------------
 
+Streamz artifacts are available for Scala 2.11 and 2.12:
+
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    // transitively depends on akka-camel 2.4.11
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.5"
+    // transitively depends on akka-camel 2.4.13
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.5.1"
 
-    // transitively depends on akka-stream 2.4.11
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.5"
+    // transitively depends on akka-stream 2.4.13
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.5.1"
 
 Combinators for Akka Stream
 ---------------------------
