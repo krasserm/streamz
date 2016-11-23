@@ -2,11 +2,21 @@ Streamz
 =======
 
 [![Gitter](https://badges.gitter.im/krasserm/streamz.svg)](https://gitter.im/krasserm/streamz?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Build Status](https://travis-ci.org/krasserm/streamz.svg?branch=master)](https://travis-ci.org/krasserm/streamz)
 
-Streamz is a resource combinator library for [FS2](https://github.com/functional-streams-for-scala/fs2). It supports 
+Streamz is a combinator library for integrating [Functional Streams for Scala](https://github.com/functional-streams-for-scala/fs2) (FS2), [Akka Streams](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) and [Apache Camel](http://camel.apache.org/). It integrates
 
-- conversion of [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) `Source`s, `Flow`s and `Sink`s to and from FS2 `Stream`s, `Pipe`s and `Sink`s, respectively.
-- usage of [Apache Camel](http://camel.apache.org/) endpoints in FS2 `Stream`s.
+- **FS2 with Akka Streams:** FS2 `Stream`s, `Pipe`s and `Sink`s can be converted to Akka Stream `Source`s, `Flow`s and `Sink`s, respectively, and vice versa with [Stream converters](#stream-converters).
+- **FS2 with Apache Camel:** [Camel endpoints](http://camel.apache.org/components.html) can be integrated into FS2 streams with the [Camel DSL for FS2](#dsl-for-fs2).
+- **Akka Streams with Apache Camel:** Camel endpoints can be integrated into Akka Streams with the [Camel DSL for Akka Streams](#dsl-for-as).
+
+![Streamz intro](images/streamz-intro.png)
+
+API docs
+--------
+
+- [API docs for Scala 2.12](http://krasserm.github.io/streamz/scala-2.12/unidoc/index.html)
+- [API docs for Scala 2.11](http://krasserm.github.io/streamz/scala-2.11/unidoc/index.html)
 
 Dependencies
 ------------
@@ -15,26 +25,28 @@ Streamz artifacts are available for Scala 2.11 and 2.12:
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    // transitively depends on akka-camel 2.4.13
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-camel" % "0.5.1"
+    // transitively depends on akka-stream 2.4.14
+    libraryDependencies += "com.github.krasserm" %% "streamz-akka" % "0.6"
 
-    // transitively depends on akka-stream 2.4.13
-    libraryDependencies += "com.github.krasserm" %% "streamz-akka-stream" % "0.5.1"
+    // transitively depends on Apache Camel 2.18.0
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel" % "0.6"
 
-Combinators for Akka Stream
----------------------------
+<a name="stream-converters">
+Stream converters
+-----------------
 
-These combinators support the conversion of [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) `Source`s, `Flow`s and `Sink`s to and from FS2 `Stream`s, `Pipe`s and `Sink`s, respectively. They can be imported with 
+Stream converters convert FS2 `Stream`s, `Pipe`s and `Sink`s to Akka Stream `Source`s, `Flow`s and `Sink`s, respectively, and vice versa. They are provided by the `streamz-akka` artifact and can be imported with 
 
 ```scala
-import streamz.akka.stream._
+import streamz.akka._
 ```
 
-and require the following implicit values:
+and require the following `implicit`s in scope:
 
 ```scala
 import akka.actor.ActorRefFactory
 import akka.stream.ActorMaterializer
+
 import scala.concurrent.ExecutionContext
 
 val factory: ActorRefFactory = ...
@@ -53,13 +65,13 @@ implicit val materializer: ActorMaterializer = ActorMaterializer()(factory)
 |`Graph[SinkShape[I], M]`    |`toSink()`   |`Sink[Task, I]`    |
 |`Graph[FlowShape[I, O], M]` |`toPipe()`   |`Pipe[Task, I, O]` |
 
-**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala)):
+**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/akka/ConverterExample.scala)):
 
 ```scala
-import akka.stream.scaladsl.{Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource}
-import akka.{Done, NotUsed}
+import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource }
+import akka.{ Done, NotUsed }
 
-import fs2.{Pipe, Sink, Stream, Task}
+import fs2.{ Pipe, Sink, Stream, Task }
 
 import scala.collection.immutable.Seq
 import scala.concurrent.Future
@@ -93,16 +105,16 @@ assert(fStream1.through(fPipe1).runLog.unsafeRun() == numbers.flatMap(f))
 |`Sink[F[_], I]`    |`toSink()`   |`Graph[SinkShape[I], Future[Done]]` |
 |`Pipe[F[_], I, O]` |`toFlow()`   |`Graph[FlowShape[I, O], NotUsed]`   |
 
-**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/example/ConverterExample.scala)):
+**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/akka/ConverterExample.scala)):
 
 ```scala
-import akka.stream.scaladsl.{Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, Keep}
-import akka.{Done, NotUsed}
+import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, Keep }
+import akka.{ Done, NotUsed }
 
-import fs2.{Pipe, Pure, Sink, Stream, pipe}
+import fs2.{ Pipe, Pure, Sink, Stream, pipe }
 
 import scala.collection.immutable.Seq
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
 
 val numbers: Seq[Int] = 1 to 10
@@ -126,56 +138,318 @@ assert(Await.result(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run(), 
 
 ### Backpressure, cancellation, completion and errors
 
-Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-akka-stream/src/test/scala/streamz/akka/stream/ConverterSpec.scala)).  
+Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-akka/src/test/scala/streamz/akka/ConverterSpec.scala)).  
 
-Combinators for Apache Camel
-----------------------------
-
-These combinators support the usage of [Apache Camel](http://camel.apache.org/) endpoints in FS2 [`Stream`](https://oss.sonatype.org/service/local/repositories/releases/archive/co/fs2/fs2-core_2.11/0.9.1/fs2-core_2.11-0.9.1-javadoc.jar/!/index.html#fs2.Stream)s.
-
-```scala
-import akka.actor.ActorSystem
-import fs2.Task
-import fs2.Stream
-
-import streamz.akka.camel._
-
-implicit val system = ActorSystem("example")
-
-val s: Stream[Task,Unit] =
-  // receive from endpoint
-  receive[String]("seda:q1")
-  // in-only message exchange with endpoint and continue stream with in-message
-  .sendW("seda:q3")
-  // in-out message exchange with endpoint and continue stream with out-message
-  .request[Int]("bean:service?method=length")
-  // in-only message exchange with endpoint
-  .send("seda:q2")
-
-  // create concurrent task from stream
-  val t: Task[Unit] = s.run
-
-  // run task (side effects only here) ...
-  t.unsafeRun
-```
-
-An implicit ``ActorSystem`` must be in scope  because the combinator implementation depends on [Akka Camel](http://doc.akka.io/docs/akka/2.4/scala/camel.html). A discrete stream starting from a Camel endpoint can be created with ``receive`` where its type parameter is used to convert received message bodies to given type using a Camel type converter, if needed:
+Apache Camel integration
+------------------------
+ 
+Apache Camel endpoints can be integrated into FS2 streams and Akka streams with a Camel DSL that is provided by the `streamz-camel` artifact. The Camel DSL requires an implicit [`StreamContext`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext.html) in scope. A `StreamContext` uses a `CamelContext` to manage the endpoints 
+referenced by FS2 streams and Akka streams. A `StreamContext` with an internally managed `CamelContext` can be created with `StreamContext()`:
 
 ```scala
-val s1: Stream[Task,String] = receive[String]("seda:q1")
+import streamz.camel.StreamContext
+
+// contains an internally managed CamelContext 
+implicit val streamContext: StreamContext = StreamContext()
 ```
 
-Streams can also be targeted at Camel endpoints. The ``send`` and ``sendW`` combinators initiate in-only message exchanges with a Camel endpoint:
-
-```scala
-val s2: Stream[Task,Unit] = s1.send("seda:q2")
-val s3: Stream[Task,String] = s1.sendW("seda:q3")
-```
-    
-The ``request`` combinator initiates in-out message exchanges with a Camel endpoint where its type parameter is used to convert response message bodies to given type using a Camel type converter, if needed:
+Applications that want to re-use an existing, externally managed `CamelContext` should create a `StreamContext` with  `StreamContext(camelContext: CamelContext)`: 
 
 ```scala
-val s4: Stream[Task,Int] = s1.request[Int]("bean:service?method=length")
+import org.apache.camel.CamelContext
+import streamz.camel.StreamContext
+
+// an externally managed CamelContext
+val camelContext: CamelContext = ...
+
+// re-uses the externally managed CamelContext
+implicit val streamContext: StreamContext = StreamContext(camelContext)
 ```
-   
-These combinators are compatible with all available [Camel endpoints](http://camel.apache.org/components.html) and all `Stream` combinators (and now supersede the [scalaz-camel](https://github.com/krasserm/scalaz-camel) project). A more concrete example how to process files from an FTP server is available [here](https://github.com/krasserm/streamz/blob/master/streamz-akka-camel/src/test/scala/streamz/example/FtpExample.scala).
+
+After usage, a `StreamContext` should be stopped with `streamContext.stop()`. 
+
+The following two subsections introduce the Camel DSL; a more realistic usage example is given in subsection [Example application](#example-application). The full source code presented in these subsections is available [here](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/camel).
+
+
+<a name="dsl-for-fs2">
+### Camel DSL for FS2
+
+The Camel DSL for FS2 can be imported with:
+
+```scala
+import streamz.camel.fs2dsl._
+```
+
+#### Consuming from an endpoint
+
+An FS2 stream that emits messages consumed from a Camel endpoint can be created with `receive`. Endpoints are referenced by their [endpoint URI](http://camel.apache.org/uris.html). For example,
+
+```scala
+import streamz.camel.StreamMessage
+
+val s1: Stream[Task, StreamMessage[String]] = receive[String]("seda:q1")
+```
+
+creates an FS2 stream that consumes messages from the [SEDA endpoint](http://camel.apache.org/seda.html) `seda:q1` and converts them to `StreamMessage[String]`s. A [`StreamMessage[A]`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamMessage.html) contains a message `body` of type `A` and message `headers`. Calling `receive` with a `String` type parameter creates an FS2 stream that converts consumed message bodies to type `String` before emitting them as `StreamMessage[String]`. Type conversion internally uses a Camel [type converter](http://camel.apache.org/type-converter.html). An FS2 stream that only emits the converted message bodies can be created with `receiveBody`:
+
+```scala
+val s1b: Stream[Task, String] = receiveBody[String]("seda:q1")
+```
+
+This is equivalent to `receive[String]("seda:q1").map(_.body)`.
+
+#### Sending to an endpoint
+
+For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should be used:
+
+```scala
+val s2: Stream[Task, StreamMessage[String]] = s1.send("seda:q2")
+```
+
+It initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The `send` combinator is also available for streams of message bodies:
+
+```scala
+val s2b: Stream[Task, String] = s1b.send("seda:q2")
+```
+
+#### Requesting from an endpoint
+
+For requesting a reply from an endpoint to an input `StreamMessage`, the `request` combinator should be used:
+
+```scala
+val s3: Stream[Task, StreamMessage[Int]] = s2.request[Int]("bean:service?method=weight")
+```
+
+It initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available (`Double`, for example). The `request` combinator is also available for streams of message bodies:
+
+```scala
+val s3b: Stream[Task, Int] = s2b.request[Int]("bean:service?method=weight")
+```
+
+<a name="dsl-for-as">
+### Camel DSL for Akka Streams (Scala)
+
+The Camel DSL for Akka Streams can be imported with:
+
+```scala
+import streamz.camel.akkadsl._
+```
+
+#### Consuming from an endpoint
+
+An Akka Stream source that emits messages consumed from a Camel endpoint can be created with `receive`. Endpoints are referenced by their [endpoint URI](http://camel.apache.org/uris.html). For example,
+
+```scala
+import akka.NotUsed
+import akka.stream.scaladsl._
+import streamz.camel.StreamMessage
+
+val s1: Source[StreamMessage[String], NotUsed] = receive[String]("seda:q1")
+```
+
+creates an Akka Stream `Source` that consumes messages from the [SEDA endpoint](http://camel.apache.org/seda.html) `seda:q1` and converts them to `StreamMessage[String]`s. A [`StreamMessage[A]`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamMessage.html) contains a message `body` of type `A` and message `headers`. Calling `receive` with a `String` type parameter creates an Akka Stream `Source` that converts consumed message bodies to type `String` before emitting them as `StreamMessage[String]`. Type conversion internally uses a Camel [type converter](http://camel.apache.org/type-converter.html). An Akka Stream `Source` that only emits the converted message bodies can be created with `receiveBody`:
+
+```scala
+val s1b: Source[String, NotUsed] = receiveBody[String]("seda:q1")
+```
+
+This is equivalent to `receive[String]("seda:q1").map(_.body)`.
+
+#### Sending to an endpoint
+
+For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should be used:
+
+```scala
+val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2")
+```
+
+It initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The `send` combinator is also available for sources or flows of message bodies:
+
+```scala
+val s2b: Source[String, NotUsed] = s1b.send("seda:q2")
+```
+
+#### Requesting from an endpoint
+
+For requesting a reply from an endpoint to an input `StreamMessage`, the `request` combinator should be used:
+
+```scala
+val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight")
+```
+
+It initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The `request` combinator is also available for sources or flows of message bodies:
+
+```scala
+val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
+```
+
+In addition to `Source`, `send` and `request` combinators are also available on stream stages of type `Flow` and `SubFlow` (of `Source` and `Flow`).
+
+### Camel DSL for Akka Streams (Java)
+
+Coming soon ...
+
+<a name="example-application">
+### Example application
+
+The example application consumes file content line by line, either from a TCP endpoint or a from file endpoint, and prints the consumed lines prefixed with a formatted line number to `stdout`:
+
+![Streamz example](images/streamz-example.png)
+
+- The TCP endpoint is implemented with the [Netty4 component](http://camel.apache.org/netty4.html). It listens on `localhost:5051` and is configured to use a text line codec (see `tcpEndpointUri` below) so that consumers receive a separate message for each line.
+- The file endpoint is implemented with the [File component](http://camel.apache.org/file2.html). It scans the `input` directory for new files and serves them as `String`s to consumers. The consumed file content is split into lines in a separate *Line Split* step.
+- Lines consumed from both endpoints are merged into a single stream in a *Merge* step.
+- To generate line numbers for the consumed lines, a *Line Number Source* is configured to generate numbers 1, 2, ..., n. These numbers are then formatted to a line prefix using the `[$lineNumber] ` template. The line number formatter is an object registered in the `CamelContext` under the name `exampleService` and accessed with a [Bean endpoint](https://camel.apache.org/bean.html) configured to call the `linePrefix` method.
+- The line prefixes are then concatenated with the actual lines in a *ZipWith* step.
+- Finally, the concatenation results are sent to `stream:out`, a [Stream endpoint](http://camel.apache.org/stream.html) that writes messages to `stdout`.
+
+In the following two subsections, the implementations for both, FS2 and Akka Streams, are shown which closely match the above diagram. Both implementations share the definitions of `ExampleService`, `StreamContext` and endpoint URIs:
+
+```scala
+class ExampleService {
+  def linePrefix(lineNumber: Int): String = s"[$lineNumber] "
+}
+
+trait ExampleContext {
+  import org.apache.camel.impl.{ DefaultCamelContext, SimpleRegistry }
+  import streamz.camel.StreamContext
+
+  private val camelRegistry = new SimpleRegistry
+  private val camelContext = new DefaultCamelContext
+
+  camelContext.start()
+  camelContext.setRegistry(camelRegistry)
+  camelRegistry.put("exampleService", new ExampleService)
+
+  implicit val context: StreamContext =
+    StreamContext(camelContext)
+
+  val tcpEndpointUri: String =
+    "netty4:tcp://localhost:5150?sync=false&textline=true&encoding=utf-8"
+
+  val fileEndpointUri: String =
+    "file:input?charset=utf-8"
+
+  val serviceEndpointUri: String =
+    "bean:exampleService?method=linePrefix"
+
+  val printerEndpointUri: String =
+    "stream:out"
+}
+```
+
+#### Implementation for FS2
+
+```scala
+object CamelFs2Example extends ExampleContext with App {
+  import fs2._
+
+  // import Camel DSL for FS2
+  import streamz.camel.fs2dsl._
+
+  implicit val strategy: Strategy =
+    Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global)
+
+  val tcpLineStream: Stream[Task, String] =
+    receiveBody[String](tcpEndpointUri)
+
+  val fileLineStream: Stream[Task, String] =
+    receiveBody[String](fileEndpointUri).through(text.lines)
+
+  val linePrefixStream: Stream[Task, String] =
+    Stream.iterate(1)(_ + 1).request[String](serviceEndpointUri)
+
+  val stream: Stream[Task, String] =
+    tcpLineStream
+      .merge(fileLineStream)
+      .zipWith(linePrefixStream)((l, n) => n concat l)
+      .send(printerEndpointUri)
+
+  stream.run.unsafeRun
+}
+```
+
+#### Implementation for Akka Streams
+
+```scala
+object CamelAkkaExample extends ExampleContext with App {
+  import akka.NotUsed
+  import akka.actor.ActorSystem
+  import akka.stream.ActorMaterializer
+  import akka.stream.scaladsl.{ Sink, Source }
+  import scala.collection.immutable.Iterable
+
+  // import Camel DSL for Akka Streams
+  import streamz.camel.akkadsl._
+
+  implicit val system = ActorSystem("example")
+  implicit val materializer = ActorMaterializer()
+
+  val tcpLineSource: Source[String, NotUsed] =
+    receiveBody[String](tcpEndpointUri)
+
+  val fileLineSource: Source[String, NotUsed] =
+    receiveBody[String](fileEndpointUri).mapConcat(_.lines.to[Iterable])
+
+  val linePrefixSource: Source[String, NotUsed] =
+    Source.fromIterator(() => Iterator.from(1)).request[String](serviceEndpointUri)
+
+  val stream: Source[String, NotUsed] =
+    tcpLineSource
+      .merge(fileLineSource)
+      .zipWith(linePrefixSource)((l, n) => n concat l)
+      .send(printerEndpointUri)
+
+  stream.runWith(Sink.ignore)
+}
+```
+
+#### Example application usage
+
+Depending on the implementation, the example application can be started with
+
+```
+$ sbt 'examples/runMain streamz.examples.camel.CamelFs2Example'
+```
+
+or 
+
+```
+$ sbt 'examples/runMain streamz.examples.camel.CamelAkkaExample'
+```
+
+Before submitting data to the application, let’s create an input file with two lines:
+
+```
+$ cat >> example.txt
+hello
+streamz
+^D
+```
+
+Copy the generated file to the `input` directory:
+
+```
+$ cp example.txt input/
+```
+
+You should see the following stream output:
+
+```
+[1] hello
+[2] streamz
+```
+
+Then send the file content to the TCP endpoint (with `nc` on Mac OS X or `netcat` on Linux):
+
+```
+$ cat example.txt | nc localhost 5150
+```
+
+You should see the following stream output:
+
+```
+[3] hello
+[4] streamz
+```
+
