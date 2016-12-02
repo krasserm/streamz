@@ -134,7 +134,7 @@ assert(Await.result(aSource2.toMat(AkkaSink.seq)(Keep.right).run(), 5.seconds) =
 assert(Await.result(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run(), 5.seconds) == numbers.map(g))
 ```
 
-`fSink2`, `fStream2` and `fPipe2` are run when the Akka streams that compose `aSink2`, `aSource2` and `aFlow2` are materialized.
+`fSink2`, `fStream2` and `fPipe2` are run when the Akka Streams that compose `aSink2`, `aSource2` and `aFlow2` are materialized.
 
 ### Backpressure, cancellation, completion and errors
 
@@ -143,8 +143,8 @@ Downstream demand and cancellation as well as upstream completion and error sign
 Apache Camel integration
 ------------------------
  
-Apache Camel endpoints can be integrated into FS2 streams and Akka streams with a Camel DSL that is provided by the `streamz-camel` artifact. The Camel DSL requires an implicit [`StreamContext`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext.html) in scope. A `StreamContext` uses a `CamelContext` to manage the endpoints 
-referenced by FS2 streams and Akka streams. A `StreamContext` with an internally managed `CamelContext` can be created with `StreamContext()`:
+Apache Camel endpoints can be integrated into FS2 streams and Akka Streams with a Camel DSL that is provided by the `streamz-camel` artifact. The Camel DSL requires an implicit [`StreamContext`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext.html) in scope. A `StreamContext` uses a `CamelContext` to manage the endpoints 
+referenced by FS2 streams and Akka Streams. A `StreamContext` with an internally managed `CamelContext` can be created with `StreamContext()`:
 
 ```scala
 import streamz.camel.StreamContext
@@ -206,7 +206,7 @@ For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should 
 val s2: Stream[Task, StreamMessage[String]] = s1.send("seda:q2")
 ```
 
-It initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The `send` combinator is also available for streams of message bodies:
+This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The `send` combinator is also available for streams of message bodies:
 
 ```scala
 val s2b: Stream[Task, String] = s1b.send("seda:q2")
@@ -220,14 +220,14 @@ For requesting a reply from an endpoint to an input `StreamMessage`, the `reques
 val s3: Stream[Task, StreamMessage[Int]] = s2.request[Int]("bean:service?method=weight")
 ```
 
-It initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available (`Double`, for example). The `request` combinator is also available for streams of message bodies:
+This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available (`Double`, for example). The `request` combinator is also available for streams of message bodies:
 
 ```scala
 val s3b: Stream[Task, Int] = s2b.request[Int]("bean:service?method=weight")
 ```
 
 <a name="dsl-for-as">
-### Camel DSL for Akka Streams (Scala)
+### Camel DSL for Akka Streams
 
 The Camel DSL for Akka Streams can be imported with:
 
@@ -237,7 +237,7 @@ import streamz.camel.akkadsl._
 
 #### Consuming from an endpoint
 
-An Akka Stream source that emits messages consumed from a Camel endpoint can be created with `receive`. Endpoints are referenced by their [endpoint URI](http://camel.apache.org/uris.html). For example,
+An Akka Stream `Source` that emits messages consumed from a Camel endpoint can be created with `receive`. Endpoints are referenced by their [endpoint URI](http://camel.apache.org/uris.html). For example,
 
 ```scala
 import akka.NotUsed
@@ -263,7 +263,7 @@ For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should 
 val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2")
 ```
 
-It initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The `send` combinator is also available for sources or flows of message bodies:
+This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The `send` combinator is not only available for `Source`s, `Flow`s and `SubFlow`s of `StreamMessage`s but also for `Source`s, `Flow`s and `SubFlow`s of message bodies:
 
 ```scala
 val s2b: Source[String, NotUsed] = s1b.send("seda:q2")
@@ -277,17 +277,13 @@ For requesting a reply from an endpoint to an input `StreamMessage`, the `reques
 val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight")
 ```
 
-It initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The `request` combinator is also available for sources or flows of message bodies:
+This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The `request` combinator is not only available for `Source`s, `Flow`s and `SubFlow`s of `StreamMessage`s but also for `Source`s, `Flow`s and `SubFlow`s of message bodies:
 
 ```scala
 val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
 ```
 
-In addition to `Source`, `send` and `request` combinators are also available on stream stages of type `Flow` and `SubFlow` (of `Source` and `Flow`).
-
-### Camel DSL for Akka Streams (Java)
-
-Coming soon ...
+A Java version of the Camel DSL for Akka Streams is coming soon.
 
 <a name="example-application">
 ### Example application
@@ -427,7 +423,7 @@ streamz
 ^D
 ```
 
-Copy the generated file to the `input` directory:
+Copy the generated file to the `input` directory so that it can be consumed by the file endpoint:
 
 ```
 $ cp example.txt input/
@@ -452,4 +448,3 @@ You should see the following stream output:
 [3] hello
 [4] streamz
 ```
-
