@@ -15,7 +15,7 @@ name := "streamz"
 
 organization in ThisBuild := "com.github.krasserm"
 
-version in ThisBuild := "0.6-SNAPSHOT"
+version in ThisBuild := "0.7-SNAPSHOT"
 
 crossScalaVersions in ThisBuild := Seq("2.11.8", "2.12.0")
 
