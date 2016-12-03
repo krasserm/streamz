@@ -95,12 +95,11 @@ class StreamContext(val camelContext: CamelContext) {
   }
 
   /**
-   * Stops this `StreamContext` and returns `this`.
+   * Stops this `StreamContext`.
    */
-  def stop(): StreamContext = {
+  def stop(): Unit = {
     consumerTemplate.stop()
     producerTemplate.stop()
-    this
   }
 }
 
@@ -127,11 +126,10 @@ class DefaultStreamContext extends StreamContext(new DefaultCamelContext) {
   }
 
   /**
-   * Stops this `StreamContext` including the internally managed [[DefaultCamelContext]] and returns `this`.
+   * Stops this `StreamContext` including the internally managed [[DefaultCamelContext]].
    */
-  override def stop(): DefaultStreamContext = {
+  override def stop(): Unit = {
     super.stop()
     camelContext.stop()
-    this
   }
 }
