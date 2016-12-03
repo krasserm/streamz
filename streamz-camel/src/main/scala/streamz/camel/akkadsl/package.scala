@@ -80,7 +80,7 @@ package object akkadsl {
   implicit def streamMessageBodyFlowScalaDsl[A, B, M](self: Flow[A, B, M]): StreamMessageBodyScalaDsl[B, M, Flow[A, B, M]] =
     new StreamMessageBodyScalaDsl(self)
 
-  implicit def streamMessageBodySubFlowOfSourceScalaDsl[B, M](self: SubFlow[B, M, Source[B, M]#Repr, Source[B, M]#Closed]): StreamMessageBodyScalaDsl[B, M, SubFlow[B, M, Source[B, M]#Repr, Source[B, M]#Closed]] =
+  implicit def streamMessageBodySubFlowOfSourceScalaDsl[A, M](self: SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]): StreamMessageBodyScalaDsl[A, M, SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]] =
     new StreamMessageBodyScalaDsl(self)
 
   implicit def streamMessageBodySubFlowOfFlowScalaDsl[A, B, M](self: SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]): StreamMessageBodyScalaDsl[B, M, SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]] =

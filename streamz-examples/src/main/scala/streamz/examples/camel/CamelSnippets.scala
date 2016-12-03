@@ -54,7 +54,6 @@ object CamelFs2Snippets {
   val s1b: Stream[Task, String] = receiveBody[String]("seda:q1")
   val s2b: Stream[Task, String] = s1b.send("seda:q2")
   val s3b: Stream[Task, Int] = s2b.request[Int]("bean:service?method=weight")
-
 }
 
 object CamelAkkaSnippets extends App {
@@ -79,7 +78,18 @@ object CamelAkkaSnippets extends App {
   val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2")
   val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight")
 
+  val s2v = s1.via(send("seda:q2", parallelism = 3))
+  val s3v = s2.via(request[String, Int]("bean:service?method=weight", parallelism = 3))
+
   val s1b: Source[String, NotUsed] = receiveBody[String]("seda:q1")
   val s2b: Source[String, NotUsed] = s1b.send("seda:q2")
   val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
+
+  val f1: Flow[String, StreamMessage[String], NotUsed] = ???
+  val f2: Flow[String, StreamMessage[String], NotUsed] = f1.send("seda:q2")
+  val f3: Flow[String, StreamMessage[Int], NotUsed] = f2.request[Int]("bean:service?method=weight")
+
+  val f1b: Flow[String, String, NotUsed] = ???
+  val f2b: Flow[String, String, NotUsed] = f1b.send("seda:q2")
+  val f3b: Flow[String, Int, NotUsed] = f2b.request[Int]("bean:service?method=weight")
 }

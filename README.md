@@ -263,11 +263,35 @@ For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should 
 val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2")
 ```
 
-This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The `send` combinator is not only available for `Source`s, `Flow`s and `SubFlow`s of `StreamMessage`s but also for `Source`s, `Flow`s and `SubFlow`s of message bodies:
+This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. 
+
+The `send` combinator is not only available for sources of type `Source[StreamMessage[A], M]` but more generally for any source of type `Source[A, M]`:
 
 ```scala
 val s2b: Source[String, NotUsed] = s1b.send("seda:q2")
 ```
+
+If `A` is not a `StreamMessage`, `send` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped `A`. The `send` combinator is also available for flows of type `Flow[A, B, M]`, `SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]` and `SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]`. Instead of using the implicit `send` combinator, applications can also use the `akkadsl.send` graph stage 
+
+```scala
+package object akkadsl {
+  // ...
+
+  def send[I](uri: String, parallelism: Int)(implicit context: StreamContext): 
+    Graph[FlowShape[StreamMessage[I], StreamMessage[I]], NotUsed]
+
+  // ...
+}
+```
+
+together with the Akka Streams `via` combinator:
+
+
+```scala
+val s2 = s1.via(send("seda:q2", parallelism = 3))
+```
+
+The `parallelism` parameter determines how many `send`s can be executed in parallel. It is required for the `akkadsl.send` graph stage but optional for the `send` comninator (and has a default value of 1).
 
 #### Requesting from an endpoint
 
@@ -277,11 +301,34 @@ For requesting a reply from an endpoint to an input `StreamMessage`, the `reques
 val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight")
 ```
 
-This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The `request` combinator is not only available for `Source`s, `Flow`s and `SubFlow`s of `StreamMessage`s but also for `Source`s, `Flow`s and `SubFlow`s of message bodies:
+This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter `[Int]` specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). 
+
+The `request` combinator is not only available for sources of type `Source[StreamMessage[A], M]` but more generally for any source of type `Source[A, M]`:
 
 ```scala
 val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
 ```
+
+If `A` is not a `StreamMessage`, `request` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped message body `B` of the output `StreamMessage[B]`. The `request` combinator is also available for flows of type `Flow[A, B, M]`, `SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]` and `SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]`. Instead of using the implicit `request` combinator, applications can also use the `akkadsl.request` graph stage 
+
+```scala
+package object akkadsl {
+  // ...
+
+  def request[I, O](uri: String, parallelism: Int)(implicit context: StreamContext, tag: ClassTag[O]): 
+    Graph[FlowShape[StreamMessage[I], StreamMessage[O]], NotUsed]
+
+  // ...
+}
+```
+
+together with the Akka Streams `via` combinator:
+
+```scala
+val s3 = s2.via(request[String, Int]("bean:service?method=weight", parallelism = 3))
+```
+
+The `parallelism` parameter determines how many `request`s can be executed in parallel. It is required for the `akkadsl.request` graph stage but optional for the `request` comninator (and has a default value of 1).
 
 A Java version of the Camel DSL for Akka Streams is coming soon.
 
