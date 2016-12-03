@@ -291,7 +291,7 @@ together with the Akka Streams `via` combinator:
 val s2 = s1.via(send("seda:q2", parallelism = 3))
 ```
 
-The `parallelism` parameter determines how many `send`s can be executed in parallel. It is required for the `akkadsl.send` graph stage but optional for the `send` comninator (and has a default value of 1).
+The `parallelism` parameter determines how many sends can be executed in parallel. It is required for the `akkadsl.send` graph stage but optional for the `send` combinator that uses a default value of 1. For values greater than 1 , the message order is still preserved by `send`.
 
 #### Requesting from an endpoint
 
@@ -328,7 +328,7 @@ together with the Akka Streams `via` combinator:
 val s3 = s2.via(request[String, Int]("bean:service?method=weight", parallelism = 3))
 ```
 
-The `parallelism` parameter determines how many `request`s can be executed in parallel. It is required for the `akkadsl.request` graph stage but optional for the `request` comninator (and has a default value of 1).
+The `parallelism` parameter determines how many requests can be executed in parallel. It is required for the `akkadsl.request` graph stage but optional for the `request` combinator that a default value of 1. For values greater than 1 , the message order is still preserved by `request`.
 
 A Java version of the Camel DSL for Akka Streams is coming soon.
 

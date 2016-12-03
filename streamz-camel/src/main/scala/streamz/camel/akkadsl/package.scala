@@ -136,7 +136,7 @@ package object akkadsl {
    * @throws TypeConversionException if type conversion fails.
    */
   def request[I, O](uri: String, parallelism: Int)(implicit context: StreamContext, tag: ClassTag[O]): Graph[FlowShape[StreamMessage[I], StreamMessage[O]], NotUsed] =
-    Flow[StreamMessage[I]].mapAsync(1)(produce[I, O](uri, _, ExchangePattern.InOut, (_, exchange) => StreamMessage.from[O](exchange.getOut)))
+    Flow[StreamMessage[I]].mapAsync(parallelism)(produce[I, O](uri, _, ExchangePattern.InOut, (_, exchange) => StreamMessage.from[O](exchange.getOut)))
 
   private def consume[O](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[O]): Source[StreamMessage[O], NotUsed] =
     Source.actorPublisher[StreamMessage[O]](EndpointConsumer.props[O](uri)).mapMaterializedValue(_ => NotUsed)
