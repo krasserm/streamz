@@ -495,3 +495,7 @@ You should see the following stream output:
 [3] hello
 [4] streamz
 ```
+
+### External examples
+
+- [Serve static files from an FS2 stream in an Akka HTTP server](https://gist.github.com/bmc/2db513245a4d7213ba7aba4f67723d12).
