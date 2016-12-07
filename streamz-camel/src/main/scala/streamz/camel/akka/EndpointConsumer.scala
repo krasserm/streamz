@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package streamz.camel.akkadsl
+package streamz.camel.akka
 
 import akka.actor.Props
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.Request
 
-import streamz.camel.{ StreamMessage, StreamContext }
+import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.reflect.ClassTag
 import scala.util.{ Failure, Success, Try }
 
-private[camel] object EndpointConsumer {
+private[akka] object EndpointConsumer {
   case object ConsumeTimeout
   case class ConsumeSuccess(m: Any)
   case class ConsumeFailure(t: Throwable)
@@ -34,7 +34,7 @@ private[camel] object EndpointConsumer {
     Props(new EndpointConsumer[O](uri))
 }
 
-private[camel] class EndpointConsumer[O](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[O]) extends ActorPublisher[StreamMessage[O]] {
+private[akka] class EndpointConsumer[O](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[O]) extends ActorPublisher[StreamMessage[O]] {
   import EndpointConsumer._
 
   def waiting: Receive = {

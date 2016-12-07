@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package streamz.akka
+package streamz.fs2.akka
 
 import akka.{ Done, NotUsed }
 import akka.actor._
@@ -23,8 +23,8 @@ import akka.stream.scaladsl.{ Source => AkkaSource, Flow => AkkaFlow, Sink => Ak
 
 import fs2._
 
-import streamz.akka.AkkaStreamPublisher._
-import streamz.akka.AkkaStreamSubscriber._
+import streamz.fs2.akka.AkkaStreamPublisher._
+import streamz.fs2.akka.AkkaStreamSubscriber._
 
 import scala.concurrent.{ Future, ExecutionContext }
 

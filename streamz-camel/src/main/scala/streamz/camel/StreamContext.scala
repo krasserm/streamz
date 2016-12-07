@@ -37,10 +37,30 @@ object StreamContext {
    */
   def apply(camelContext: CamelContext): StreamContext =
     new StreamContext(camelContext).start()
+
+  /**
+   * Java API.
+   *
+   * Creates and returns a started [[DefaultStreamContext]].
+   */
+  def create(): StreamContext =
+    apply()
+
+  /**
+   * Java API.
+   *
+   * Creates and returns a started [[StreamContext]].
+   *
+   * @param camelContext externally managed [[CamelContext]]. Applications are responsible
+   *                     for starting the `CamelContext` before calling this factory method
+   *                     and stopping the `CamelContext` after stopping the created `StreamContext`.
+   */
+  def create(camelContext: CamelContext): StreamContext =
+    apply(camelContext)
 }
 
 /**
- * A stream context required by the [[akkadsl]] and [[fs2dsl]] stream DSL elements.
+ * A stream context required by the Camel DSL elements for FS2 and Akka Streams.
  *
  * @param camelContext externally managed [[CamelContext]]. Applications are responsible
  *                     for starting the `CamelContext` before starting this `StreamContext`
@@ -86,6 +106,16 @@ class StreamContext(val camelContext: CamelContext) {
   }
 
   /**
+   * Java API.
+   *
+   * Converts `obj` to `clazz` using a Camel type converter.
+   *
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def convertObject[A](obj: Any, clazz: Class[A]): A =
+    convertObject(obj)(ClassTag(clazz))
+
+  /**
    * Starts this `StreamContext` and returns `this`.
    */
   def start(): StreamContext = {
@@ -109,6 +139,9 @@ object DefaultStreamContext {
    */
   def apply(): DefaultStreamContext =
     new DefaultStreamContext().start()
+
+  def create(): DefaultStreamContext =
+    apply()
 }
 
 /**

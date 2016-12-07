@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package streamz.camel.akkadsl
+package streamz.camel.akka
 
-import akka.actor.{ Props, ActorRef, ActorSystem }
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.stream.ActorMaterializer
 import akka.stream.actor.ActorPublisherMessage.Request
 import akka.stream.scaladsl._
 import akka.stream.testkit.TestSubscriber
 import akka.stream.testkit.scaladsl.TestSink
-import akka.testkit.{ TestProbe, TestKit }
+import akka.testkit.{ TestKit, TestProbe }
 
-import org.apache.camel.{ Producer, ExchangePattern }
+import org.apache.camel.{ ExchangePattern, Producer }
 import org.scalatest._
 
-import streamz.camel.{ StreamMessage, StreamContext }
-import streamz.camel.akkadsl.EndpointConsumer.ConsumeSuccess
+import streamz.camel.{ StreamContext, StreamMessage }
+import streamz.camel.akka.EndpointConsumer.ConsumeSuccess
 
 import scala.reflect.ClassTag
 

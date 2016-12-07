@@ -23,7 +23,7 @@ import akka.stream.scaladsl.{ Flow => AkkaFlow, Keep, Sink => AkkaSink, Source =
 
 import fs2.{ Pipe, Pure, Sink, Stream, Task, pipe }
 
-import streamz.akka._
+import streamz.fs2.akka._
 
 import scala.collection.immutable.Seq
 import scala.concurrent._

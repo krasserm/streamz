@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-package streamz
+package streamz.examples.camel;
 
-package object akka extends ConverterDsl
+public class CamelAkkaJavaDslExampleService {
+    public String linePrefix(int lineNumber) {
+        return String.format("[%d] ", lineNumber);
+    }
+}

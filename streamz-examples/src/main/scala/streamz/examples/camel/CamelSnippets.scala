@@ -27,8 +27,8 @@ import streamz.camel.{ StreamMessage, StreamContext }
 
 import scala.concurrent.ExecutionContext.global
 
-object CamelFs2Snippets {
-  import streamz.camel.fs2dsl._
+object CamelFs2DslSnippets {
+  import streamz.camel.fs2.dsl._
 
   implicit val context = StreamContext()
   implicit val strategy = Strategy.fromExecutionContext(global)
@@ -56,8 +56,8 @@ object CamelFs2Snippets {
   val s3b: Stream[Task, Int] = s2b.request[Int]("bean:service?method=weight")
 }
 
-object CamelAkkaSnippets extends App {
-  import streamz.camel.akkadsl._
+object CamelAkkaScalaDslSnippets extends App {
+  import streamz.camel.akka.scaladsl._
 
   implicit val system = ActorSystem("example")
   implicit val materializer = ActorMaterializer()
@@ -75,11 +75,11 @@ object CamelAkkaSnippets extends App {
   s.runForeach(println)
 
   val s1: Source[StreamMessage[String], NotUsed] = receive[String]("seda:q1")
-  val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2")
-  val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight")
+  val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2", parallelism = 3)
+  val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight", parallelism = 3)
 
-  val s2v = s1.via(send("seda:q2", parallelism = 3))
-  val s3v = s2.via(request[String, Int]("bean:service?method=weight", parallelism = 3))
+  val s2v = s1.via(send("seda:q2"))
+  val s3v = s2.via(request[String, Int]("bean:service?method=weight"))
 
   val s1b: Source[String, NotUsed] = receiveBody[String]("seda:q1")
   val s2b: Source[String, NotUsed] = s1b.send("seda:q2")

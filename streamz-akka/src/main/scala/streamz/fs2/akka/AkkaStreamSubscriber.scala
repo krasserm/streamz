@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package streamz.akka
+package streamz.fs2.akka
 
 import akka.actor.Props
 import akka.stream.actor._
 import akka.stream.actor.ActorSubscriberMessage._
 
-import streamz.akka.Converter.Callback
+import streamz.fs2.akka.Converter.Callback
 
 private[akka] object AkkaStreamSubscriber {
   case class Request[A](callback: Callback[Option[A]])

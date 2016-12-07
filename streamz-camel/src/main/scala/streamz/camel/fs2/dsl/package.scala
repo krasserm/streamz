@@ -14,32 +14,34 @@
  * limitations under the License.
  */
 
-package streamz.camel
+package streamz.camel.fs2
 
 import fs2._
 
 import org.apache.camel.spi.Synchronization
 import org.apache.camel.{ Exchange, ExchangePattern, TypeConversionException }
 
+import streamz.camel.{ StreamContext, StreamMessage }
+
 import scala.reflect.ClassTag
 import scala.util._
 
-package object fs2dsl {
+package object dsl {
   /**
    * Camel endpoint combinators for [[StreamMessage]] streams of type `Stream[Task, StreamMessage[A]]`.
    */
   implicit class StreamMessageDsl[A](self: Stream[Task, StreamMessage[A]]) {
     /**
-     * @see [[fs2dsl.send]]
+     * @see [[dsl.send]]
      */
     def send(uri: String)(implicit context: StreamContext, strategy: Strategy): Stream[Task, StreamMessage[A]] =
-      self.through(fs2dsl.send[A](uri))
+      self.through(dsl.send[A](uri))
 
     /**
-     * @see [[fs2dsl.request]]
+     * @see [[dsl.request]]
      */
     def request[B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Stream[Task, StreamMessage[B]] =
-      self.through(fs2dsl.request[A, B](uri))
+      self.through(dsl.request[A, B](uri))
   }
 
   /**
@@ -47,32 +49,17 @@ package object fs2dsl {
    */
   implicit class StreamMessageBodyDsl[A](self: Stream[Task, A]) {
     /**
-     * @see [[fs2dsl.send]]
+     * @see [[dsl.sendBody]]
      */
     def send(uri: String)(implicit context: StreamContext, strategy: Strategy): Stream[Task, A] =
-      self.map(StreamMessage(_)).send(uri).map(_.body)
+      self.through(dsl.sendBody[A](uri))
 
     /**
-     * @see [[fs2dsl.request]]
+     * @see [[dsl.requestBody]]
      */
     def request[B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Stream[Task, B] =
-      self.map(StreamMessage(_)).request[B](uri).map(_.body)
+      self.through(dsl.requestBody[A, B](uri))
   }
-
-  /**
-   * Creates a stream of message bodies consumed from the Camel endpoint identified by `uri`.
-   * Message bodies are converted to type `O` using a Camel type converter. The stream completes
-   * with an error if the message exchange with the endpoint fails.
-   *
-   * Only [[ExchangePattern.InOnly]] message exchanges with the endpoint are supported at the moment.
-   * Endpoints that create [[ExchangePattern.InOut]] message exchanges will not receive a reply from
-   * the stream.
-   *
-   * @param uri Camel endpoint URI.
-   * @throws TypeConversionException if type conversion fails.
-   */
-  def receiveBody[O](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[O]): Stream[Task, O] =
-    receive(uri).map(_.body)
 
   /**
    * Creates a stream of [[StreamMessage]]s consumed from the Camel endpoint identified by `uri`.
@@ -91,14 +78,51 @@ package object fs2dsl {
   }
 
   /**
-   * Creates a pipe that initiates an [[ExchangePattern.InOnly]] message exchange with the Camel endpoint
-   * identified by `uri` and continues the stream with the input message after the endpoint has processed
+   * Creates a stream of message consumed from the Camel endpoint identified by `uri`.
+   * Message are converted to type `O` using a Camel type converter. The stream completes
+   * with an error if the message exchange with the endpoint fails.
+   *
+   * Only [[ExchangePattern.InOnly]] message exchanges with the endpoint are supported at the moment.
+   * Endpoints that create [[ExchangePattern.InOut]] message exchanges will not receive a reply from
+   * the stream.
+   *
+   * @param uri Camel endpoint URI.
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def receiveBody[O](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[O]): Stream[Task, O] =
+    receive(uri).map(_.body)
+
+  /**
+   * Creates a pipe that initiates an [[ExchangePattern.InOnly]] [[StreamMessage]] exchange with the Camel endpoint
+   * identified by `uri` and continues the stream with the input [[StreamMessage]] after the endpoint has processed
    * that message. The pipe completes with an error if the message exchange with the endpoint fails.
    *
    * @param uri Camel endpoint URI.
    */
   def send[I](uri: String)(implicit context: StreamContext, strategy: Strategy): Pipe[Task, StreamMessage[I], StreamMessage[I]] =
     produce[I, I](uri, ExchangePattern.InOnly, (message, _) => message)
+
+  /**
+   * Creates a pipe that initiates an [[ExchangePattern.InOnly]] message exchange with the Camel endpoint
+   * identified by `uri` and continues the stream with the input message after the endpoint has processed
+   * that message. The pipe completes with an error if the message exchange with the endpoint fails.
+   *
+   * @param uri Camel endpoint URI.
+   */
+  def sendBody[I](uri: String)(implicit context: StreamContext, strategy: Strategy): Pipe[Task, I, I] =
+    s => s.map(StreamMessage(_)).through(send(uri)).map(_.body)
+
+  /**
+   * Creates a pipe that initiates an [[ExchangePattern.InOut]] [[StreamMessage]] exchange with the Camel endpoint
+   * identified by `uri` and continues the stream with the output [[StreamMessage]] received from the endpoint. The
+   * output [[StreamMessage]] body is converted to type `O` using a Camel type converter. The pipe completes
+   * with an error if the message exchange with the endpoint fails.
+   *
+   * @param uri Camel endpoint URI.
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def request[I, O](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[O]): Pipe[Task, StreamMessage[I], StreamMessage[O]] =
+    produce[I, O](uri, ExchangePattern.InOut, (_, exchange) => StreamMessage.from[O](exchange.getOut))
 
   /**
    * Creates a pipe that initiates an [[ExchangePattern.InOut]] message exchange with the Camel endpoint
@@ -109,8 +133,8 @@ package object fs2dsl {
    * @param uri Camel endpoint URI.
    * @throws TypeConversionException if type conversion fails.
    */
-  def request[I, O](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[O]): Pipe[Task, StreamMessage[I], StreamMessage[O]] =
-    produce[I, O](uri, ExchangePattern.InOut, (_, exchange) => StreamMessage.from[O](exchange.getOut))
+  def requestBody[I, O](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[O]): Pipe[Task, I, O] =
+    s => s.map(StreamMessage(_)).through(request[I, O](uri)).map(_.body)
 
   private def consume[O](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[O]): Stream[Task, StreamMessage[O]] = {
     import context._

@@ -14,23 +14,31 @@
  * limitations under the License.
  */
 
-package streamz.camel
+package streamz.camel.akka.scaladsl
 
 import akka.actor._
-import akka.testkit.TestKit
-
-import fs2.{ Strategy, Stream }
-
-import streamz.camel.fs2dsl._
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{ Sink, Source }
 
 import org.apache.camel.TypeConversionException
 import org.apache.camel.impl.{ DefaultCamelContext, SimpleRegistry }
 import org.scalatest._
 
-import scala.collection.immutable.Seq
-import scala.concurrent.ExecutionContext.global
+import streamz.camel.StreamContext
 
-class Fs2DslSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll {
+import scala.collection.immutable.Seq
+import scala.concurrent._
+import scala.concurrent.duration._
+
+object ScalaDslSpec {
+  implicit class AwaitHelper[A](f: Future[A]) {
+    def await: A = Await.result(f, 3.seconds)
+  }
+}
+
+class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
+  import ScalaDslSpec._
+
   val camelRegistry = new SimpleRegistry
   val camelContext = new DefaultCamelContext()
 
@@ -38,7 +46,8 @@ class Fs2DslSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Mat
   camelRegistry.put("service", new Service)
 
   implicit val streamContext = new StreamContext(camelContext)
-  implicit val strategy = Strategy.fromExecutionContext(global)
+  implicit val actorSystem = ActorSystem("test")
+  implicit val actorMaterializer = ActorMaterializer()
 
   import streamContext._
 
@@ -48,9 +57,9 @@ class Fs2DslSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Mat
   }
 
   override protected def afterAll(): Unit = {
-    camelContext.stop()
     streamContext.stop()
-    TestKit.shutdownActorSystem(system)
+    camelContext.stop()
+    actorSystem.terminate()
   }
 
   class Service {
@@ -58,41 +67,34 @@ class Fs2DslSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Mat
       if (i == -1) throw new Exception("test") else i + 1
   }
 
-  "A receiver" must {
-    "create a stream" in {
+  "receive" must {
+    "create a source" in {
       1 to 3 foreach { i => producerTemplate.sendBody("seda:q1", i) }
-      receiveBody[Int]("seda:q1").take(3).runLog.unsafeRun should be(Seq(1, 2, 3))
+      receiveBody[Int]("seda:q1").take(3).runWith(Sink.seq[Int]).await should be(Seq(1, 2, 3))
     }
     "complete with an error if type conversion fails" in {
       producerTemplate.sendBody("seda:q2", "a")
-      intercept[TypeConversionException](receiveBody[Int]("seda:q2").run.unsafeRun)
+      intercept[TypeConversionException](receiveBody[Int]("seda:q2").runWith(Sink.ignore).await)
     }
   }
 
-  "A sender" must {
+  "send" must {
     "send to an endpoint and continue with the sent message" in {
-      receiveBody[Int]("seda:q3").send("seda:q4").take(3).runLog.unsafeRunAsync {
-        case Right(r) => testActor ! r
-        case Left(e) =>
-      }
-      1 to 2 foreach { i =>
-        producerTemplate.sendBody("seda:q3", i)
-        consumerTemplate.receiveBody("seda:q4") should be(i)
-      }
-      producerTemplate.sendBody("seda:q3", 3)
-      expectMsg(Seq(1, 2, 3))
+      val result = Source(Seq(1, 2, 3)).send("seda:q3").take(3).runWith(Sink.seq[Int])
+      1 to 3 foreach { i => consumerTemplate.receiveBody("seda:q3") should be(i) }
+      result.await should be(Seq(1, 2, 3))
     }
   }
 
-  "A requestor" must {
+  "request" must {
     "request from an endpoint and continue with the response message" in {
-      Stream(1, 2, 3).request[Int]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq(2, 3, 4))
+      Source(Seq(1, 2, 3)).request("bean:service?method=plusOne").runWith(Sink.seq[Int]).await should be(Seq(2, 3, 4))
     }
     "convert response message types using a Camel type converter" in {
-      Stream("1", "2", "3").request[Int]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq(2, 3, 4))
+      Source(Seq(1, 2, 3)).request[String]("bean:service?method=plusOne").runWith(Sink.seq[String]).await should be(Seq("2", "3", "4"))
     }
     "complete with an error if the request fails" in {
-      intercept[Exception](Stream(-1, 2, 3).request[Int]("bean:service?method=plusOne").run.unsafeRun).getMessage should be("test")
+      intercept[Exception](Source(Seq(-1, 2, 3)).request("bean:service?method=plusOne").runWith(Sink.ignore).await).getMessage should be("test")
     }
   }
 }

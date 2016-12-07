@@ -1,3 +1,5 @@
 name := "streamz-camel"
 
-libraryDependencies += "org.apache.camel" % "camel-core" % Version.Camel
+libraryDependencies ++= Seq(
+  "org.apache.camel" % "camel-core"      % Version.Camel,
+  "com.novocode"     % "junit-interface" % Version.JUnitInterface % "test")

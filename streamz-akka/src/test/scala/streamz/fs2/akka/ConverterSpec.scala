@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package streamz.akka
+package streamz.fs2.akka
 
 import akka.Done
 import akka.actor.ActorSystem

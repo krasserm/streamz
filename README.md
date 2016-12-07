@@ -38,7 +38,7 @@ Stream converters
 Stream converters convert FS2 `Stream`s, `Pipe`s and `Sink`s to Akka Stream `Source`s, `Flow`s and `Sink`s, respectively, and vice versa. They are provided by the `streamz-akka` artifact and can be imported with 
 
 ```scala
-import streamz.akka._
+import streamz.fs2.akka._
 ```
 
 and require the following `implicit`s in scope:
@@ -138,7 +138,7 @@ assert(Await.result(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run(), 
 
 ### Backpressure, cancellation, completion and errors
 
-Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-akka/src/test/scala/streamz/akka/ConverterSpec.scala)).  
+Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-akka/src/test/scala/streamz/fs2/akka/ConverterSpec.scala)).  
 
 Apache Camel integration
 ------------------------
@@ -177,7 +177,7 @@ The following two subsections introduce the Camel DSL; a more realistic usage ex
 The Camel DSL for FS2 can be imported with:
 
 ```scala
-import streamz.camel.fs2dsl._
+import streamz.camel.fs2.dsl._
 ```
 
 #### Consuming from an endpoint
@@ -232,7 +232,7 @@ val s3b: Stream[Task, Int] = s2b.request[Int]("bean:service?method=weight")
 The Camel DSL for Akka Streams can be imported with:
 
 ```scala
-import streamz.camel.akkadsl._
+import streamz.camel.akka.scaladsl._
 ```
 
 #### Consuming from an endpoint
@@ -260,10 +260,10 @@ This is equivalent to `receive[String]("seda:q1").map(_.body)`.
 For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should be used:
 
 ```scala
-val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2")
+val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2”, parallelism = 3)
 ```
 
-This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. 
+This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. The optional `parallelism` parameter determines how many sends can be executed in parallel and defaults to 1. For values greater than 1 the message order is still preserved by `send`.
 
 The `send` combinator is not only available for sources of type `Source[StreamMessage[A], M]` but more generally for any source of type `Source[A, M]`:
 
@@ -271,13 +271,19 @@ The `send` combinator is not only available for sources of type `Source[StreamMe
 val s2b: Source[String, NotUsed] = s1b.send("seda:q2")
 ```
 
-If `A` is not a `StreamMessage`, `send` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped `A`. The `send` combinator is also available for flows of type `Flow[A, B, M]`, `SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]` and `SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]`. Instead of using the implicit `send` combinator, applications can also use the `akkadsl.send` graph stage 
+If `A` is not a `StreamMessage`, `send` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped `A`. The `send` combinator is also available for flows of type 
+
+- `Flow[A, B, M]`
+- `SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]` and 
+- `SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]`
+
+Instead of using the implicit `send` combinator, applications can also use the `scaladsl.send` graph stage 
 
 ```scala
-package object akkadsl {
+package object scaladsl {
   // ...
 
-  def send[I](uri: String, parallelism: Int)(implicit context: StreamContext): 
+  def send[I](uri: String, parallelism: Int = 1)(implicit context: StreamContext): 
     Graph[FlowShape[StreamMessage[I], StreamMessage[I]], NotUsed]
 
   // ...
@@ -288,20 +294,18 @@ together with the Akka Streams `via` combinator:
 
 
 ```scala
-val s2 = s1.via(send("seda:q2", parallelism = 3))
+val s2 = s1.via(send("seda:q2"))
 ```
-
-The `parallelism` parameter determines how many sends can be executed in parallel. It is required for the `akkadsl.send` graph stage but optional for the `send` combinator that uses a default value of 1. For values greater than 1 , the message order is still preserved by `send`.
 
 #### Requesting from an endpoint
 
 For requesting a reply from an endpoint to an input `StreamMessage`, the `request` combinator should be used:
 
 ```scala
-val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight")
+val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight”, parallelism = 3)
 ```
 
-This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter `[Int]` specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). 
+This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `receive` type parameter `[Int]` specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The optional `parallelism` parameter determines how many requests can be executed in parallel and defaults to 1. For values greater than 1 the message order is still preserved by `request`.
 
 The `request` combinator is not only available for sources of type `Source[StreamMessage[A], M]` but more generally for any source of type `Source[A, M]`:
 
@@ -309,13 +313,19 @@ The `request` combinator is not only available for sources of type `Source[Strea
 val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
 ```
 
-If `A` is not a `StreamMessage`, `request` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped message body `B` of the output `StreamMessage[B]`. The `request` combinator is also available for flows of type `Flow[A, B, M]`, `SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]` and `SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]`. Instead of using the implicit `request` combinator, applications can also use the `akkadsl.request` graph stage 
+If `A` is not a `StreamMessage`, `request` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped message body `B` of the output `StreamMessage[B]`. The `request` combinator is also available for flows of type 
+
+- `Flow[A, B, M]`
+- `SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]` and 
+- `SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]`
+
+Instead of using the implicit `request` combinator, applications can also use the `scaladsl.request` graph stage 
 
 ```scala
-package object akkadsl {
+package object scaladsl {
   // ...
 
-  def request[I, O](uri: String, parallelism: Int)(implicit context: StreamContext, tag: ClassTag[O]): 
+  def request[I, O](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[O]): 
     Graph[FlowShape[StreamMessage[I], StreamMessage[O]], NotUsed]
 
   // ...
@@ -327,10 +337,6 @@ together with the Akka Streams `via` combinator:
 ```scala
 val s3 = s2.via(request[String, Int]("bean:service?method=weight", parallelism = 3))
 ```
-
-The `parallelism` parameter determines how many requests can be executed in parallel. It is required for the `akkadsl.request` graph stage but optional for the `request` combinator that uses a default value of 1. For values greater than 1 , the message order is still preserved by `request`.
-
-A Java version of the Camel DSL for Akka Streams is coming soon.
 
 <a name="example-application">
 ### Example application
@@ -388,7 +394,7 @@ object CamelFs2Example extends ExampleContext with App {
   import fs2._
 
   // import Camel DSL for FS2
-  import streamz.camel.fs2dsl._
+  import streamz.camel.fs2.dsl._
 
   implicit val strategy: Strategy =
     Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global)
@@ -423,7 +429,7 @@ object CamelAkkaExample extends ExampleContext with App {
   import scala.collection.immutable.Iterable
 
   // import Camel DSL for Akka Streams
-  import streamz.camel.akkadsl._
+  import streamz.camel.akka.scaladsl._
 
   implicit val system = ActorSystem("example")
   implicit val materializer = ActorMaterializer()

@@ -47,11 +47,11 @@ trait ExampleContext {
     "stream:out"
 }
 
-object CamelFs2Example extends ExampleContext with App {
+object CamelFs2DslExample extends ExampleContext with App {
   import fs2._
 
   // import Camel DSL for FS2
-  import streamz.camel.fs2dsl._
+  import streamz.camel.fs2.dsl._
 
   implicit val strategy: Strategy =
     Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global)
@@ -74,7 +74,7 @@ object CamelFs2Example extends ExampleContext with App {
   stream.run.unsafeRun
 }
 
-object CamelAkkaExample extends ExampleContext with App {
+object CamelAkkaScalaDslExample extends ExampleContext with App {
   import akka.NotUsed
   import akka.actor.ActorSystem
   import akka.stream.ActorMaterializer
@@ -82,7 +82,7 @@ object CamelAkkaExample extends ExampleContext with App {
   import scala.collection.immutable.Iterable
 
   // import Camel DSL for Akka Streams
-  import streamz.camel.akkadsl._
+  import streamz.camel.akka.scaladsl._
 
   implicit val system = ActorSystem("example")
   implicit val materializer = ActorMaterializer()

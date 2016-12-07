@@ -16,6 +16,9 @@
 
 package streamz.camel
 
+import java.util.{ Map => JMap }
+import java.util.Optional
+
 import org.apache.camel.impl.DefaultMessage
 import org.apache.camel.{ TypeConversionException, Message }
 
@@ -54,6 +57,54 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
    */
   def headerOptionAs[B](name: String)(implicit streamContext: StreamContext, tag: ClassTag[B]): Option[B] =
     headers.get(name).map(streamContext.convertObject[B])
+
+  /**
+   * Java API.
+   *
+   * Returns the message body.
+   */
+  def getBody: A =
+    body
+
+  /**
+   * Java API.
+   *
+   * Returns the message headers.
+   */
+  def getHeaders: JMap[String, Any] =
+    headers.asJava
+
+  /**
+   * Java API.
+   *
+   * Returns the `body` converted to type `B` using a Camel type converter.
+   *
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def getBodyAs[B](streamContext: StreamContext, clazz: Class[B]): B =
+    bodyAs(streamContext, ClassTag(clazz))
+
+  /**
+   * Java API.
+   *
+   * Returns the `name` header value converted to type `B` using a Camel type converter.
+   *
+   * @throws NoSuchElementException if the `name` header does not exist.
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def getHeaderAs[B](name: String, streamContext: StreamContext, clazz: Class[B]): B =
+    headerAs(name)(streamContext, ClassTag(clazz))
+
+  /**
+   * Java API.
+   *
+   * Returns the `name` header value converted to type `B` using a Camel type converter
+   * if the `name` header is defined.
+   *
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def getHeaderOptionAs[B](name: String, streamContext: StreamContext, clazz: Class[B]): Optional[B] =
+    Optional.ofNullable(headerOptionAs(name)(streamContext, ClassTag(clazz)).getOrElse(null.asInstanceOf[B]))
 
   private[camel] def camelMessage: Message = {
     val result = new DefaultMessage

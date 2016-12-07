@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package streamz.akka
+package streamz.fs2.akka
 
 import akka.actor.Props
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage._
 
-import streamz.akka.Converter.Callback
+import streamz.fs2.akka.Converter.Callback
 
 private[akka] object AkkaStreamPublisher {
   case class Next[A](elem: A, cb: Callback[Option[Unit]])
