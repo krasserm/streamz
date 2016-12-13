@@ -107,10 +107,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="streamz">streamz</a></dd></dl></div>
-    </li><li name="streamz.camel.akkadsl" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="akkadsl"></a><a id="akkadsl:akkadsl"></a>
+    </li><li name="streamz.camel.akka" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="akka"></a><a id="akka:akka"></a>
       <span class="permalink">
-      <a href="../../streamz/camel/index.html#akkadsl" title="Permalink">
+      <a href="../../streamz/camel/index.html#akka" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -119,16 +119,16 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="akkadsl/index.html">
-              <span class="name">akkadsl</span>
+        <a title="" href="akka/index.html">
+              <span class="name">akka</span>
             </a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="streamz.camel">camel</a></dd></dl></div>
-    </li><li name="streamz.camel.fs2dsl" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="fs2dsl"></a><a id="fs2dsl:fs2dsl"></a>
+    </li><li name="streamz.camel.fs2" visbl="pub" class="indented3 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fs2"></a><a id="fs2:fs2"></a>
       <span class="permalink">
-      <a href="../../streamz/camel/index.html#fs2dsl" title="Permalink">
+      <a href="../../streamz/camel/index.html#fs2" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -137,8 +137,8 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="fs2dsl/index.html">
-              <span class="name">fs2dsl</span>
+        <a title="" href="fs2/index.html">
+              <span class="name">fs2</span>
             </a>
       </span>
       
@@ -151,8 +151,8 @@
                         </a>
                       </li><li class="current-entities indented2">
                         <a class="object" href="StreamContext$.html" title=""></a>
-                        <a class="class" href="StreamContext.html" title="A stream context required by the akkadsl and fs2dsl stream DSL elements."></a>
-                        <a href="StreamContext.html" title="A stream context required by the akkadsl and fs2dsl stream DSL elements.">
+                        <a class="class" href="StreamContext.html" title="A stream context required by the Camel DSL elements for FS2 and Akka Streams."></a>
+                        <a href="StreamContext.html" title="A stream context required by the Camel DSL elements for FS2 and Akka Streams.">
                           StreamContext
                         </a>
                       </li><li class="current-entities indented2">
@@ -389,6 +389,23 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
       <p class="shortcomment cmt">A Camel consumer template created from <code>camelContext</code>.</p><div class="fullcomment"><div class="comment cmt"><p>A Camel consumer template created from <code>camelContext</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="streamz.camel.StreamContext#convertObject" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="convertObject[A](obj:Any,clazz:Class[A]):A"></a><a id="convertObject[A](Any,Class[A]):A"></a>
+      <span class="permalink">
+      <a href="../../streamz/camel/DefaultStreamContext.html#convertObject[A](obj:Any,clazz:Class[A]):A" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">convertObject</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="obj">obj: <span class="extype" name="scala.Any">Any</span></span>, <span name="clazz">clazz: <span class="extype" name="scala.Predef.Class">Class</span>[<span class="extype" name="streamz.camel.StreamContext.convertObject.A">A</span>]</span>)</span><span class="result">: <span class="extype" name="streamz.camel.StreamContext.convertObject.A">A</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Java API.</p><div class="fullcomment"><div class="comment cmt"><p>Java API.</p><p>Converts <code>obj</code> to <code>clazz</code> using a Camel type converter.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd><dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+    </li><li name="streamz.camel.StreamContext#convertObject" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="convertObject[A](obj:Any)(implicitclassTag:scala.reflect.ClassTag[A]):A"></a><a id="convertObject[A](Any)(ClassTag[A]):A"></a>
       <span class="permalink">
       <a href="../../streamz/camel/DefaultStreamContext.html#convertObject[A](obj:Any)(implicitclassTag:scala.reflect.ClassTag[A]):A" title="Permalink">
@@ -607,9 +624,9 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
       <p class="shortcomment cmt">Starts this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Starts this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="streamz.camel.DefaultStreamContext">DefaultStreamContext</a> → <a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="streamz.camel.DefaultStreamContext#stop" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="stop():streamz.camel.DefaultStreamContext"></a><a id="stop():DefaultStreamContext"></a>
+      <a id="stop():Unit"></a>
       <span class="permalink">
-      <a href="../../streamz/camel/DefaultStreamContext.html#stop():streamz.camel.DefaultStreamContext" title="Permalink">
+      <a href="../../streamz/camel/DefaultStreamContext.html#stop():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -618,10 +635,10 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">stop</span><span class="params">()</span><span class="result">: <a href="" class="extype" name="streamz.camel.DefaultStreamContext">DefaultStreamContext</a></span>
+        <span class="name">stop</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       
-      <p class="shortcomment cmt">Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.
+      <p class="shortcomment cmt">Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="streamz.camel.DefaultStreamContext">DefaultStreamContext</a> → <a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>

@@ -247,6 +247,24 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
       <p class="shortcomment cmt">A Camel consumer template created from <code>camelContext</code>.</p><div class="fullcomment"><div class="comment cmt"><p>A Camel consumer template created from <code>camelContext</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="streamz.camel.StreamContext#convertObject" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="convertObject[A](obj:Any,clazz:Class[A]):A"></a>
+      <a id="convertObject[A](Any,Class[A]):A"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">convertObject</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="obj">obj: <span class="extype" name="scala.Any">Any</span></span>, <span name="clazz">clazz: <span class="extype" name="scala.Predef.Class">Class</span>[<span class="extype" name="streamz.camel.StreamContext.convertObject.A">A</span>]</span>)</span><span class="result">: <span class="extype" name="streamz.camel.StreamContext.convertObject.A">A</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#streamz.camel.DefaultStreamContext@convertObject[A](obj:Any,clazz:Class[A]):A" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Java API.</p><div class="fullcomment"><div class="comment cmt"><p>Java API.</p><p>Converts <code>obj</code> to <code>clazz</code> using a Camel type converter.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd><dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+    </li><li name="streamz.camel.StreamContext#convertObject" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="convertObject[A](obj:Any)(implicitclassTag:scala.reflect.ClassTag[A]):A"></a>
       <a id="convertObject[A](Any)(ClassTag[A]):A"></a>
       <h4 class="signature">
@@ -478,22 +496,22 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
       <p class="shortcomment cmt">Starts this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Starts this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="streamz.camel.DefaultStreamContext">DefaultStreamContext</a> → <a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="streamz.camel.DefaultStreamContext#stop" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="stop():streamz.camel.DefaultStreamContext"></a>
-      <a id="stop():DefaultStreamContext"></a>
+      <a id="stop():Unit"></a>
+      <a id="stop():Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">stop</span><span class="params">()</span><span class="result">: <a href="" class="extype" name="streamz.camel.DefaultStreamContext">DefaultStreamContext</a></span>
+        <span class="name">stop</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.camel.DefaultStreamContext@stop():streamz.camel.DefaultStreamContext" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.camel.DefaultStreamContext@stop():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span> and returns <code>this</code>.
+      <p class="shortcomment cmt">Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Stops this <code>StreamContext</code> including the internally managed <span class="extype" name="DefaultCamelContext">DefaultCamelContext</span>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="streamz.camel.DefaultStreamContext">DefaultStreamContext</a> → <a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
