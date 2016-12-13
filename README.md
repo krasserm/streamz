@@ -12,6 +12,14 @@ Streamz is a combinator library for integrating [Functional Streams for Scala](h
 
 ![Streamz intro](images/streamz-intro.png)
 
+Documentation
+-------------
+
+- [Camel DSL for Akka Streams](streamz-camel-akka/README.md)
+- [Camel DSL for FS2](streamz-camel-fs2/README.md)
+- [Stream converters](streamz-converter/README.md)
+- [Example application](streamz-examples/README.md)
+
 API docs
 --------
 
@@ -33,14 +41,6 @@ Streamz artifacts are available for Scala 2.11 and 2.12:
 
     // transitively depends on akka-stream 2.4.14
     libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.7"
-
-Documentation
--------------
-
-- [Camel DSL for Akka Streams](streamz-camel-akka/README.md)
-- [Camel DSL for FS2](streamz-camel-fs2/README.md)
-- [Stream converters](streamz-converter/README.md)
-- [Example application](streamz-examples/README.md)
 
 External examples
 -----------------
