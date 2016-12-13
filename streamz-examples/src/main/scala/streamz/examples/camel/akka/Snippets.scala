@@ -44,12 +44,15 @@ object Snippets extends App {
   val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2", parallelism = 3)
   val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight", parallelism = 3)
 
-  val s2v = s1.via(send("seda:q2"))
-  val s3v = s2.via(request[String, Int]("bean:service?method=weight"))
+  val s2v: Source[StreamMessage[String], NotUsed] = s1.via(send("seda:q2"))
+  val s3v: Source[StreamMessage[Int], NotUsed] = s2.via(request[String, Int]("bean:service?method=weight"))
 
   val s1b: Source[String, NotUsed] = receiveBody[String]("seda:q1")
   val s2b: Source[String, NotUsed] = s1b.send("seda:q2")
   val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
+
+  val s2bv: Source[String, NotUsed] = s1b.via(sendBody("seda:q2"))
+  val s3bv: Source[Int, NotUsed] = s2b.via(requestBody[String, Int]("bean:service?method=weight"))
 
   val f1: Flow[String, StreamMessage[String], NotUsed] = ???
   val f2: Flow[String, StreamMessage[String], NotUsed] = f1.send("seda:q2")

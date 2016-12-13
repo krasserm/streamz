@@ -26,7 +26,7 @@ import streamz.examples.camel.ExampleContext
 
 import scala.collection.immutable.Iterable
 
-class Example extends ExampleContext {
+object Example extends ExampleContext with App {
   implicit val system = ActorSystem("example")
   implicit val materializer = ActorMaterializer()
 

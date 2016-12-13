@@ -28,22 +28,22 @@ public interface JavaDsl {
     StreamContext streamContext();
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.receive scaladsl.receive} */
-    default <O> Source<StreamMessage<O>, NotUsed> receive(String uri, Class<O> clazz) {
+    default <A> Source<StreamMessage<A>, NotUsed> receive(String uri, Class<A> clazz) {
         return new JavaDslDef(streamContext()).receive(uri, clazz);
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.receiveBody scaladsl.receiveBody} */
-    default <O> Source<O, NotUsed> receiveBody(String uri, Class<O> clazz) {
+    default <A> Source<A, NotUsed> receiveBody(String uri, Class<A> clazz) {
         return new JavaDslDef(streamContext()).receiveBody(uri, clazz);
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.send scaladsl.send} */
-    default <I> Graph<FlowShape<StreamMessage<I>, StreamMessage<I>>, NotUsed> send(String uri, int parallelism) {
+    default <A> Graph<FlowShape<StreamMessage<A>, StreamMessage<A>>, NotUsed> send(String uri, int parallelism) {
         return new JavaDslDef(streamContext()).send(uri, parallelism);
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.send scaladsl.send} */
-    default <I> Graph<FlowShape<StreamMessage<I>, StreamMessage<I>>, NotUsed> send(String uri) {
+    default <A> Graph<FlowShape<StreamMessage<A>, StreamMessage<A>>, NotUsed> send(String uri) {
         return send(uri, 1);
     }
 
@@ -53,27 +53,27 @@ public interface JavaDsl {
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.sendBody scaladsl.sendBody} */
-    default <I> Graph<FlowShape<I, I>, NotUsed> sendBody(String uri) {
+    default <A> Graph<FlowShape<A, A>, NotUsed> sendBody(String uri) {
         return sendBody(uri, 1);
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.request scaladsl.request} */
-    default <I, O> Graph<FlowShape<StreamMessage<I>, StreamMessage<O>>, NotUsed> request(String uri, int parallelism, Class<O> clazz) {
+    default <A, B> Graph<FlowShape<StreamMessage<A>, StreamMessage<B>>, NotUsed> request(String uri, int parallelism, Class<B> clazz) {
         return new JavaDslDef(streamContext()).request(uri, parallelism, clazz);
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.request scaladsl.request} */
-    default <I, O> Graph<FlowShape<StreamMessage<I>, StreamMessage<O>>, NotUsed> request(String uri, Class<O> clazz) {
+    default <A, B> Graph<FlowShape<StreamMessage<A>, StreamMessage<B>>, NotUsed> request(String uri, Class<B> clazz) {
         return request(uri, 1, clazz);
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.requestBody scaladsl.requestBody} */
-    default <I, O> Graph<FlowShape<I, O>, NotUsed> requestBody(String uri, int parallelism, Class<O> clazz) {
+    default <A, B> Graph<FlowShape<A, B>, NotUsed> requestBody(String uri, int parallelism, Class<B> clazz) {
         return new JavaDslDef(streamContext()).requestBody(uri, parallelism, clazz);
     }
 
     /** Delegates to {@link streamz.camel.akka.scaladsl.requestBody scaladsl.requestBody} */
-    default <I, O> Graph<FlowShape<I, O>, NotUsed> requestBody(String uri, Class<O> clazz) {
+    default <A, B> Graph<FlowShape<A, B>, NotUsed> requestBody(String uri, Class<B> clazz) {
         return requestBody(uri, 1 , clazz);
     }
 }

@@ -21,7 +21,7 @@ import fs2.{ Strategy, Stream, Task, text }
 import streamz.camel.fs2.dsl._
 import streamz.examples.camel.ExampleContext
 
-class Example extends ExampleContext {
+object Example extends ExampleContext with App {
   implicit val strategy: Strategy =
     Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global)
 

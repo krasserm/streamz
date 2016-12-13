@@ -27,9 +27,9 @@ implicit val materializer: ActorMaterializer = ActorMaterializer()(factory)
 
 |From                        |With         |To                 |
 |----------------------------|-------------|-------------------|
-|`Graph[SourceShape[O], M]`  |`toStream()` |`Stream[Task, O]`  |
-|`Graph[SinkShape[I], M]`    |`toSink()`   |`Sink[Task, I]`    |
-|`Graph[FlowShape[I, O], M]` |`toPipe()`   |`Pipe[Task, I, O]` |
+|`Graph[SourceShape[A], M]`  |`toStream()` |`Stream[Task, A]`  |
+|`Graph[SinkShape[A], M]`    |`toSink()`   |`Sink[Task, A]`    |
+|`Graph[FlowShape[A, B], M]` |`toPipe()`   |`Pipe[Task, A, B]` |
 
 **Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/converter/Example.scala)):
 
@@ -67,9 +67,9 @@ assert(fStream1.through(fPipe1).runLog.unsafeRun() == numbers.flatMap(f))
 
 |From               |With         |To                                  |
 |-------------------|-------------|------------------------------------|
-|`Stream[F[_], O]`  |`toSource()` |`Graph[SourceShape[O], NotUsed]`    |
-|`Sink[F[_], I]`    |`toSink()`   |`Graph[SinkShape[I], Future[Done]]` |
-|`Pipe[F[_], I, O]` |`toFlow()`   |`Graph[FlowShape[I, O], NotUsed]`   |
+|`Stream[F[_], A]`  |`toSource()` |`Graph[SourceShape[A], NotUsed]`    |
+|`Sink[F[_], A]`    |`toSink()`   |`Graph[SinkShape[A], Future[Done]]` |
+|`Pipe[F[_], A, B]` |`toFlow()`   |`Graph[FlowShape[A, B], NotUsed]`   |
 
 **Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/akka/Example.scala)):
 

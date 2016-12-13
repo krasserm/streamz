@@ -26,21 +26,21 @@ import streamz.camel.akka.scaladsl
 import scala.reflect.ClassTag
 
 private class JavaDslDef(streamContext: StreamContext) {
-  def receive[O](uri: String, clazz: Class[O]): Source[StreamMessage[O], NotUsed] =
+  def receive[A](uri: String, clazz: Class[A]): Source[StreamMessage[A], NotUsed] =
     Source.fromGraph(scaladsl.receive(uri)(streamContext, ClassTag(clazz)))
 
-  def send[I](uri: String, parallelism: Int): Graph[FlowShape[StreamMessage[I], StreamMessage[I]], NotUsed] =
-    scaladsl.send[I](uri, parallelism)(streamContext)
-
-  def request[I, O](uri: String, parallelism: Int, clazz: Class[O]): Graph[FlowShape[StreamMessage[I], StreamMessage[O]], NotUsed] =
-    scaladsl.request[I, O](uri, parallelism)(streamContext, ClassTag(clazz))
-
-  def receiveBody[O](uri: String, clazz: Class[O]): Source[O, NotUsed] =
+  def receiveBody[A](uri: String, clazz: Class[A]): Source[A, NotUsed] =
     Source.fromGraph(scaladsl.receiveBody(uri)(streamContext, ClassTag(clazz)))
 
-  def sendBody[I](uri: String, parallelism: Int): Graph[FlowShape[I, I], NotUsed] =
-    scaladsl.sendBody[I](uri, parallelism)(streamContext)
+  def send[A](uri: String, parallelism: Int): Graph[FlowShape[StreamMessage[A], StreamMessage[A]], NotUsed] =
+    scaladsl.send[A](uri, parallelism)(streamContext)
 
-  def requestBody[I, O](uri: String, parallelism: Int, clazz: Class[O]): Graph[FlowShape[I, O], NotUsed] =
-    scaladsl.requestBody[I, O](uri, parallelism)(streamContext, ClassTag(clazz))
+  def sendBody[A](uri: String, parallelism: Int): Graph[FlowShape[A, A], NotUsed] =
+    scaladsl.sendBody[A](uri, parallelism)(streamContext)
+
+  def request[A, B](uri: String, parallelism: Int, clazz: Class[B]): Graph[FlowShape[StreamMessage[A], StreamMessage[B]], NotUsed] =
+    scaladsl.request[A, B](uri, parallelism)(streamContext, ClassTag(clazz))
+
+  def requestBody[A, B](uri: String, parallelism: Int, clazz: Class[B]): Graph[FlowShape[A, B], NotUsed] =
+    scaladsl.requestBody[A, B](uri, parallelism)(streamContext, ClassTag(clazz))
 }

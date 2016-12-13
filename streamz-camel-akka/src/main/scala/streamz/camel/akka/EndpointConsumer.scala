@@ -30,11 +30,11 @@ private[akka] object EndpointConsumer {
   case class ConsumeSuccess(m: Any)
   case class ConsumeFailure(t: Throwable)
 
-  def props[O](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[O]): Props =
-    Props(new EndpointConsumer[O](uri))
+  def props[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]): Props =
+    Props(new EndpointConsumer[A](uri))
 }
 
-private[akka] class EndpointConsumer[O](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[O]) extends ActorPublisher[StreamMessage[O]] {
+private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]) extends ActorPublisher[StreamMessage[A]] {
   import EndpointConsumer._
 
   def waiting: Receive = {
@@ -45,7 +45,7 @@ private[akka] class EndpointConsumer[O](uri: String)(implicit streamContext: Str
 
   def consuming: Receive = {
     case ConsumeSuccess(m) =>
-      onNext(m.asInstanceOf[StreamMessage[O]])
+      onNext(m.asInstanceOf[StreamMessage[A]])
       if (!isCanceled && totalDemand > 0) consume() else context.become(waiting)
     case ConsumeTimeout =>
       if (!isCanceled) consume()
@@ -55,7 +55,7 @@ private[akka] class EndpointConsumer[O](uri: String)(implicit streamContext: Str
 
   def receive = waiting
 
-  private def consume[O]()(implicit tag: ClassTag[O]): Unit = {
+  private def consume()(implicit tag: ClassTag[A]): Unit = {
     import streamContext._
     Try(consumerTemplate.receive(uri, 500)) match {
       case Success(null) =>
@@ -64,7 +64,7 @@ private[akka] class EndpointConsumer[O](uri: String)(implicit streamContext: Str
         self ! ConsumeFailure(ce.getException)
         consumerTemplate.doneUoW(ce)
       case Success(ce) =>
-        Try(StreamMessage.from[O](ce.getIn)) match {
+        Try(StreamMessage.from[A](ce.getIn)) match {
           case Success(m) => self ! ConsumeSuccess(m)
           case Failure(e) => self ! ConsumeFailure(e)
         }

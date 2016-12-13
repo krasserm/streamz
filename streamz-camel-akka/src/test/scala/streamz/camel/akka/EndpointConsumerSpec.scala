@@ -33,7 +33,7 @@ import streamz.camel.akka.EndpointConsumer.ConsumeSuccess
 import scala.reflect.ClassTag
 
 object EndpointConsumerSpec {
-  class TestEndpointConsumer[O](uri: String, probe: ActorRef)(implicit streamContext: StreamContext, tag: ClassTag[O]) extends EndpointConsumer[O](uri) {
+  class TestEndpointConsumer[A](uri: String, probe: ActorRef)(implicit streamContext: StreamContext, tag: ClassTag[A]) extends EndpointConsumer[A](uri) {
     override def waiting: Receive = {
       case r: Request =>
         probe ! r

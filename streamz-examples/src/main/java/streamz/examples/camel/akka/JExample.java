@@ -21,48 +21,19 @@ import akka.actor.ActorSystem;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
-import streamz.camel.StreamContext;
-import streamz.camel.akka.javadsl.JavaDsl;
 
 import static java.util.Arrays.asList;
 
-public class JExample implements JavaDsl {
+public class JExample extends JExampleContext {
     private ActorMaterializer actorMaterializer;
-    private StreamContext streamContext;
 
     public JExample() throws Exception {
+        super();
         ActorSystem actorSystem = ActorSystem.create("example");
-        SimpleRegistry camelRegistry = new SimpleRegistry();
-        DefaultCamelContext camelContext = new DefaultCamelContext();
-
-        camelRegistry.put("exampleService", new JExampleService());
-        camelContext.setRegistry(camelRegistry);
-        camelContext.start();
-
         actorMaterializer = ActorMaterializer.create(actorSystem);
-        streamContext = StreamContext.create(camelContext);
-    }
-
-    @Override
-    public StreamContext streamContext() {
-        return streamContext;
     }
 
     public Runnable setup() {
-        String tcpEndpointUri =
-                "netty4:tcp://localhost:5150?sync=false&textline=true&encoding=utf-8";
-
-        String fileEndpointUri =
-                "file:input?charset=utf-8";
-
-        String serviceEndpointUri =
-                "bean:exampleService?method=linePrefix";
-
-        String printerEndpointUri =
-                "stream:out";
-
         Source<String, NotUsed> tcpLineSource =
                 receiveBody(tcpEndpointUri, String.class);
 
@@ -78,12 +49,7 @@ public class JExample implements JavaDsl {
                         .zipWith(linePrefixSource, (l, n) -> n.concat(l))
                         .via(sendBody(printerEndpointUri));
 
-        return new Runnable() {
-            @Override
-            public void run() {
-                stream.runWith(Sink.ignore(), actorMaterializer);
-            }
-        };
+        return () -> { stream.runWith(Sink.ignore(), actorMaterializer); };
     }
 
     public static void main(String... args) throws Exception {
