@@ -1,7 +1,7 @@
 Camel DSL for Akka Streams
 --------------------------
 
-[Apache Camel endpoints](http://camel.apache.org/components.html) can be integrated into [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) applications with a [Scala DSL](#scala-dsl) or [Java DSL]((#java-dsl)) that is provided by the `streamz-camel-akka` artifact.
+[Apache Camel endpoints](http://camel.apache.org/components.html) can be integrated into [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) applications with a [Scala DSL](#scala-dsl) or [Java DSL](#java-dsl) that is provided by the `streamz-camel-akka` artifact.
 
 <a name="scala-dsl">
 ### Scala DSL
