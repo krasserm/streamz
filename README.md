@@ -33,13 +33,10 @@ Streamz artifacts are available for Scala 2.11 and 2.12:
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    // transitively depends on Apache Camel 2.18.0
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.7"
 
-    // transitively depends on Apache Camel 2.18.0
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.7"
 
-    // transitively depends on akka-stream 2.4.14
     libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.7"
 
 External examples
