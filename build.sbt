@@ -23,14 +23,7 @@ scalaVersion in ThisBuild := "2.12.0"
 
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
 
-libraryDependencies in ThisBuild ++= Seq(
-  "co.fs2"            %% "fs2-core"            % Version.Fs2,
-  "com.typesafe.akka" %% "akka-actor"          % Version.Akka,
-  "com.typesafe.akka" %% "akka-stream"         % Version.Akka,
-  "com.typesafe.akka" %% "akka-stream-testkit" % Version.Akka      % "test",
-  "com.typesafe.akka" %% "akka-testkit"        % Version.Akka      % "test",
-  "org.scalatest"     %% "scalatest"           % Version.Scalatest % "test"
-)
+libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Scalatest % "test"
 
 // ---------------------------------------------------------------------------
 //  Code formatter settings
@@ -59,19 +52,29 @@ lazy val headerSettings = Seq(headers := Map(
 // ---------------------------------------------------------------------------
 
 lazy val root = project.in(file("."))
-  .aggregate(akka, camel, examples)
+  .aggregate(camelContext, camelAkka, camelFs2, converter, examples)
   .settings(unidocSettings: _*)
   .settings(unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(examples))
 
-lazy val akka = project.in(file("streamz-akka"))
+lazy val camelContext = project.in(file("streamz-camel-context"))
   .enablePlugins(AutomateHeaderPlugin)
   .settings(headerSettings)
 
-lazy val camel = project.in(file("streamz-camel"))
+lazy val camelAkka = project.in(file("streamz-camel-akka"))
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(headerSettings)
+  .dependsOn(camelContext)
+
+lazy val camelFs2 = project.in(file("streamz-camel-fs2"))
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(headerSettings)
+  .dependsOn(camelContext)
+
+lazy val converter = project.in(file("streamz-converter"))
   .enablePlugins(AutomateHeaderPlugin)
   .settings(headerSettings)
 
 lazy val examples = project.in(file("streamz-examples"))
   .enablePlugins(AutomateHeaderPlugin)
   .settings(headerSettings)
-  .dependsOn(akka, camel)
+  .dependsOn(camelAkka, camelFs2, converter)
