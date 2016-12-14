@@ -12,7 +12,7 @@ The Scala DSL can be imported with:
 import streamz.camel.akka.scaladsl._
 ```
 
-Its usage requires an implicit [`StreamContext`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext.html) in scope. A `StreamContext` uses a `CamelContext` to manage the endpoints that are created and referenced by applications. A `StreamContext` with an internally managed `CamelContext` can be created with `StreamContext()`:
+Its usage requires an implicit [`StreamContext`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext.html) in scope. A `StreamContext` uses a `CamelContext` to manage the endpoints that are created and referenced by an application. A `StreamContext` with an internally managed `CamelContext` can be created with `StreamContext()`:
 
 ```scala
 import streamz.camel.StreamContext
@@ -150,7 +150,7 @@ val s3b: Source[Int, NotUsed] = s2b.via(requestBody[String, Int]("bean:service?m
 <a name="java-dsl">
 ### Java DSL
 
-A class inherits the Java DSL by implementing the `JavaDsl` interface: 
+The Java DSL can be accessed by implementing the `JavaDsl` interface:
 
 ```java
 import streamz.camel.StreamContext;
@@ -172,7 +172,7 @@ public class Example implements JavaDsl {
 }
 ```
 
-It must implement the `streamContext` method and return the [`StreamContext`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext.html) used by an application. A `StreamContext` uses a `CamelContext` to manage the endpoints that are created and referenced by applications. A `StreamContext` with an internally managed `CamelContext` can be created with `StreamContext.create()`:
+An implementation class must implement the `streamContext` method and return the [`StreamContext`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext.html) that is used by an application. A `StreamContext` uses a `CamelContext` to manage the endpoints that are created and referenced by an application. A `StreamContext` instance can (and usually should) be shared by several `JavaDsl` instances. A `StreamContext` with an internally managed `CamelContext` can be created with `StreamContext.create()`:
 
 ```java
 // contains an internally managed CamelContext 
