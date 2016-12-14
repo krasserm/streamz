@@ -71,7 +71,7 @@ assert(fStream1.through(fPipe1).runLog.unsafeRun() == numbers.flatMap(f))
 |`Sink[F[_], A]`    |`toSink()`   |`Graph[SinkShape[A], Future[Done]]` |
 |`Pipe[F[_], A, B]` |`toFlow()`   |`Graph[FlowShape[A, B], NotUsed]`   |
 
-**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/akka/Example.scala)):
+**Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/converter/Example.scala)):
 
 ```scala
 import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, Keep }
@@ -104,5 +104,5 @@ assert(Await.result(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run(), 
 
 ### Backpressure, cancellation, completion and errors
 
-Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-akka/src/test/scala/streamz/converter/ConverterSpec.scala)).  
+Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-converter/src/test/scala/streamz/converter/ConverterSpec.scala)).  
 
