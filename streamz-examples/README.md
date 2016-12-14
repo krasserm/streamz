@@ -12,7 +12,13 @@ The example application consumes file content line by line, either from a TCP en
 - The line prefixes are then concatenated with the actual lines in a *ZipWith* step.
 - Finally, the concatenation results are sent to `stream:out`, a [Stream endpoint](http://camel.apache.org/stream.html) that writes messages to `stdout`.
 
-The following subsections show implementations of the example application with the [Camel Java DSL for Akka Streams](#example-akka-java), the [Camel Scala DSL for Akka Streams](#example-akka-scala) and the [Camel DSL for FS2](#example-fs2). They all closely match the above diagram. The source code is available in the [streamz-examples](https://github.com/krasserm/streamz/tree/master/streamz-examples) module. 
+The following subsections show implementations of the example application with
+
+- the [Camel Java DSL for Akka Streams](#example-akka-java)
+- the [Camel Scala DSL for Akka Streams](#example-akka-scala) and 
+- the [Camel DSL for FS2](#example-fs2)
+
+The source code is available in the [streamz-examples](https://github.com/krasserm/streamz/tree/master/streamz-examples) module. Section [Example application usage](#example-usage) shows how to run and use the example application.
 
 <a name="example-akka-java">
 ### Camel Java DSL for Akka Streams
@@ -204,9 +210,16 @@ object Example extends ExampleContext with App {
 }
 ```
 
+<a name="example-usage">
 ### Example application usage
 
-Depending on the implementation, the example application can be started with one of:
+For running the example application you first need to checkout the project: 
+
+```
+$ git clone https://github.com/krasserm/streamz.git
+```
+
+From the project’s root directory, the example application can be started with one of the following commands (depending on the implementation):
 
 ```
 $ sbt 'examples/runMain streamz.examples.camel.akka.JExample'
@@ -214,7 +227,7 @@ $ sbt 'examples/runMain streamz.examples.camel.akka.Example'
 $ sbt 'examples/runMain streamz.examples.camel.fs2.Example'
 ```
 
-Before submitting data to the application, let’s create an input file with two lines:
+Before submitting data to the application, create an input file with two lines:
 
 ```
 $ cat >> example.txt
