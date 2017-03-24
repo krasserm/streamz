@@ -20,7 +20,7 @@ The following subsections show implementations of the example application with
 
 The source code is available in the [streamz-examples](https://github.com/krasserm/streamz/tree/master/streamz-examples) module. Section [Example application usage](#example-usage) shows how to run and use the example application.
 
-<a name="example-akka-java">
+<a name="example-akka-java"></a>
 ### Camel Java DSL for Akka Streams
 
 ```java
@@ -108,7 +108,7 @@ public class JExample extends JExampleContext {
 }
 ```
 
-<a name="example-akka-scala">
+<a name="example-akka-scala"></a>
 ### Camel Scala DSL for Akka Streams
 
 ```scala
@@ -176,7 +176,7 @@ object Example extends ExampleContext with App {
 }
 ```
 
-<a name="example-fs2">
+<a name="example-fs2"></a>
 ### Camel DSL for FS2
 
 Here, we re-use `ExampleService` and `ExampleContent` from the previous section.
@@ -210,7 +210,7 @@ object Example extends ExampleContext with App {
 }
 ```
 
-<a name="example-usage">
+<a name="example-usage"></a>
 ### Example application usage
 
 For running the example application you first need to checkout the project: 

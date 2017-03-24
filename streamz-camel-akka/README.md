@@ -1,9 +1,17 @@
 Camel DSL for Akka Streams
 --------------------------
 
-[Apache Camel endpoints](http://camel.apache.org/components.html) can be integrated into [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) applications with a [Scala DSL](#scala-dsl) or [Java DSL](#java-dsl) that is provided by the `streamz-camel-akka` artifact.
+[Apache Camel endpoints](http://camel.apache.org/components.html) can be integrated into [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html) applications with a [Scala DSL](#scala-dsl) or [Java DSL](#java-dsl).
 
-<a name="scala-dsl">
+### Dependencies
+
+The DSL is provided by the `streamz-camel-akka` artifact which is available for Scala 2.11 and 2.12:
+
+    resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.7"
+
+<a name="scala-dsl"></a>
 ### Scala DSL
 
 The Scala DSL can be imported with:
@@ -147,7 +155,7 @@ val s3: Source[StreamMessage[Int], NotUsed] = s2.via(request[String, Int]("bean:
 val s3b: Source[Int, NotUsed] = s2b.via(requestBody[String, Int]("bean:service?method=weight"))
 ```
 
-<a name="java-dsl">
+<a name="java-dsl"></a>
 ### Java DSL
 
 The Java DSL can be accessed by implementing the `JavaDsl` interface:
