@@ -17,9 +17,9 @@ organization in ThisBuild := "com.github.krasserm"
 
 version in ThisBuild := "0.8-SNAPSHOT"
 
-crossScalaVersions in ThisBuild := Seq("2.11.8", "2.12.0")
+crossScalaVersions in ThisBuild := Seq("2.11.11", "2.12.2")
 
-scalaVersion in ThisBuild := "2.12.0"
+scalaVersion in ThisBuild := "2.12.2"
 
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
 
