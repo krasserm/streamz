@@ -1,5 +1,5 @@
 object Version {
-  val Akka = "2.5.1"
+  val Akka = "2.4.18"
   val Camel = "2.19.0"
   val Fs2 = "0.9.5"
   val Log4j = "2.5"
