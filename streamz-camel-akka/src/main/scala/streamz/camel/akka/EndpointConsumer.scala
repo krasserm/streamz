@@ -19,7 +19,7 @@ package streamz.camel.akka
 import akka.actor.Props
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.Request
-
+import org.apache.camel.ExchangePattern
 import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.reflect.ClassTag
@@ -60,7 +60,9 @@ private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: Str
     Try(consumerTemplate.receive(uri, 500)) match {
       case Success(null) =>
         self ! ConsumeTimeout
-      case Success(ce) if ce.getException != null =>
+      case Success(ce) if ce.getPattern != ExchangePattern.InOnly =>
+        self ! ConsumeFailure(new IllegalArgumentException(s"Exchange pattern ${ExchangePattern.InOnly} expected but was ${ce.getPattern}"))
+      case Success(ce) if ce.getException ne null =>
         self ! ConsumeFailure(ce.getException)
         consumerTemplate.doneUoW(ce)
       case Success(ce) =>

@@ -35,30 +35,41 @@ object Snippets extends App {
       // in-only message exchange with endpoint and continue stream with in-message
       .send("seda:q2")
       // in-out message exchange with endpoint and continue stream with out-message
-      .request[Int]("bean:service?method=weight")
+      .sendRequest[Int]("bean:service?method=weight")
 
   // run stream (side effects only here) ...
   s.runForeach(println)
 
   val s1: Source[StreamMessage[String], NotUsed] = receive[String]("seda:q1")
   val s2: Source[StreamMessage[String], NotUsed] = s1.send("seda:q2", parallelism = 3)
-  val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight", parallelism = 3)
+  val s3: Source[StreamMessage[Int], NotUsed] = s2.sendRequest[Int]("bean:service?method=weight", parallelism = 3)
+
+  val rf1: Flow[StreamMessage[String], StreamMessage[String], NotUsed] =
+    receiveRequest[String, String]("netty4:tcp://localhost:5150?textline=true")
+  val rf1b: Flow[String, String, NotUsed] =
+    receiveRequestBody[String, String]("netty4:tcp://localhost:5150?textline=true")
+
+  val echo1: RunnableGraph[NotUsed] = rf1.reply
+  val echo1b: RunnableGraph[NotUsed] = rf1.join(Flow[StreamMessage[String]])
+  val greet: RunnableGraph[NotUsed] = rf1b.map(s => s"hello $s").reply
+
+  greet.run()
 
   val s2v: Source[StreamMessage[String], NotUsed] = s1.via(send("seda:q2"))
-  val s3v: Source[StreamMessage[Int], NotUsed] = s2.via(request[String, Int]("bean:service?method=weight"))
+  val s3v: Source[StreamMessage[Int], NotUsed] = s2.via(sendRequest[String, Int]("bean:service?method=weight"))
 
   val s1b: Source[String, NotUsed] = receiveBody[String]("seda:q1")
   val s2b: Source[String, NotUsed] = s1b.send("seda:q2")
-  val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
+  val s3b: Source[Int, NotUsed] = s2b.sendRequest[Int]("bean:service?method=weight")
 
   val s2bv: Source[String, NotUsed] = s1b.via(sendBody("seda:q2"))
-  val s3bv: Source[Int, NotUsed] = s2b.via(requestBody[String, Int]("bean:service?method=weight"))
+  val s3bv: Source[Int, NotUsed] = s2b.via(sendRequestBody[String, Int]("bean:service?method=weight"))
 
   val f1: Flow[String, StreamMessage[String], NotUsed] = ???
   val f2: Flow[String, StreamMessage[String], NotUsed] = f1.send("seda:q2")
-  val f3: Flow[String, StreamMessage[Int], NotUsed] = f2.request[Int]("bean:service?method=weight")
+  val f3: Flow[String, StreamMessage[Int], NotUsed] = f2.sendRequest[Int]("bean:service?method=weight")
 
   val f1b: Flow[String, String, NotUsed] = ???
   val f2b: Flow[String, String, NotUsed] = f1b.send("seda:q2")
-  val f3b: Flow[String, Int, NotUsed] = f2b.request[Int]("bean:service?method=weight")
+  val f3b: Flow[String, Int, NotUsed] = f2b.sendRequest[Int]("bean:service?method=weight")
 }

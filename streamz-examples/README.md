@@ -91,7 +91,7 @@ public class JExample extends JExampleContext {
                 receiveBody(fileEndpointUri, String.class).mapConcat(s -> asList(s.split("\\r\\n|\\n|\\r")));
 
         Source<String, NotUsed> linePrefixSource =
-                Source.range(1, Integer.MAX_VALUE).via(requestBody(serviceEndpointUri, String.class));
+                Source.range(1, Integer.MAX_VALUE).via(sendRequestBody(serviceEndpointUri, String.class));
 
         Source<String, NotUsed> stream =
                 tcpLineSource
@@ -164,7 +164,7 @@ object Example extends ExampleContext with App {
     receiveBody[String](fileEndpointUri).mapConcat(_.lines.to[Iterable])
 
   val linePrefixSource: Source[String, NotUsed] =
-    Source.fromIterator(() => Iterator.from(1)).request[String](serviceEndpointUri)
+    Source.fromIterator(() => Iterator.from(1)).sendRequest[String](serviceEndpointUri)
 
   val stream: Source[String, NotUsed] =
     tcpLineSource
@@ -198,7 +198,7 @@ object Example extends ExampleContext with App {
     receiveBody[String](fileEndpointUri).through(text.lines)
 
   val linePrefixStream: Stream[Task, String] =
-    Stream.iterate(1)(_ + 1).request[String](serviceEndpointUri)
+    Stream.iterate(1)(_ + 1).sendRequest[String](serviceEndpointUri)
 
   val stream: Stream[Task, String] =
     tcpLineStream

@@ -23,12 +23,10 @@ import akka.stream.scaladsl._
 import akka.stream.testkit.TestSubscriber
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.{ TestKit, TestProbe }
-
 import org.apache.camel.{ ExchangePattern, Producer }
 import org.scalatest._
-
-import streamz.camel.{ StreamContext, StreamMessage }
 import streamz.camel.akka.EndpointConsumer.ConsumeSuccess
+import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.reflect.ClassTag
 
@@ -129,6 +127,20 @@ class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLik
       producer.process(exchange)
       sink.request(1)
       sink.expectError().getMessage should be("boom")
+    }
+    "error the stream if a message exchange is not in-only" in {
+      val uri = "seda:q4"
+
+      val producer = endpointProducer(uri)
+      val (publisher, sink) = actorPublisherAndTestSink[String](uri)
+
+      val message = StreamMessage(body = "test")
+      val exchange = createExchange(message, ExchangePattern.InOut)
+
+      producerTemplate.asyncRequestBody(uri, "test")
+
+      sink.request(1)
+      sink.expectError().getMessage should be("Exchange pattern InOnly expected but was InOut")
     }
   }
 }

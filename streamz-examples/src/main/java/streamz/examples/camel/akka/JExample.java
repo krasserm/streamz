@@ -41,7 +41,7 @@ public class JExample extends JExampleContext {
                 receiveBody(fileEndpointUri, String.class).mapConcat(s -> asList(s.split("\\r\\n|\\n|\\r")));
 
         Source<String, NotUsed> linePrefixSource =
-                Source.range(1, Integer.MAX_VALUE).via(requestBody(serviceEndpointUri, String.class));
+                Source.range(1, Integer.MAX_VALUE).via(sendRequestBody(serviceEndpointUri, String.class));
 
         Source<String, NotUsed> stream =
                 tcpLineSource

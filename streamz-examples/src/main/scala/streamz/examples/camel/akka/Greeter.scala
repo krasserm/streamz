@@ -16,34 +16,15 @@
 
 package streamz.examples.camel.akka
 
-import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl._
-
+import streamz.camel.StreamContext
 import streamz.camel.akka.scaladsl._
-import streamz.examples.camel.ExampleContext
 
-import scala.collection.immutable.Iterable
-
-object Example extends ExampleContext with App {
+object Greeter extends App {
   implicit val system = ActorSystem("example")
   implicit val materializer = ActorMaterializer()
+  implicit val context = StreamContext()
 
-  val tcpLineSource: Source[String, NotUsed] =
-    receiveBody[String](tcpEndpointUri)
-
-  val fileLineSource: Source[String, NotUsed] =
-    receiveBody[String](fileEndpointUri).mapConcat(_.lines.to[Iterable])
-
-  val linePrefixSource: Source[String, NotUsed] =
-    Source.fromIterator(() => Iterator.from(1)).sendRequest[String](serviceEndpointUri)
-
-  val stream: Source[String, NotUsed] =
-    tcpLineSource
-      .merge(fileLineSource)
-      .zipWith(linePrefixSource)((l, n) => n concat l)
-      .send(printerEndpointUri)
-
-  stream.runWith(Sink.ignore)
+  receiveRequestBody[String, String]("netty4:tcp://localhost:5150?textline=true").map(s => s"hello $s").reply.run()
 }

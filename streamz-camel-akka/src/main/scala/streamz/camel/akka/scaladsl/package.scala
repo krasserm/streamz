@@ -41,10 +41,10 @@ package object scaladsl {
       self.via(scaladsl.send[A](uri, parallelism))
 
     /**
-     * @see [[scaladsl.request]]
+     * @see [[scaladsl.sendRequest]]
      */
-    def request[B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): self.Repr[StreamMessage[B]] =
-      self.via(scaladsl.request[A, B](uri, parallelism))
+    def sendRequest[B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): self.Repr[StreamMessage[B]] =
+      self.via(scaladsl.sendRequest[A, B](uri, parallelism))
   }
 
   /**
@@ -58,10 +58,30 @@ package object scaladsl {
       self.via(scaladsl.sendBody[A](uri, parallelism))
 
     /**
-     * @see [[scaladsl.requestBody]]
+     * @see [[scaladsl.sendRequestBody]]
      */
-    def request[B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): self.Repr[B] =
-      self.via(requestBody[A, B](uri, parallelism))
+    def sendRequest[B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): self.Repr[B] =
+      self.via(sendRequestBody[A, B](uri, parallelism))
+  }
+
+  class StreamMessageFlowDsl[A, M](val self: Flow[StreamMessage[A], StreamMessage[A], M]) {
+    /**
+     * Pipes the flow's output to its input. Terminal operation on a flow created with [[receiveRequest]]
+     * whose output type has been transformed to its input type.
+     *
+     * @see [[receiveRequest]]
+     */
+    def reply: RunnableGraph[M] = self.joinMat(Flow[StreamMessage[A]])(Keep.left)
+  }
+
+  class StreamMessageBodyFlowDsl[A, M](val self: Flow[A, A, M]) {
+    /**
+     * Pipes the flow's output to its input. Terminal operation on a flow created with [[receiveRequestBody]]
+     * whose output type has been transformed to its input type.
+     *
+     * @see [[receiveRequestBody]]
+     */
+    def reply: RunnableGraph[M] = self.joinMat(Flow[A])(Keep.left)
   }
 
   implicit def streamMessageSourceDsl[A, M](self: Source[StreamMessage[A], M]): StreamMessageDsl[A, M, Source[StreamMessage[A], M]] =
@@ -69,6 +89,9 @@ package object scaladsl {
 
   implicit def streamMessageFlowDsl[A, B, M](self: Flow[A, StreamMessage[B], M]): StreamMessageDsl[B, M, Flow[A, StreamMessage[B], M]] =
     new StreamMessageDsl(self)
+
+  implicit def streamMessageFlowDsl[A, M](self: Flow[StreamMessage[A], StreamMessage[A], M]): StreamMessageFlowDsl[A, M] =
+    new StreamMessageFlowDsl(self)
 
   implicit def streamMessageSubFlowOfSourceDsl[A, M](self: SubFlow[StreamMessage[A], M, Source[StreamMessage[A], M]#Repr, Source[StreamMessage[A], M]#Closed]): StreamMessageDsl[A, M, SubFlow[StreamMessage[A], M, Source[StreamMessage[A], M]#Repr, Source[StreamMessage[A], M]#Closed]] =
     new StreamMessageDsl(self)
@@ -82,6 +105,9 @@ package object scaladsl {
   implicit def streamMessageBodyFlowDsl[A, B, M](self: Flow[A, B, M]): StreamMessageBodyDsl[B, M, Flow[A, B, M]] =
     new StreamMessageBodyDsl(self)
 
+  implicit def streamMessageFlowDsl[A, M](self: Flow[A, A, M]): StreamMessageBodyFlowDsl[A, M] =
+    new StreamMessageBodyFlowDsl(self)
+
   implicit def streamMessageBodySubFlowOfSourceDsl[A, M](self: SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]): StreamMessageBodyDsl[A, M, SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]] =
     new StreamMessageBodyDsl(self)
 
@@ -93,30 +119,60 @@ package object scaladsl {
    * [[StreamMessage]] bodies are converted to type `A` using a Camel type converter. The source
    * completes with an error if the message exchange with the endpoint fails.
    *
-   * Only [[ExchangePattern.InOnly]] message exchanges with the endpoint are supported at the moment.
-   * Endpoints that create [[ExchangePattern.InOut]] message exchanges will not receive a reply from
-   * the stream.
+   * Use this method for processing inbound [[ExchangePattern.InOnly]] message exchanges.
    *
    * @param uri Camel endpoint URI.
    * @throws TypeConversionException if type conversion fails.
    */
   def receive[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]): Source[StreamMessage[A], NotUsed] =
-    consume[A](uri)
+    consumeInOnly[A](uri)
+
+  /**
+   * Creates a flow of [[StreamMessage]]s whose output is consumed as request messages from the Camel endpoint identified by
+   * `uri` and whose input is sent as reply messages to that endpoint. Reply messages are expected to be in the
+   * same order as their corresponding request messages. Request [[StreamMessage]] bodies are converted
+   * to type `B` using a Camel type converter. The flow completes with an error if the message exchange
+   * with the endpoint fails.
+   *
+   * Use this method for processing inbound [[ExchangePattern.InOut]] message exchanges.
+   *
+   * @param uri Camel endpoint URI.
+   * @param capacity maximum number of active requests i.e. maximum number of consumed messages with
+   *                 pending reply messages.
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def receiveRequest[A, B](uri: String, capacity: Int = 16)(implicit streamContext: StreamContext, tag: ClassTag[B]): Flow[StreamMessage[A], StreamMessage[B], NotUsed] =
+    consumeInOut[A, B](uri, capacity)
 
   /**
    * Creates a source of messages consumed from the Camel endpoint identified by `uri`.
-   * Messages are converted to type `A` using a Camel type converter. The source completes
-   * with an error if the message exchange with the endpoint fails.
+   * Messages are converted to type `A` using a Camel type converter. The source
+   * completes with an error if the message exchange with the endpoint fails.
    *
-   * Only [[ExchangePattern.InOnly]] message exchanges with the endpoint are supported at the moment.
-   * Endpoints that create [[ExchangePattern.InOut]] message exchanges will not receive a reply from
-   * the stream.
+   * Use this method for processing inbound [[ExchangePattern.InOnly]] message exchanges.
    *
    * @param uri Camel endpoint URI.
    * @throws TypeConversionException if type conversion fails.
    */
   def receiveBody[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]): Source[A, NotUsed] =
-    consume[A](uri).map(_.body)
+    consumeInOnly[A](uri).map(_.body)
+
+  /**
+   * Creates a flow of messages whose output is consumed as request messages from the Camel endpoint identified by
+   * `uri` and whose input is sent as reply messages to that endpoint. Reply messages are expected to be in the
+   * same order as their corresponding request messages. Request message bodies are converted
+   * to type `B` using a Camel type converter. The flow completes with an error if the message exchange
+   * with the endpoint fails.
+   *
+   * Use this method for processing inbound [[ExchangePattern.InOut]] message exchanges.
+   *
+   * @param uri Camel endpoint URI.
+   * @param capacity maximum number of active requests i.e. maximum number of consumed messages with
+   *                 pending reply messages.
+   * @throws TypeConversionException if type conversion fails.
+   */
+  def receiveRequestBody[A, B](uri: String, capacity: Int = 16)(implicit streamContext: StreamContext, tag: ClassTag[B]): Flow[A, B, NotUsed] =
+    Flow[A].map(StreamMessage(_)).via(consumeInOut[A, B](uri, capacity)).map(_.body)
 
   /**
    * Creates a flow that initiates an [[ExchangePattern.InOnly]] [[StreamMessage]] exchange with the Camel endpoint
@@ -150,7 +206,7 @@ package object scaladsl {
    * @param parallelism number of parallel requests.  Message order preserved for any `parallelism` value.
    * @throws TypeConversionException if type conversion fails.
    */
-  def request[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): Graph[FlowShape[StreamMessage[A], StreamMessage[B]], NotUsed] =
+  def sendRequest[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): Graph[FlowShape[StreamMessage[A], StreamMessage[B]], NotUsed] =
     Flow[StreamMessage[A]].mapAsync(parallelism)(produce[A, B](uri, _, ExchangePattern.InOut, (_, exchange) => StreamMessage.from[B](exchange.getOut)))
 
   /**
@@ -163,11 +219,14 @@ package object scaladsl {
    * @param parallelism number of parallel requests.  Message order preserved for any `parallelism` value.
    * @throws TypeConversionException if type conversion fails.
    */
-  def requestBody[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): Graph[FlowShape[A, B], NotUsed] =
-    Flow[A].map(StreamMessage(_)).via(request[A, B](uri, parallelism)).map(_.body)
+  def sendRequestBody[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): Graph[FlowShape[A, B], NotUsed] =
+    Flow[A].map(StreamMessage(_)).via(sendRequest[A, B](uri, parallelism)).map(_.body)
 
-  private def consume[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]): Source[StreamMessage[A], NotUsed] =
+  private def consumeInOnly[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]): Source[StreamMessage[A], NotUsed] =
     Source.actorPublisher[StreamMessage[A]](EndpointConsumer.props[A](uri)).mapMaterializedValue(_ => NotUsed)
+
+  private def consumeInOut[A, B](uri: String, capacity: Int)(implicit streamContext: StreamContext, tag: ClassTag[B]): Flow[StreamMessage[A], StreamMessage[B], NotUsed] =
+    Flow.fromGraph(new EndpointConsumerReplier[A, B](uri, capacity))
 
   private def produce[A, B](uri: String, message: StreamMessage[A], pattern: ExchangePattern, result: (StreamMessage[A], Exchange) => StreamMessage[B])(implicit context: StreamContext): Future[StreamMessage[B]] = {
     val promise = Promise[StreamMessage[B]]()

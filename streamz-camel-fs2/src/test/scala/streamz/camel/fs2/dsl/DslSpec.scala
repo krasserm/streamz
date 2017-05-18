@@ -57,7 +57,7 @@ class DslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   }
 
   "receive" must {
-    "create a stream" in {
+    "consume from an endpoint" in {
       1 to 3 foreach { i => producerTemplate.sendBody("seda:q1", i) }
       receiveBody[Int]("seda:q1").take(3).runLog.unsafeRun should be(Seq(1, 2, 3))
     }
@@ -68,22 +68,22 @@ class DslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   }
 
   "send" must {
-    "send to an endpoint and continue with the sent message" in {
+    "send a message to an endpoint and continue with the sent message" in {
       val result = Stream(1, 2, 3).send("seda:q3").take(3).runLog.unsafeRunAsyncFuture
       1 to 3 foreach { i => consumerTemplate.receiveBody("seda:q3") should be(i) }
       Await.result(result, 3.seconds) should be(Seq(1, 2, 3))
     }
   }
 
-  "request" must {
-    "request from an endpoint and continue with the response message" in {
-      Stream(1, 2, 3).request[Int]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq(2, 3, 4))
+  "sendRequest" must {
+    "send a request message to an endpoint and continue with the response message" in {
+      Stream(1, 2, 3).sendRequest[Int]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq(2, 3, 4))
     }
     "convert response message types using a Camel type converter" in {
-      Stream(1, 2, 3).request[String]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq("2", "3", "4"))
+      Stream(1, 2, 3).sendRequest[String]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq("2", "3", "4"))
     }
     "complete with an error if the request fails" in {
-      intercept[Exception](Stream(-1, 2, 3).request[Int]("bean:service?method=plusOne").run.unsafeRun).getMessage should be("test")
+      intercept[Exception](Stream(-1, 2, 3).sendRequest[Int]("bean:service?method=plusOne").run.unsafeRun).getMessage should be("test")
     }
   }
 }

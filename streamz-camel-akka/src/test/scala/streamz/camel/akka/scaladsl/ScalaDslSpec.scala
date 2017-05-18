@@ -18,12 +18,10 @@ package streamz.camel.akka.scaladsl
 
 import akka.actor._
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{ Sink, Source }
-
-import org.apache.camel.TypeConversionException
+import akka.stream.scaladsl.{ Keep, Sink, Source }
 import org.apache.camel.impl.{ DefaultCamelContext, SimpleRegistry }
+import org.apache.camel.{ CamelExecutionException, TypeConversionException }
 import org.scalatest._
-
 import streamz.camel.StreamContext
 
 import scala.collection.immutable.Seq
@@ -67,8 +65,11 @@ class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
       if (i == -1) throw new Exception("test") else i + 1
   }
 
+  def awaitEndpointRegistration(uri: String): Unit =
+    Thread.sleep(200)
+
   "receive" must {
-    "create a source" in {
+    "consume from an endpoint" in {
       1 to 3 foreach { i => producerTemplate.sendBody("seda:q1", i) }
       receiveBody[Int]("seda:q1").take(3).runWith(Sink.seq[Int]).await should be(Seq(1, 2, 3))
     }
@@ -78,23 +79,41 @@ class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
     }
   }
 
+  "receiveRequest" must {
+    "consume request messages from an endpoint and send reply messages to that endpoint" in {
+      val uri = "direct:d1"
+      receiveRequestBody[String, String](uri, capacity = 3).map(s => s"re-$s").reply.run()
+
+      awaitEndpointRegistration(uri)
+      Seq("a", "b", "c").foreach { s => producerTemplate.requestBody(uri, s) should be(s"re-$s") }
+    }
+    "complete with an error if type conversion fails" in {
+      val uri = "direct:d2"
+      val execution = receiveRequestBody[String, Int](uri, capacity = 3).map(s => s"re-$s").alsoToMat(Sink.ignore)(Keep.right).reply.run()
+
+      awaitEndpointRegistration(uri)
+      intercept[CamelExecutionException](producerTemplate.requestBody(uri, "a"))
+      intercept[TypeConversionException](execution.await)
+    }
+  }
+
   "send" must {
-    "send to an endpoint and continue with the sent message" in {
+    "send a message to an endpoint and continue with the sent message" in {
       val result = Source(Seq(1, 2, 3)).send("seda:q3").take(3).runWith(Sink.seq[Int])
       1 to 3 foreach { i => consumerTemplate.receiveBody("seda:q3") should be(i) }
       result.await should be(Seq(1, 2, 3))
     }
   }
 
-  "request" must {
-    "request from an endpoint and continue with the response message" in {
-      Source(Seq(1, 2, 3)).request("bean:service?method=plusOne").runWith(Sink.seq[Int]).await should be(Seq(2, 3, 4))
+  "sendRequest" must {
+    "send a request message to an endpoint and continue with the response message" in {
+      Source(Seq(1, 2, 3)).sendRequest("bean:service?method=plusOne").runWith(Sink.seq[Int]).await should be(Seq(2, 3, 4))
     }
     "convert response message types using a Camel type converter" in {
-      Source(Seq(1, 2, 3)).request[String]("bean:service?method=plusOne").runWith(Sink.seq[String]).await should be(Seq("2", "3", "4"))
+      Source(Seq(1, 2, 3)).sendRequest[String]("bean:service?method=plusOne").runWith(Sink.seq[String]).await should be(Seq("2", "3", "4"))
     }
     "complete with an error if the request fails" in {
-      intercept[Exception](Source(Seq(-1, 2, 3)).request("bean:service?method=plusOne").runWith(Sink.ignore).await).getMessage should be("test")
+      intercept[Exception](Source(Seq(-1, 2, 3)).sendRequest("bean:service?method=plusOne").runWith(Sink.ignore).await).getMessage should be("test")
     }
   }
 }
