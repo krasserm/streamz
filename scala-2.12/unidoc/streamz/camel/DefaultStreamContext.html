@@ -371,6 +371,24 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="streamz.camel.StreamContext#consumer" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="consumer(uri:String,processor:org.apache.camel.AsyncProcessor):org.apache.camel.Consumer"></a><a id="consumer(String,AsyncProcessor):Consumer"></a>
+      <span class="permalink">
+      <a href="../../streamz/camel/DefaultStreamContext.html#consumer(uri:String,processor:org.apache.camel.AsyncProcessor):org.apache.camel.Consumer" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">consumer</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="processor">processor: <span class="extype" name="org.apache.camel.AsyncProcessor">AsyncProcessor</span></span>)</span><span class="result">: <span class="extype" name="org.apache.camel.Consumer">Consumer</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">A Camel consumer for given <code>uri</code>.</p><div class="fullcomment"><div class="comment cmt"><p>A Camel consumer for given <code>uri</code>. If the corresponding endpoint doesn't exist yet, it is
+created and started. The returned consumer must be started (and stopped) by the caller.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="streamz.camel.StreamContext#consumerTemplate" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="consumerTemplate:org.apache.camel.ConsumerTemplate"></a><a id="consumerTemplate:ConsumerTemplate"></a>
       <span class="permalink">

@@ -105,6 +105,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body streams of type <code>FlowOps[A, M]</code>.</p>
+    </li><li name="streamz.camel.akka.scaladsl.StreamMessageBodyFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StreamMessageBodyFlowDsl[A,M]extendsAnyRef"></a>
+      <a id="StreamMessageBodyFlowDsl[A,M]:StreamMessageBodyFlowDsl[A,M]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$StreamMessageBodyFlowDsl.html"><span class="name">StreamMessageBodyFlowDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@StreamMessageBodyFlowDsl[A,M]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="streamz.camel.akka.scaladsl.StreamMessageDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="StreamMessageDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[streamz.camel.StreamMessage[A],M]]extendsAnyRef"></a>
       <a id="StreamMessageDsl[A,M,FO&lt;:FlowOps[StreamMessage[A],M]]:StreamMessageDsl[A,M,FO]"></a>
@@ -122,6 +139,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>FlowOps[StreamMessage[A], M]</code>.</p>
+    </li><li name="streamz.camel.akka.scaladsl.StreamMessageFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StreamMessageFlowDsl[A,M]extendsAnyRef"></a>
+      <a id="StreamMessageFlowDsl[A,M]:StreamMessageFlowDsl[A,M]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$StreamMessageFlowDsl.html"><span class="name">StreamMessageFlowDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@StreamMessageFlowDsl[A,M]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li></ol>
             </div>
 
@@ -147,9 +181,7 @@
     </span>
       <p class="shortcomment cmt">Creates a source of <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>s consumed from the Camel endpoint identified by <code>uri</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a source of <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>s consumed from the Camel endpoint identified by <code>uri</code>.
 <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> bodies are converted to type <code>A</code> using a Camel type converter. The source
-completes with an error if the message exchange with the endpoint fails.</p><p>Only <span class="extype" name="ExchangePattern.InOnly">ExchangePattern.InOnly</span> message exchanges with the endpoint are supported at the moment.
-Endpoints that create <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchanges will not receive a reply from
-the stream.
+completes with an error if the message exchange with the endpoint fails.</p><p>Use this method for processing inbound <span class="extype" name="ExchangePattern.InOnly">ExchangePattern.InOnly</span> message exchanges.
 </p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
     </li><li name="streamz.camel.akka.scaladsl#receiveBody" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="receiveBody[A](uri:String)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[A]):akka.stream.scaladsl.Source[A,akka.NotUsed]"></a>
@@ -168,55 +200,57 @@ the stream.
       </a>
     </span>
       <p class="shortcomment cmt">Creates a source of messages consumed from the Camel endpoint identified by <code>uri</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a source of messages consumed from the Camel endpoint identified by <code>uri</code>.
-Messages are converted to type <code>A</code> using a Camel type converter. The source completes
-with an error if the message exchange with the endpoint fails.</p><p>Only <span class="extype" name="ExchangePattern.InOnly">ExchangePattern.InOnly</span> message exchanges with the endpoint are supported at the moment.
-Endpoints that create <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchanges will not receive a reply from
-the stream.
+Messages are converted to type <code>A</code> using a Camel type converter. The source
+completes with an error if the message exchange with the endpoint fails.</p><p>Use this method for processing inbound <span class="extype" name="ExchangePattern.InOnly">ExchangePattern.InOnly</span> message exchanges.
 </p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
-    </li><li name="streamz.camel.akka.scaladsl#request" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="request[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]"></a>
-      <a id="request[A,B](String,Int)(StreamContext,ClassTag[B]):Graph[FlowShape[StreamMessage[A],StreamMessage[B]],NotUsed]"></a>
+    </li><li name="streamz.camel.akka.scaladsl#receiveRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="receiveRequest[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]"></a>
+      <a id="receiveRequest[A,B](String,Int)(StreamContext,ClassTag[B]):Flow[StreamMessage[A],StreamMessage[B],NotUsed]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">request</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.akka.scaladsl.request.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.request.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.request.B">B</span>]], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">receiveRequest</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="capacity">capacity: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">16</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="streamContext">streamContext: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.akka.scaladsl.receiveRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.receiveRequest.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.receiveRequest.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@request[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@receiveRequest[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> exchange with the Camel endpoint
-identified by <code>uri</code> and continues the flow with the output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> received from the endpoint.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> exchange with the Camel endpoint
-identified by <code>uri</code> and continues the flow with the output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> received from the endpoint. The
-output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body is converted to type <code>B</code> using a Camel type converter. The flow completes
-with an error if the message exchange with the endpoint fails.
-</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">parallelism</dt><dd class="cmt"><p>number of parallel requests.  Message order preserved for any <code>parallelism</code> value.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
-    </li><li name="streamz.camel.akka.scaladsl#requestBody" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="requestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a>
-      <a id="requestBody[A,B](String,Int)(StreamContext,ClassTag[B]):Graph[FlowShape[A,B],NotUsed]"></a>
+      <p class="shortcomment cmt">Creates a flow of <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>s whose output is consumed as request messages from the Camel endpoint identified by
+<code>uri</code> and whose input is sent as reply messages to that endpoint.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a flow of <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>s whose output is consumed as request messages from the Camel endpoint identified by
+<code>uri</code> and whose input is sent as reply messages to that endpoint. Reply messages are expected to be in the
+same order as their corresponding request messages. Request <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> bodies are converted
+to type <code>B</code> using a Camel type converter. The flow completes with an error if the message exchange
+with the endpoint fails.</p><p>Use this method for processing inbound <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchanges.
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">capacity</dt><dd class="cmt"><p>maximum number of active requests i.e. maximum number of consumed messages with
+                pending reply messages.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+    </li><li name="streamz.camel.akka.scaladsl#receiveRequestBody" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="receiveRequestBody[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[A,B,akka.NotUsed]"></a>
+      <a id="receiveRequestBody[A,B](String,Int)(StreamContext,ClassTag[B]):Flow[A,B,NotUsed]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">requestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.akka.scaladsl.requestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.camel.akka.scaladsl.requestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.requestBody.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">receiveRequestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="capacity">capacity: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">16</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="streamContext">streamContext: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.akka.scaladsl.receiveRequestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.receiveRequestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.receiveRequestBody.B">B</span>, <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@requestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@receiveRequestBody[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[A,B,akka.NotUsed]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchange with the Camel endpoint
-identified by <code>uri</code> and continues the flow with the output message received from the endpoint.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchange with the Camel endpoint
-identified by <code>uri</code> and continues the flow with the output message received from the endpoint. The
-output message is converted to type <code>B</code> using a Camel type converter. The flow completes
-with an error if the message exchange with the endpoint fails.
-</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">parallelism</dt><dd class="cmt"><p>number of parallel requests.  Message order preserved for any <code>parallelism</code> value.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Creates a flow of messages whose output is consumed as request messages from the Camel endpoint identified by
+<code>uri</code> and whose input is sent as reply messages to that endpoint.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a flow of messages whose output is consumed as request messages from the Camel endpoint identified by
+<code>uri</code> and whose input is sent as reply messages to that endpoint. Reply messages are expected to be in the
+same order as their corresponding request messages. Request message bodies are converted
+to type <code>B</code> using a Camel type converter. The flow completes with an error if the message exchange
+with the endpoint fails.</p><p>Use this method for processing inbound <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchanges.
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">capacity</dt><dd class="cmt"><p>maximum number of active requests i.e. maximum number of consumed messages with
+                pending reply messages.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
     </li><li name="streamz.camel.akka.scaladsl#send" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="send[A](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]],akka.NotUsed]"></a>
       <a id="send[A](String,Int)(StreamContext):Graph[FlowShape[StreamMessage[A],StreamMessage[A]],NotUsed]"></a>
@@ -261,6 +295,50 @@ that message.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a 
 identified by <code>uri</code> and continues the flow with the input message after the endpoint has processed
 that message. The flow completes with an error if the message exchange with the endpoint fails.
 </p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">parallelism</dt><dd class="cmt"><p>number of parallel sends. Message order preserved for any <code>parallelism</code> value.</p></dd></dl></div>
+    </li><li name="streamz.camel.akka.scaladsl#sendRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sendRequest[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]"></a>
+      <a id="sendRequest[A,B](String,Int)(StreamContext,ClassTag[B]):Graph[FlowShape[StreamMessage[A],StreamMessage[B]],NotUsed]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sendRequest</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.akka.scaladsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.sendRequest.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.sendRequest.B">B</span>]], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@sendRequest[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> exchange with the Camel endpoint
+identified by <code>uri</code> and continues the flow with the output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> received from the endpoint.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> exchange with the Camel endpoint
+identified by <code>uri</code> and continues the flow with the output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> received from the endpoint. The
+output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body is converted to type <code>B</code> using a Camel type converter. The flow completes
+with an error if the message exchange with the endpoint fails.
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">parallelism</dt><dd class="cmt"><p>number of parallel requests.  Message order preserved for any <code>parallelism</code> value.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+    </li><li name="streamz.camel.akka.scaladsl#sendRequestBody" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sendRequestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a>
+      <a id="sendRequestBody[A,B](String,Int)(StreamContext,ClassTag[B]):Graph[FlowShape[A,B],NotUsed]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sendRequestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.akka.scaladsl.sendRequestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.camel.akka.scaladsl.sendRequestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.sendRequestBody.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@sendRequestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchange with the Camel endpoint
+identified by <code>uri</code> and continues the flow with the output message received from the endpoint.</p><div class="fullcomment"><div class="comment cmt"><p>Creates a flow that initiates an <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchange with the Camel endpoint
+identified by <code>uri</code> and continues the flow with the output message received from the endpoint. The
+output message is converted to type <code>B</code> using a Camel type converter. The flow completes
+with an error if the message exchange with the endpoint fails.
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">parallelism</dt><dd class="cmt"><p>number of parallel requests.  Message order preserved for any <code>parallelism</code> value.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
     </li><li name="streamz.camel.akka.scaladsl#streamMessageBodyFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="streamMessageBodyFlowDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,B,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[B,M,akka.stream.scaladsl.Flow[A,B,M]]"></a>
       <a id="streamMessageBodyFlowDsl[A,B,M](Flow[A,B,M]):StreamMessageBodyDsl[B,M,Flow[A,B,M]]"></a>
@@ -325,6 +403,40 @@ that message. The flow completes with an error if the message exchange with the 
       </span>
       </h4><span class="permalink">
       <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageBodySubFlowOfSourceDsl[A,M](self:akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[A,M,akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="streamz.camel.akka.scaladsl#streamMessageFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[A,A,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyFlowDsl[A,M]"></a>
+      <a id="streamMessageFlowDsl[A,M](Flow[A,A,M]):StreamMessageBodyFlowDsl[A,M]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">streamMessageFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageBodyFlowDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyFlowDsl">StreamMessageBodyFlowDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[A,A,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyFlowDsl[A,M]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="streamz.camel.akka.scaladsl#streamMessageFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.StreamMessageFlowDsl[A,M]"></a>
+      <a id="streamMessageFlowDsl[A,M](Flow[StreamMessage[A],StreamMessage[A],M]):StreamMessageFlowDsl[A,M]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">streamMessageFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageFlowDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageFlowDsl">StreamMessageFlowDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.StreamMessageFlowDsl[A,M]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

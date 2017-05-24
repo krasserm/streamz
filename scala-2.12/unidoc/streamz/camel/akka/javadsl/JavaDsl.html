@@ -521,10 +521,10 @@
       </span>
       
       <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#receiveBody[A](uri:String)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[A]):akka.stream.scaladsl.Source[A,akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#receiveBody">scaladsl.receiveBody</a></code></p>
-    </li><li name="streamz.camel.akka.javadsl.JavaDsl#request" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="request[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]"></a><a id="request[A,B](String,Class[B]):Graph[FlowShape[StreamMessage[A],StreamMessage[B]],NotUsed]"></a>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#receiveRequest" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="receiveRequest[A,B](uri:String,clazz:Class[B]):akka.stream.javadsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]"></a><a id="receiveRequest[A,B](String,Class[B]):Flow[StreamMessage[A],StreamMessage[B],NotUsed]"></a>
       <span class="permalink">
-      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#request[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" title="Permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#receiveRequest[A,B](uri:String,clazz:Class[B]):akka.stream.javadsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -533,14 +533,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">request</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.request.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.request.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.request.B">B</span>]], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">receiveRequest</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.javadsl.Flow">Flow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequest.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequest.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
       </span>
       
-      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#request[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#request">scaladsl.request</a></code></p>
-    </li><li name="streamz.camel.akka.javadsl.JavaDsl#request" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="request[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]"></a><a id="request[A,B](String,Int,Class[B]):Graph[FlowShape[StreamMessage[A],StreamMessage[B]],NotUsed]"></a>
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#receiveRequest[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#receiveRequest">scaladsl.receiveRequest</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#receiveRequest" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="receiveRequest[A,B](uri:String,capacity:Integer,clazz:Class[B]):akka.stream.javadsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]"></a><a id="receiveRequest[A,B](String,Integer,Class[B]):Flow[StreamMessage[A],StreamMessage[B],NotUsed]"></a>
       <span class="permalink">
-      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#request[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" title="Permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#receiveRequest[A,B](uri:String,capacity:Integer,clazz:Class[B]):akka.stream.javadsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -549,14 +549,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">request</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.request.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.request.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.request.B">B</span>]], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">receiveRequest</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="capacity">capacity: <span class="extype" name="java.lang.Integer">Integer</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.javadsl.Flow">Flow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequest.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequest.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
       </span>
       
-      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#request[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#request">scaladsl.request</a></code></p>
-    </li><li name="streamz.camel.akka.javadsl.JavaDsl#requestBody" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="requestBody[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a><a id="requestBody[A,B](String,Class[B]):Graph[FlowShape[A,B],NotUsed]"></a>
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#receiveRequest[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#receiveRequest">scaladsl.receiveRequest</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#receiveRequestBody" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="receiveRequestBody[A,B](uri:String,clazz:Class[B]):akka.stream.javadsl.Flow[A,B,akka.NotUsed]"></a><a id="receiveRequestBody[A,B](String,Class[B]):Flow[A,B,NotUsed]"></a>
       <span class="permalink">
-      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#requestBody[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#receiveRequestBody[A,B](uri:String,clazz:Class[B]):akka.stream.javadsl.Flow[A,B,akka.NotUsed]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -565,14 +565,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">requestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.requestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.requestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.requestBody.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">receiveRequestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.javadsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequestBody.B">B</span>, <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
       </span>
       
-      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#requestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#requestBody">scaladsl.requestBody</a></code></p>
-    </li><li name="streamz.camel.akka.javadsl.JavaDsl#requestBody" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="requestBody[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a><a id="requestBody[A,B](String,Int,Class[B]):Graph[FlowShape[A,B],NotUsed]"></a>
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#receiveRequestBody[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[A,B,akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#receiveRequestBody">scaladsl.receiveRequestBody</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#receiveRequestBody" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="receiveRequestBody[A,B](uri:String,capacity:Integer,clazz:Class[B]):akka.stream.javadsl.Flow[A,B,akka.NotUsed]"></a><a id="receiveRequestBody[A,B](String,Integer,Class[B]):Flow[A,B,NotUsed]"></a>
       <span class="permalink">
-      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#requestBody[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#receiveRequestBody[A,B](uri:String,capacity:Integer,clazz:Class[B]):akka.stream.javadsl.Flow[A,B,akka.NotUsed]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -581,10 +581,26 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">requestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.requestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.requestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.requestBody.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">receiveRequestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="capacity">capacity: <span class="extype" name="java.lang.Integer">Integer</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.javadsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.receiveRequestBody.B">B</span>, <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
       </span>
       
-      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#requestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#requestBody">scaladsl.requestBody</a></code></p>
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#receiveRequestBody[A,B](uri:String,capacity:Int)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.scaladsl.Flow[A,B,akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#receiveRequestBody">scaladsl.receiveRequestBody</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#reply" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="reply[A]():akka.stream.javadsl.Flow[A,A,akka.NotUsed]"></a><a id="reply[A]():Flow[A,A,NotUsed]"></a>
+      <span class="permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#reply[A]():akka.stream.javadsl.Flow[A,A,akka.NotUsed]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reply</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">()</span><span class="result">: <span class="extype" name="akka.stream.javadsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.reply.A">A</span>, <span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.reply.A">A</span>, <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      
+      
     </li><li name="streamz.camel.akka.javadsl.JavaDsl#send" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="send[A](uri:String):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]],akka.NotUsed]"></a><a id="send[A](String):Graph[FlowShape[StreamMessage[A],StreamMessage[A]],NotUsed]"></a>
       <span class="permalink">
@@ -649,6 +665,70 @@
       </span>
       
       <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#sendBody[A](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext):akka.stream.Graph[akka.stream.FlowShape[A,A],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#sendBody">scaladsl.sendBody</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#sendRequest" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sendRequest[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]"></a><a id="sendRequest[A,B](String,Class[B]):Graph[FlowShape[StreamMessage[A],StreamMessage[B]],NotUsed]"></a>
+      <span class="permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#sendRequest[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sendRequest</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequest.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequest.B">B</span>]], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#sendRequest[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#sendRequest">scaladsl.sendRequest</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#sendRequest" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sendRequest[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]"></a><a id="sendRequest[A,B](String,Int,Class[B]):Graph[FlowShape[StreamMessage[A],StreamMessage[B]],NotUsed]"></a>
+      <span class="permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#sendRequest[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sendRequest</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequest.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequest.B">B</span>]], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#sendRequest[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#sendRequest">scaladsl.sendRequest</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#sendRequestBody" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sendRequestBody[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a><a id="sendRequestBody[A,B](String,Class[B]):Graph[FlowShape[A,B],NotUsed]"></a>
+      <span class="permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#sendRequestBody[A,B](uri:String,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sendRequestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequestBody.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#sendRequestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#sendRequestBody">scaladsl.sendRequestBody</a></code></p>
+    </li><li name="streamz.camel.akka.javadsl.JavaDsl#sendRequestBody" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sendRequestBody[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a><a id="sendRequestBody[A,B](String,Int,Class[B]):Graph[FlowShape[A,B],NotUsed]"></a>
+      <span class="permalink">
+      <a href="../../../../streamz/camel/akka/javadsl/JavaDsl.html#sendRequestBody[A,B](uri:String,parallelism:Int,clazz:Class[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sendRequestBody</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.lang.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span></span>, <span name="clazz">clazz: <span class="extype" name="java.lang.Class">Class</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequestBody.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequestBody.A">A</span>, <span class="extype" name="streamz.camel.akka.javadsl.JavaDsl.sendRequestBody.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Delegates to <code><a href="../scaladsl/index.html#sendRequestBody[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#sendRequestBody">scaladsl.sendRequestBody</a></code></p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
