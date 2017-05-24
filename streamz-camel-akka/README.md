@@ -44,7 +44,7 @@ implicit val streamContext: StreamContext = StreamContext(camelContext)
 
 After usage, a `StreamContext` should be stopped with `streamContext.stop()`. 
 
-#### Consuming from an endpoint
+#### Receiving in-only message exchanges from an endpoint
 
 An Akka Stream `Source` that emits messages consumed from a Camel endpoint can be created with `receive`. Endpoints are referenced by their [endpoint URI](http://camel.apache.org/uris.html). For example,
 
@@ -62,10 +62,42 @@ creates an Akka Stream `Source` that consumes messages from the [SEDA endpoint](
 val s1b: Source[String, NotUsed] = receiveBody[String]("seda:q1")
 ```
 
-This is equivalent to `receive[String]("seda:q1").map(_.body)`.
+This is equivalent to `receive[String]("seda:q1").map(_.body)`. 
 
-#### Sending to an endpoint
+`receive` and `receiveBody` can only be used with endpoints that create [in-only message exchanges](http://camel.apache.org/exchange-pattern.html). 
 
+#### Receiving in-out message exchanges from an endpoint
+
+An Akka Stream `Flow` whose output is received request messages from a Camel endpoint and whose input is sent as reply messages to that endpoint can be created with `receiveRequest`. For example, 
+
+```scala
+import akka.NotUsed
+import akka.stream.scaladsl._
+import streamz.camel.StreamMessage
+
+val rf1: Flow[StreamMessage[String], StreamMessage[String], NotUsed] =
+  receiveRequest[String, String]("netty4:tcp://localhost:5150?textline=true")
+```
+
+creates an Akka Stream `Flow` whose output is received as request text lines from a [Netty endpoint](http://camel.apache.org/netty4.html) and whose input is sent as reply text lines to that endpoint. The created `Flow` expects reply messages to be in the same order as their corresponding request messages. Calling `receiveRequest` with `String` as second type parameter creates an Akka Stream `Flow` that converts request message bodies to type `String`, using a Camel [type converter](http://camel.apache.org/type-converter.html), before emitting them as `StreamMessage[String]`. An Akka Stream `Flow` whose output and input messages are `StreamMessage` bodies can be created with `receiveRequestBody`:
+
+```scala
+val rf1b: Flow[String, String, NotUsed] =
+  receiveRequestBody[String, String]("netty4:tcp://localhost:5150?textline=true")
+```
+
+`receiveRequest` and `receiveRequestBody` can only be used with endpoints that create [in-out message exchanges](http://camel.apache.org/exchange-pattern.html). 
+
+For creating a TCP service that prepends `hello` to request messages before replying to the sender we need to map the request messages bodies and pipe the results to the flow's input with `reply`. 
+
+```scala
+val greet: RunnableGraph[NotUsed] = rf1b.map(s => s"hello $s").reply
+```
+
+`reply` is part of the DSL and is equivalent to `join(Flow[String])` in this case. A runnable version of the example is in [Greeter.scala](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/camel/akka/Greeter.scala) which can be tested with `telnet localhost 5150`.
+
+#### Sending in-only message exchanges to an endpoint
+     
 For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should be used:
 
 ```scala
@@ -110,38 +142,38 @@ val s2: Source[StreamMessage[String], NotUsed] = s1.via(send("seda:q2"))
 val s2b: Source[String, NotUsed] = s1b.via(sendBody("seda:q2"))
 ```
 
-#### Requesting from an endpoint
+#### Sending in-out message exchanges to an endpoint
 
-For requesting a reply from an endpoint to an input `StreamMessage`, the `request` combinator should be used:
-
-```scala
-val s3: Source[StreamMessage[Int], NotUsed] = s2.request[Int]("bean:service?method=weight”, parallelism = 3)
-```
-
-This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `request` type parameter `[Int]` specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The optional `parallelism` parameter determines how many requests can be executed in parallel and defaults to 1. For values greater than 1 the message order is still preserved by `request`.
-
-The `request` combinator is not only available for sources of type `Source[StreamMessage[A], M]` but more generally for any source of type `Source[A, M]`:
+For sending a request `StreamMessage` to an endpoint and obtaining a reply, the `sendRequest` combinator should be used:
 
 ```scala
-val s3b: Source[Int, NotUsed] = s2b.request[Int]("bean:service?method=weight")
+val s3: Source[StreamMessage[Int], NotUsed] = s2.sendRequest[Int]("bean:service?method=weight", parallelism = 3)
 ```
 
-If `A` is not a `StreamMessage`, `request` automatically wraps the message as message body into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped message body `B` of the output `StreamMessage[B]`. The `request` combinator is also available for flows of type 
+This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `sendRequest` type parameter `[Int]` specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The optional `parallelism` parameter determines how many requests can be executed in parallel and defaults to 1. For values greater than 1 the message order is still preserved by `sendRequest`.
+
+The `sendRequest` combinator is not only available for sources of type `Source[StreamMessage[A], M]` but more generally for any source of type `Source[A, M]`:
+
+```scala
+val s3b: Source[Int, NotUsed] = s2b.sendRequest[Int]("bean:service?method=weight")
+```
+
+If `A` is not a `StreamMessage`, `sendRequest` automatically wraps the message as message body into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped message body `B` of the output `StreamMessage[B]`. The `sendRequest` combinator is also available for flows of type 
 
 - `Flow[A, B, M]`
 - `SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]` and 
 - `SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]`
 
-Instead of using the implicit `request` and `requestBody` combinators, applications can also use the `scaladsl.request` and `scaladsl.requestBody` graph stages 
+Instead of using the implicit `sendRequest` and `sendRequestBody` combinators, applications can also use the `scaladsl.sendRequest` and `scaladsl.sendRequestBody` graph stages 
 
 ```scala
 package object scaladsl {
   // ...
 
-  def request[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): 
+  def sendRequest[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): 
     Graph[FlowShape[StreamMessage[A], StreamMessage[B]], NotUsed]
 
-  def requestBody[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): 
+  def sendRequestBody[A, B](uri: String, parallelism: Int = 1)(implicit context: StreamContext, tag: ClassTag[B]): 
     Graph[FlowShape[A, B], NotUsed]
 
   // ...
@@ -151,8 +183,8 @@ package object scaladsl {
 together with the Akka Streams `via` combinator:
 
 ```scala
-val s3: Source[StreamMessage[Int], NotUsed] = s2.via(request[String, Int]("bean:service?method=weight"))
-val s3b: Source[Int, NotUsed] = s2b.via(requestBody[String, Int]("bean:service?method=weight"))
+val s3: Source[StreamMessage[Int], NotUsed] = s2.via(sendRequest[String, Int]("bean:service?method=weight"))
+val s3b: Source[Int, NotUsed] = s2b.via(sendRequestBody[String, Int]("bean:service?method=weight"))
 ```
 
 <a name="java-dsl"></a>
@@ -201,7 +233,7 @@ StreamContext streamContext = StreamContext.create(camelContext);
 
 After usage, a `StreamContext` should be stopped with `streamContext.stop()`. 
 
-#### Consuming from an endpoint
+#### Receiving in-only message exchanges from an endpoint
 
 An Akka Stream `Source` that emits messages consumed from a Camel endpoint can be created with `receive`. Endpoints are referenced by their [endpoint URI](http://camel.apache.org/uris.html). For example,
 
@@ -221,7 +253,39 @@ Source<String, NotUsed> s1b = receiveBody("seda:q1", String.class);
 
 This is equivalent to `receive("seda:q1", String.class).map(StreamMessage::getBody);`.
 
-#### Sending to an endpoint
+`receive` and `receiveBody` can only be used with endpoints that create [in-only message exchanges](http://camel.apache.org/exchange-pattern.html). 
+
+#### Receiving in-out message exchanges from an endpoint
+
+An Akka Stream `Flow` whose output is received request messages from a Camel endpoint and whose input is sent as reply messages to that endpoint can be created with `receiveRequest`. For example, 
+
+```java
+import akka.NotUsed;
+import akka.stream.javadsl.Flow;
+import streamz.camel.StreamMessage;
+
+Flow<StreamMessage<String>, StreamMessage<String>, NotUsed> rf1 =
+        receiveRequest("netty4:tcp://localhost:5150?textline=true", String.class);
+```
+
+creates an Akka Stream `Flow` whose output is received as request text lines from a [Netty endpoint](http://camel.apache.org/netty4.html) and whose input is sent as reply text lines to that endpoint. The created `Flow` expects reply messages to be in the same order as their corresponding request messages. Calling `receiveRequest` with `String.class` parameter creates an Akka Stream `Flow` that converts request message bodies to type `String`, using a Camel [type converter](http://camel.apache.org/type-converter.html), before emitting them as `StreamMessage<String>`. An Akka Stream `Flow` whose output and input messages are `StreamMessage` bodies can be created with `receiveRequestBody`:
+
+```java
+Flow<String, String, NotUsed> rf1b =
+        receiveRequestBody("netty4:tcp://localhost:5150?textline=true", String.class);
+```
+
+`receiveRequest` and `receiveRequestBody` can only be used with endpoints that create [in-out message exchanges](http://camel.apache.org/exchange-pattern.html). 
+
+For creating a TCP service that prepends `hello` to request messages before replying to the sender we need to map the request messages bodies and pipe the results to the flow's input with `join(reply())`. 
+
+```java
+RunnableGraph<NotUsed> greet = rf1b.map(line -> "hello " + line).join(reply());
+```
+
+`reply()` is part of the DSL and is equivalent to `Flow.create()`. A runnable version of the example is in [JGreeter.java](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/java/streamz/examples/camel/akka/JGreeter.java) which can be tested with `telnet localhost 5150`.
+
+#### Sending in-only message exchanges to an endpoint
 
 For sending a `StreamMessage` to a Camel endpoint, one of the `send` graph stages should be used
 
@@ -255,31 +319,31 @@ public interface JavaDsl {
 Source<String, NotUsed> s2b = s1b.via(sendBody("seda:q2"));
 ```
 
-#### Requesting from an endpoint
+#### Sending in-out message exchanges to an endpoint
 
-For requesting a reply from an endpoint to an input `StreamMessage`, one of the `request` graph stages should be used
+For sending a request `StreamMessage` to an endpoint and obtaining a reply, one of the `sendRequest` graph stages should be used:
 
 ```java
 public interface JavaDsl {
-    default <A, B> Graph<FlowShape<StreamMessage<A>, StreamMessage<B>>, NotUsed> request(String uri, int parallelism, Class<B> clazz) { /* ... */ };
-    default <A, B> Graph<FlowShape<StreamMessage<A>, StreamMessage<B>>, NotUsed> request(String uri, Class<B> clazz) { /* ... */ };
+    default <A, B> Graph<FlowShape<StreamMessage<A>, StreamMessage<B>>, NotUsed> sendRequest(String uri, int parallelism, Class<B> clazz) { /* ... */ };
+    default <A, B> Graph<FlowShape<StreamMessage<A>, StreamMessage<B>>, NotUsed> sendRequest(String uri, Class<B> clazz) { /* ... */ };
 }
 ```
 
 together with the Akka Streams `via` combinator:
 
 ```java
-Source<StreamMessage<Integer>, NotUsed> s3 = s2.via(request("bean:service?method=weight", 3, Integer.class));
+Source<StreamMessage<Integer>, NotUsed> s3 = s2.via(sendRequest("bean:service?method=weight", 3, Integer.class));
 ```
 
-This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `clazz` parameter specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The optional `parallelism` parameter determines how many requests can be executed in parallel and defaults to 1. For values greater than 1 the message order is still preserved by `request`.
+This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `clazz` parameter specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available, (`Double`, for example). The optional `parallelism` parameter determines how many requests can be executed in parallel and defaults to 1. For values greater than 1 the message order is still preserved by `sendRequest`.
 
-To create a graph stage that processes messages of type other than `StreamMessage[A]`, one of the `requestBody` methods should be used:
+To create a graph stage that processes messages of type other than `StreamMessage[A]`, one of the `sendRequestBody` methods should be used:
 
 ```java
 public interface JavaDsl {
-    default <A, B> Graph<FlowShape<A, B>, NotUsed> requestBody(String uri, int parallelism, Class<O> clazz) { /* ... */ };
-    default <A, B> Graph<FlowShape<A, B>, NotUsed> requestBody(String uri, Class<B> clazz) { /* ... */ };
+    default <A, B> Graph<FlowShape<A, B>, NotUsed> sendRequestBody(String uri, int parallelism, Class<B> clazz) { /* ... */ };
+    default <A, B> Graph<FlowShape<A, B>, NotUsed> sendRequestBody(String uri, Class<B> clazz) { /* ... */ };
 }
 ```
 

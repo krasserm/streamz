@@ -38,10 +38,10 @@ package object dsl {
       self.through(dsl.send[A](uri))
 
     /**
-     * @see [[dsl.request]]
+     * @see [[dsl.sendRequest]]
      */
-    def request[B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Stream[Task, StreamMessage[B]] =
-      self.through(dsl.request[A, B](uri))
+    def sendRequest[B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Stream[Task, StreamMessage[B]] =
+      self.through(dsl.sendRequest[A, B](uri))
   }
 
   /**
@@ -55,10 +55,10 @@ package object dsl {
       self.through(dsl.sendBody[A](uri))
 
     /**
-     * @see [[dsl.requestBody]]
+     * @see [[dsl.sendRequestBody]]
      */
-    def request[B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Stream[Task, B] =
-      self.through(dsl.requestBody[A, B](uri))
+    def sendRequest[B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Stream[Task, B] =
+      self.through(dsl.sendRequestBody[A, B](uri))
   }
 
   /**
@@ -121,7 +121,7 @@ package object dsl {
    * @param uri Camel endpoint URI.
    * @throws TypeConversionException if type conversion fails.
    */
-  def request[A, B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Pipe[Task, StreamMessage[A], StreamMessage[B]] =
+  def sendRequest[A, B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Pipe[Task, StreamMessage[A], StreamMessage[B]] =
     produce[A, B](uri, ExchangePattern.InOut, (_, exchange) => StreamMessage.from[B](exchange.getOut))
 
   /**
@@ -133,8 +133,8 @@ package object dsl {
    * @param uri Camel endpoint URI.
    * @throws TypeConversionException if type conversion fails.
    */
-  def requestBody[A, B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Pipe[Task, A, B] =
-    s => s.map(StreamMessage(_)).through(request[A, B](uri)).map(_.body)
+  def sendRequestBody[A, B](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[B]): Pipe[Task, A, B] =
+    s => s.map(StreamMessage(_)).through(sendRequest[A, B](uri)).map(_.body)
 
   private def consume[A](uri: String)(implicit context: StreamContext, strategy: Strategy, tag: ClassTag[A]): Stream[Task, StreamMessage[A]] = {
     import context._

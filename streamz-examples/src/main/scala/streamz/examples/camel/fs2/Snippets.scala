@@ -33,7 +33,7 @@ object Snippets {
       // in-only message exchange with endpoint and continue stream with in-message
       .send("seda:q2")
       // in-out message exchange with endpoint and continue stream with out-message
-      .request[Int]("bean:service?method=weight")
+      .sendRequest[Int]("bean:service?method=weight")
 
   // create task from stream
   val t: Task[Unit] = s.run
@@ -43,9 +43,9 @@ object Snippets {
 
   val s1: Stream[Task, StreamMessage[String]] = receive[String]("seda:q1")
   val s2: Stream[Task, StreamMessage[String]] = s1.send("seda:q2")
-  val s3: Stream[Task, StreamMessage[Int]] = s2.request[Int]("bean:service?method=weight")
+  val s3: Stream[Task, StreamMessage[Int]] = s2.sendRequest[Int]("bean:service?method=weight")
 
   val s1b: Stream[Task, String] = receiveBody[String]("seda:q1")
   val s2b: Stream[Task, String] = s1b.send("seda:q2")
-  val s3b: Stream[Task, Int] = s2b.request[Int]("bean:service?method=weight")
+  val s3b: Stream[Task, Int] = s2b.sendRequest[Int]("bean:service?method=weight")
 }

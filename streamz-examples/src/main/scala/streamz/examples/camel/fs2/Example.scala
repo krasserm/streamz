@@ -32,7 +32,7 @@ object Example extends ExampleContext with App {
     receiveBody[String](fileEndpointUri).through(text.lines)
 
   val linePrefixStream: Stream[Task, String] =
-    Stream.iterate(1)(_ + 1).request[String](serviceEndpointUri)
+    Stream.iterate(1)(_ + 1).sendRequest[String](serviceEndpointUri)
 
   val stream: Stream[Task, String] =
     tcpLineStream

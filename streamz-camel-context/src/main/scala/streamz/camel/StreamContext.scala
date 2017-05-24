@@ -68,16 +68,28 @@ object StreamContext {
  */
 class StreamContext(val camelContext: CamelContext) {
   /**
+   * A Camel producer template created from `camelContext`.
+   */
+  lazy val producerTemplate: ProducerTemplate =
+    camelContext.createProducerTemplate()
+
+  /**
    * A Camel consumer template created from `camelContext`.
    */
   lazy val consumerTemplate: ConsumerTemplate =
     camelContext.createConsumerTemplate()
 
   /**
-   * A Camel producer template created from `camelContext`.
+   * A Camel consumer for given `uri`. If the corresponding endpoint doesn't exist yet, it is
+   * created and started. The returned consumer must be started (and stopped) by the caller.
    */
-  lazy val producerTemplate: ProducerTemplate =
-    camelContext.createProducerTemplate()
+  def consumer(uri: String, processor: AsyncProcessor): Consumer = {
+    val endpoint = camelContext.getEndpoint(uri)
+    if (!camelContext.getEndpoints.contains(endpoint)) {
+      endpoint.start()
+    }
+    endpoint.createConsumer(processor)
+  }
 
   /**
    * Creates a Camel [[Exchange]] of given `pattern` and input `message`.

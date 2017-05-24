@@ -19,6 +19,8 @@ package streamz.examples.camel.akka;
 import akka.NotUsed;
 import akka.actor.ActorSystem;
 import akka.stream.ActorMaterializer;
+import akka.stream.javadsl.Flow;
+import akka.stream.javadsl.RunnableGraph;
 import akka.stream.javadsl.Source;
 import streamz.camel.StreamContext;
 import streamz.camel.StreamMessage;
@@ -41,16 +43,26 @@ public class JSnippets implements JavaDsl {
                         // in-only message exchange with endpoint and continue stream with in-message
                         .via(send("seda:q2"))
                         // in-out message exchange with endpoint and continue stream with out-message
-                        .via(request("bean:service?method=weight", Integer.class));
+                        .via(sendRequest("bean:service?method=weight", Integer.class));
 
         s.runForeach(System.out::println, actorMaterializer);
 
         Source<StreamMessage<String>, NotUsed> s1 = receive("seda:q1", String.class);
         Source<StreamMessage<String>, NotUsed> s2 = s1.via(send("seda:q2", 3));
-        Source<StreamMessage<Integer>, NotUsed> s3 = s2.via(request("bean:service?method=weight", 3, Integer.class));
+        Source<StreamMessage<Integer>, NotUsed> s3 = s2.via(sendRequest("bean:service?method=weight", 3, Integer.class));
+
+        Flow<StreamMessage<String>, StreamMessage<String>, NotUsed> rf1 =
+                receiveRequest("netty4:tcp://localhost:5150?textline=true", String.class);
+        Flow<String, String, NotUsed> rf1b =
+                receiveRequestBody("netty4:tcp://localhost:5150?textline=true", String.class);
+
+        RunnableGraph<NotUsed> echo = rf1.join(Flow.create());
+        RunnableGraph<NotUsed> greet = rf1b.map(line -> "hello " + line).join(reply());
+
+        greet.run(actorMaterializer);
 
         Source<String, NotUsed> s1b = receiveBody("seda:q1", String.class);
         Source<String, NotUsed> s2b = s1b.via(sendBody("seda:q2"));
-        Source<Integer, NotUsed> s3b = s2b.via(requestBody("bean:service?method=weight", Integer.class));
+        Source<Integer, NotUsed> s3b = s2b.via(sendRequestBody("bean:service?method=weight", Integer.class));
     }
 }
