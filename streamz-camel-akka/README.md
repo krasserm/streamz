@@ -68,7 +68,7 @@ This is equivalent to `receive[String]("seda:q1").map(_.body)`.
 
 #### Receiving in-out message exchanges from an endpoint
 
-An Akka Stream `Flow` whose output is received request messages from a Camel endpoint and whose input is sent as reply messages to that endpoint can be created with `receiveRequest`. For example, 
+An Akka Stream `Flow` whose output is received as request messages from a Camel endpoint and whose input is sent as reply messages to that endpoint can be created with `receiveRequest`. For example, 
 
 ```scala
 import akka.NotUsed
@@ -257,7 +257,7 @@ This is equivalent to `receive("seda:q1", String.class).map(StreamMessage::getBo
 
 #### Receiving in-out message exchanges from an endpoint
 
-An Akka Stream `Flow` whose output is received request messages from a Camel endpoint and whose input is sent as reply messages to that endpoint can be created with `receiveRequest`. For example, 
+An Akka Stream `Flow` whose output is received as request messages from a Camel endpoint and whose input is sent as reply messages to that endpoint can be created with `receiveRequest`. For example, 
 
 ```java
 import akka.NotUsed;
