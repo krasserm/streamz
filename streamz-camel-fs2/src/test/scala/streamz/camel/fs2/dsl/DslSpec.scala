@@ -16,7 +16,7 @@
 
 package streamz.camel.fs2.dsl
 
-import fs2.{ Strategy, Stream }
+import fs2.Stream
 
 import org.apache.camel.TypeConversionException
 import org.apache.camel.impl.{ DefaultCamelContext, SimpleRegistry }
@@ -27,7 +27,6 @@ import streamz.camel.StreamContext
 import scala.collection.immutable.Seq
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.global
 
 class DslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   val camelRegistry = new SimpleRegistry
@@ -37,7 +36,6 @@ class DslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   camelRegistry.put("service", new Service)
 
   implicit val streamContext = new StreamContext(camelContext)
-  implicit val strategy = Strategy.fromExecutionContext(global)
 
   import streamContext._
 

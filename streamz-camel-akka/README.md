@@ -42,6 +42,8 @@ val camelContext: CamelContext = ...
 implicit val streamContext: StreamContext = StreamContext(camelContext)
 ```
 
+A `StreamContext` internally manages an `executorService` for running blocking endpoint operations. Applications can configure a custom executor service by providing an `executorServiceFactory` during `StreamContext` creation. See [API docs](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext$.html) for details.
+
 After usage, a `StreamContext` should be stopped with `streamContext.stop()`. 
 
 #### Receiving in-only message exchanges from an endpoint
@@ -230,6 +232,8 @@ CamelContext camelContext = ...
 // re-uses the externally managed CamelContext
 StreamContext streamContext = StreamContext.create(camelContext);
 ```
+
+A `StreamContext` internally manages an `executorService` for running blocking endpoint operations. Applications can configure a custom executor service by providing an `executorServiceFactory` during `StreamContext` creation. See [API docs](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamContext$.html) for details.
 
 After usage, a `StreamContext` should be stopped with `streamContext.stop()`. 
 

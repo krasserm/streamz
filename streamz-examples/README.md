@@ -188,8 +188,8 @@ import streamz.camel.fs2.dsl._
 import streamz.examples.camel.ExampleContext
 
 object Example extends ExampleContext with App {
-  implicit val strategy: Strategy =
-    Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global)
+  implicit val strategy: Strategy = 
+    Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global) // needed for merge
 
   val tcpLineStream: Stream[Task, String] =
     receiveBody[String](tcpEndpointUri)

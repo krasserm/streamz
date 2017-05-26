@@ -21,6 +21,7 @@ import akka.actor.ActorSystem;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
 import streamz.camel.StreamContext;
+import streamz.camel.StreamMessage;
 import streamz.camel.akka.javadsl.JavaDsl;
 
 public class JGreeter implements JavaDsl, Runnable {
@@ -41,8 +42,17 @@ public class JGreeter implements JavaDsl, Runnable {
 
     @Override
     public void run() {
+        // TCP greeter service. Use with e.g. "telnet localhost 5150"
         Flow<String, String, NotUsed> tcp = receiveRequestBody("netty4:tcp://localhost:5150?textline=true", String.class);
         tcp.map(line -> "hello " + line).join(reply()).run(actorMaterializer);
+
+        // HTTP greeter service. Use with e.g. "curl http://localhost:8080/greeter?name=..."
+        Flow<StreamMessage<String>, StreamMessage<String>, NotUsed> http = receiveRequest("jetty:http://localhost:8080/greeter", String.class);
+        http.map(msg -> StreamMessage.create("Hello " + getName(msg) + "\n")).join(reply()).run(actorMaterializer);
+    }
+
+    private Object getName(StreamMessage<String> msg) {
+        return msg.getHeaders().getOrDefault("name", "unknown");
     }
 
     public static void main(String... args) throws Exception {

@@ -56,7 +56,7 @@ public class JavaDslTest implements JavaDsl {
             ActorMaterializer.create(actorSystem);
 
     private static StreamContext streamContext =
-            new StreamContext(camelContext);
+            StreamContext.create(camelContext);
 
     private static List<Integer> numbers =
             asList(1, 2, 3);

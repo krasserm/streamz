@@ -17,11 +17,13 @@
 package streamz.camel.akka
 
 import akka.actor.Props
+import akka.pattern.pipe
 import akka.stream.actor.ActorPublisher
 import akka.stream.actor.ActorPublisherMessage.Request
 import org.apache.camel.ExchangePattern
 import streamz.camel.{ StreamContext, StreamMessage }
 
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.reflect.ClassTag
 import scala.util.{ Failure, Success, Try }
 
@@ -37,42 +39,46 @@ private[akka] object EndpointConsumer {
 private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]) extends ActorPublisher[StreamMessage[A]] {
   import EndpointConsumer._
 
+  private implicit val ec: ExecutionContext =
+    ExecutionContext.fromExecutorService(streamContext.executorService)
+
   def waiting: Receive = {
     case r: Request =>
-      consume()
+      consumeAsync()
       context.become(consuming)
   }
 
   def consuming: Receive = {
     case ConsumeSuccess(m) =>
       onNext(m.asInstanceOf[StreamMessage[A]])
-      if (!isCanceled && totalDemand > 0) consume() else context.become(waiting)
+      if (!isCanceled && totalDemand > 0) consumeAsync() else context.become(waiting)
     case ConsumeTimeout =>
-      if (!isCanceled) consume()
+      if (!isCanceled) consumeAsync()
     case ConsumeFailure(e) =>
       onError(e)
   }
 
   def receive = waiting
 
-  private def consume()(implicit tag: ClassTag[A]): Unit = {
-    import streamContext._
-    Try(consumerTemplate.receive(uri, 500)) match {
-      case Success(null) =>
-        self ! ConsumeTimeout
-      case Success(ce) if ce.getPattern != ExchangePattern.InOnly =>
-        self ! ConsumeFailure(new IllegalArgumentException(s"Exchange pattern ${ExchangePattern.InOnly} expected but was ${ce.getPattern}"))
-      case Success(ce) if ce.getException ne null =>
-        self ! ConsumeFailure(ce.getException)
+  private def consumeAsync()(implicit tag: ClassTag[A]): Unit = {
+    import streamContext.consumerTemplate
+
+    Future(consumerTemplate.receive(uri, 500)).map {
+      case null =>
+        ConsumeTimeout
+      case ce if ce.getPattern != ExchangePattern.InOnly =>
+        ConsumeFailure(new IllegalArgumentException(s"Exchange pattern ${ExchangePattern.InOnly} expected but was ${ce.getPattern}"))
+      case ce if ce.getException ne null =>
         consumerTemplate.doneUoW(ce)
-      case Success(ce) =>
+        ConsumeFailure(ce.getException)
+      case ce =>
+        consumerTemplate.doneUoW(ce)
         Try(StreamMessage.from[A](ce.getIn)) match {
-          case Success(m) => self ! ConsumeSuccess(m)
-          case Failure(e) => self ! ConsumeFailure(e)
+          case Success(m) => ConsumeSuccess(m)
+          case Failure(e) => ConsumeFailure(e)
         }
-        consumerTemplate.doneUoW(ce)
-      case Failure(ex) =>
-        self ! ConsumeFailure(ex)
-    }
+    }.recover {
+      case ex => ConsumeFailure(ex)
+    }.pipeTo(self)
   }
 }

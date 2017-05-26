@@ -16,16 +16,13 @@
 
 package streamz.examples.camel.fs2
 
-import fs2.{ Strategy, Stream, Task }
+import fs2.{ Stream, Task }
 
 import streamz.camel.{ StreamMessage, StreamContext }
 import streamz.camel.fs2.dsl._
 
-import scala.concurrent.ExecutionContext.global
-
 object Snippets {
   implicit val context = StreamContext()
-  implicit val strategy = Strategy.fromExecutionContext(global)
 
   val s: Stream[Task, StreamMessage[Int]] =
     // receive stream message from endpoint

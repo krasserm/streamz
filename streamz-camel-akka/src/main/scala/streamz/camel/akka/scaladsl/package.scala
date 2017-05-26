@@ -19,10 +19,8 @@ package streamz.camel.akka
 import akka.NotUsed
 import akka.stream._
 import akka.stream.scaladsl._
-
 import org.apache.camel.spi.Synchronization
 import org.apache.camel.{ Exchange, ExchangePattern, TypeConversionException }
-
 import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.concurrent.{ Future, Promise }

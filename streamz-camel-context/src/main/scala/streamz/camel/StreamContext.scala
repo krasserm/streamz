@@ -16,32 +16,67 @@
 
 package streamz.camel
 
+import java.util.concurrent.{ ExecutorService, LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit }
+import java.util.function.Supplier
+
 import org.apache.camel._
 import org.apache.camel.impl.{ DefaultCamelContext, DefaultExchange }
 
 import scala.reflect.ClassTag
 
 object StreamContext {
-  /**
-   * Creates and returns a started [[DefaultStreamContext]].
-   */
-  def apply(): StreamContext =
-    DefaultStreamContext.apply()
+  type ExecutorServiceFactory = () => ExecutorService
 
   /**
-   * Creates and returns a started [[StreamContext]].
+   * Default factory for the executor service used for running blocking endpoint operations.
+   */
+  val DefaultExecutorServiceFactory: ExecutorServiceFactory =
+    () => new ThreadPoolExecutor(2, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable](), new ThreadPoolExecutor.DiscardPolicy)
+
+  /**
+   * Creates and returns a started [[StreamContext]] with an internally managed `camelContext`
+   * and an `executorService` created with [[DefaultExecutorServiceFactory]].
+   */
+  def apply(): StreamContext =
+    DefaultStreamContext.apply(DefaultExecutorServiceFactory)
+
+  /**
+   * Creates and returns a started [[StreamContext]] with an internally managed `camelContext`
+   * and an `executorService` created with given `executorServiceFactory`.
+   *
+   * @param executorServiceFactory factory for creating the stream context's `executorService`.
+   */
+  def apply(executorServiceFactory: ExecutorServiceFactory): StreamContext =
+    DefaultStreamContext.apply(executorServiceFactory)
+
+  /**
+   * Creates and returns a started [[StreamContext]] with an externally managed `camelContext`
+   * and an `executorService` created with [[DefaultExecutorServiceFactory]].
    *
    * @param camelContext externally managed [[CamelContext]]. Applications are responsible
    *                     for starting the `CamelContext` before calling this factory method
    *                     and stopping the `CamelContext` after stopping the created `StreamContext`.
    */
   def apply(camelContext: CamelContext): StreamContext =
-    new StreamContext(camelContext).start()
+    new StreamContext(camelContext, DefaultExecutorServiceFactory).start()
+
+  /**
+   * Creates and returns a started [[StreamContext]] with an externally managed `camelContext`
+   * and an `executorService` created with given `executorServiceFactory`.
+   *
+   * @param camelContext externally managed [[CamelContext]]. Applications are responsible
+   *                     for starting the `CamelContext` before calling this factory method
+   *                     and stopping the `CamelContext` after stopping the created `StreamContext`.
+   * @param executorServiceFactory factory for creating the stream context's `executorService`.
+   */
+  def apply(camelContext: CamelContext, executorServiceFactory: ExecutorServiceFactory): StreamContext =
+    new StreamContext(camelContext, executorServiceFactory).start()
 
   /**
    * Java API.
    *
-   * Creates and returns a started [[DefaultStreamContext]].
+   * Creates and returns a started [[StreamContext]] with an internally managed `camelContext`
+   * and an `executorService` created with [[DefaultExecutorServiceFactory]].
    */
   def create(): StreamContext =
     apply()
@@ -49,7 +84,19 @@ object StreamContext {
   /**
    * Java API.
    *
-   * Creates and returns a started [[StreamContext]].
+   * Creates and returns a started [[StreamContext]] with an internally managed `camelContext`
+   * and an `executorService` created with given `executorServiceFactory`.
+   *
+   * @param executorServiceFactory factory for creating the stream context's `executorService`.
+   */
+  def create(executorServiceFactory: Supplier[ExecutorService]): StreamContext =
+    apply(() => executorServiceFactory.get())
+
+  /**
+   * Java API.
+   *
+   * Creates and returns a started [[StreamContext]] with an externally managed `camelContext`
+   * and an `executorService` created with [[DefaultExecutorServiceFactory]].
    *
    * @param camelContext externally managed [[CamelContext]]. Applications are responsible
    *                     for starting the `CamelContext` before calling this factory method
@@ -57,6 +104,20 @@ object StreamContext {
    */
   def create(camelContext: CamelContext): StreamContext =
     apply(camelContext)
+
+  /**
+   * Java API.
+   *
+   * Creates and returns a started [[StreamContext]] with an externally managed `camelContext`
+   * and an `executorService` created with given `executorServiceFactory`.
+   *
+   * @param camelContext externally managed [[CamelContext]]. Applications are responsible
+   *                     for starting the `CamelContext` before calling this factory method
+   *                     and stopping the `CamelContext` after stopping the created `StreamContext`.
+   * @param executorServiceFactory factory for creating the stream context's `executorService`.
+   */
+  def create(camelContext: CamelContext, executorServiceFactory: Supplier[ExecutorService]): StreamContext =
+    apply(camelContext, () => executorServiceFactory.get())
 }
 
 /**
@@ -65,8 +126,15 @@ object StreamContext {
  * @param camelContext externally managed [[CamelContext]]. Applications are responsible
  *                     for starting the `CamelContext` before starting this `StreamContext`
  *                     and stopping the `CamelContext` after stopping this `StreamContext`.
+ * @param executorServiceFactory factory for creating this stream context's `executorService`.
  */
-class StreamContext(val camelContext: CamelContext) {
+class StreamContext(val camelContext: CamelContext, executorServiceFactory: StreamContext.ExecutorServiceFactory = StreamContext.DefaultExecutorServiceFactory) {
+  /**
+   * Executor service used for running blocking endpoint operations. It is created with `executorServiceFactory`.
+   */
+  lazy val executorService: ExecutorService =
+    executorServiceFactory()
+
   /**
    * A Camel producer template created from `camelContext`.
    */
@@ -142,25 +210,40 @@ class StreamContext(val camelContext: CamelContext) {
   def stop(): Unit = {
     consumerTemplate.stop()
     producerTemplate.stop()
+    executorService.shutdown()
   }
 }
 
 object DefaultStreamContext {
   /**
    * Creates and returns a started [[DefaultStreamContext]].
+   *
+   * @param executorServiceFactory factory for creating the stream context's `executorService`.
+   *
    */
-  def apply(): DefaultStreamContext =
-    new DefaultStreamContext().start()
+  def apply(executorServiceFactory: StreamContext.ExecutorServiceFactory): DefaultStreamContext =
+    new DefaultStreamContext(executorServiceFactory).start()
 
-  def create(): DefaultStreamContext =
-    apply()
+  /**
+   * Java API.
+   *
+   * Creates and returns a started [[DefaultStreamContext]].
+   *
+   * @param executorServiceFactory factory for creating the stream context's `executorService`.
+   *
+   */
+  def create(executorServiceFactory: StreamContext.ExecutorServiceFactory): DefaultStreamContext =
+    apply(executorServiceFactory)
 }
 
 /**
  * A default [[StreamContext]] with an internally managed [[DefaultCamelContext]]. The lifecycle
  * of the `DefaultCamelContext` is bound to the lifecycle of this `DefaultStreamContext`.
+ *
+ * @param executorServiceFactory factory for creating this stream context's `executorService`.
+ *
  */
-class DefaultStreamContext extends StreamContext(new DefaultCamelContext) {
+class DefaultStreamContext(executorServiceFactory: StreamContext.ExecutorServiceFactory) extends StreamContext(new DefaultCamelContext, executorServiceFactory) {
   /**
    * Starts this `StreamContext` including the internally managed [[DefaultCamelContext]] and returns `this`.
    */

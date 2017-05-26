@@ -118,6 +118,12 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
 }
 
 object StreamMessage {
+  def create[A](body: A): StreamMessage[A] =
+    StreamMessage(body)
+
+  def create[A](body: A, headers: JMap[String, Any]): StreamMessage[A] =
+    StreamMessage(body, headers.asScala.toMap)
+
   /**
    * Creates a [[StreamMessage]] from a Camel [[Message]] converting the message body to type `A`
    * using a Camel type converter.

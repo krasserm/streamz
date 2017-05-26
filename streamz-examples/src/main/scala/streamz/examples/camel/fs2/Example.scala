@@ -17,13 +17,12 @@
 package streamz.examples.camel.fs2
 
 import fs2.{ Strategy, Stream, Task, text }
-
 import streamz.camel.fs2.dsl._
 import streamz.examples.camel.ExampleContext
 
 object Example extends ExampleContext with App {
   implicit val strategy: Strategy =
-    Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global)
+    Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global) // needed for merge
 
   val tcpLineStream: Stream[Task, String] =
     receiveBody[String](tcpEndpointUri)

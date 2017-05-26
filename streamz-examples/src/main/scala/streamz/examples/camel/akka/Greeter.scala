@@ -18,7 +18,7 @@ package streamz.examples.camel.akka
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import streamz.camel.StreamContext
+import streamz.camel.{ StreamContext, StreamMessage }
 import streamz.camel.akka.scaladsl._
 
 object Greeter extends App {
@@ -26,5 +26,13 @@ object Greeter extends App {
   implicit val materializer = ActorMaterializer()
   implicit val context = StreamContext()
 
-  receiveRequestBody[String, String]("netty4:tcp://localhost:5150?textline=true").map(s => s"hello $s").reply.run()
+  // TCP greeter service. Use with e.g. "telnet localhost 5150"
+  receiveRequestBody[String, String]("netty4:tcp://localhost:5150?textline=true")
+    .map(s => s"hello $s")
+    .reply.run()
+
+  // HTTP greeter service. Use with e.g. "curl http://localhost:8080/greeter?name=..."
+  receiveRequest[String, String]("jetty:http://localhost:8080/greeter")
+    .map(msg => StreamMessage(s"Hello ${msg.headers.getOrElse("name", "unknown")}\n"))
+    .reply.run()
 }
