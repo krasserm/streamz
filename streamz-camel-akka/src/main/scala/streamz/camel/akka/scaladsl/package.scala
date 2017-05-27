@@ -19,10 +19,8 @@ package streamz.camel.akka
 import akka.NotUsed
 import akka.stream._
 import akka.stream.scaladsl._
-
 import org.apache.camel.spi.Synchronization
 import org.apache.camel.{ Exchange, ExchangePattern, TypeConversionException }
-
 import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.concurrent.{ Future, Promise }
@@ -31,9 +29,9 @@ import scala.util._
 
 package object scaladsl {
   /**
-   * Camel endpoint combinators for [[StreamMessage]] streams of type `FlowOps[StreamMessage[A], M]`.
+   * Send combinators for [[StreamMessage]] streams of type `FlowOps[StreamMessage[A], M]`.
    */
-  class StreamMessageDsl[A, M, FO <: FlowOps[StreamMessage[A], M]](val self: FO) {
+  class SendDsl[A, M, FO <: FlowOps[StreamMessage[A], M]](val self: FO) {
     /**
      * @see [[scaladsl.send]]
      */
@@ -48,9 +46,9 @@ package object scaladsl {
   }
 
   /**
-   * Camel endpoint combinators for [[StreamMessage]] body streams of type `FlowOps[A, M]`.
+   * Send combinators for [[StreamMessage]] body streams of type `FlowOps[A, M]`.
    */
-  class StreamMessageBodyDsl[A, M, FO <: FlowOps[A, M]](val self: FO) {
+  class SendBodyDsl[A, M, FO <: FlowOps[A, M]](val self: FO) {
     /**
      * @see [[scaladsl.sendBody]]
      */
@@ -64,55 +62,46 @@ package object scaladsl {
       self.via(sendRequestBody[A, B](uri, parallelism))
   }
 
-  class StreamMessageFlowDsl[A, M](val self: Flow[StreamMessage[A], StreamMessage[A], M]) {
+  /**
+   * Reply combinator for streams of type `Flow[A, A, M]`.
+   */
+  class ReplyDsl[A, M](val self: Flow[A, A, M]) {
     /**
      * Pipes the flow's output to its input. Terminal operation on a flow created with [[receiveRequest]]
-     * whose output type has been transformed to its input type.
+     * or [[receiveRequestBody]] whose output type has been transformed to its input type.
      *
      * @see [[receiveRequest]]
-     */
-    def reply: RunnableGraph[M] = self.joinMat(Flow[StreamMessage[A]])(Keep.left)
-  }
-
-  class StreamMessageBodyFlowDsl[A, M](val self: Flow[A, A, M]) {
-    /**
-     * Pipes the flow's output to its input. Terminal operation on a flow created with [[receiveRequestBody]]
-     * whose output type has been transformed to its input type.
-     *
      * @see [[receiveRequestBody]]
      */
     def reply: RunnableGraph[M] = self.joinMat(Flow[A])(Keep.left)
   }
 
-  implicit def streamMessageSourceDsl[A, M](self: Source[StreamMessage[A], M]): StreamMessageDsl[A, M, Source[StreamMessage[A], M]] =
-    new StreamMessageDsl(self)
+  implicit def sourceSendDsl[A, M](self: Source[StreamMessage[A], M]): SendDsl[A, M, Source[StreamMessage[A], M]] =
+    new SendDsl(self)
 
-  implicit def streamMessageFlowDsl[A, B, M](self: Flow[A, StreamMessage[B], M]): StreamMessageDsl[B, M, Flow[A, StreamMessage[B], M]] =
-    new StreamMessageDsl(self)
+  implicit def flowSendDsl[A, B, M](self: Flow[A, StreamMessage[B], M]): SendDsl[B, M, Flow[A, StreamMessage[B], M]] =
+    new SendDsl(self)
 
-  implicit def streamMessageFlowDsl[A, M](self: Flow[StreamMessage[A], StreamMessage[A], M]): StreamMessageFlowDsl[A, M] =
-    new StreamMessageFlowDsl(self)
+  implicit def subFlowOfSourceSendDsl[A, M](self: SubFlow[StreamMessage[A], M, Source[StreamMessage[A], M]#Repr, Source[StreamMessage[A], M]#Closed]): SendDsl[A, M, SubFlow[StreamMessage[A], M, Source[StreamMessage[A], M]#Repr, Source[StreamMessage[A], M]#Closed]] =
+    new SendDsl(self)
 
-  implicit def streamMessageSubFlowOfSourceDsl[A, M](self: SubFlow[StreamMessage[A], M, Source[StreamMessage[A], M]#Repr, Source[StreamMessage[A], M]#Closed]): StreamMessageDsl[A, M, SubFlow[StreamMessage[A], M, Source[StreamMessage[A], M]#Repr, Source[StreamMessage[A], M]#Closed]] =
-    new StreamMessageDsl(self)
+  implicit def subFlowOfFlowSendDsl[A, B, M](self: SubFlow[StreamMessage[B], M, Flow[A, StreamMessage[B], M]#Repr, Flow[A, StreamMessage[B], M]#Closed]): SendDsl[B, M, SubFlow[StreamMessage[B], M, Flow[A, StreamMessage[B], M]#Repr, Flow[A, StreamMessage[B], M]#Closed]] =
+    new SendDsl(self)
 
-  implicit def streamMessageSubFlowOfFlowDsl[A, B, M](self: SubFlow[StreamMessage[B], M, Flow[A, StreamMessage[B], M]#Repr, Flow[A, StreamMessage[B], M]#Closed]): StreamMessageDsl[B, M, SubFlow[StreamMessage[B], M, Flow[A, StreamMessage[B], M]#Repr, Flow[A, StreamMessage[B], M]#Closed]] =
-    new StreamMessageDsl(self)
+  implicit def sourceSendBodyDsl[A, M](self: Source[A, M]): SendBodyDsl[A, M, Source[A, M]] =
+    new SendBodyDsl(self)
 
-  implicit def streamMessageBodySourceDsl[A, M](self: Source[A, M]): StreamMessageBodyDsl[A, M, Source[A, M]] =
-    new StreamMessageBodyDsl(self)
+  implicit def flowSendBodyDsl[A, B, M](self: Flow[A, B, M]): SendBodyDsl[B, M, Flow[A, B, M]] =
+    new SendBodyDsl(self)
 
-  implicit def streamMessageBodyFlowDsl[A, B, M](self: Flow[A, B, M]): StreamMessageBodyDsl[B, M, Flow[A, B, M]] =
-    new StreamMessageBodyDsl(self)
+  implicit def subFlowOfSourceSendBodyDsl[A, M](self: SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]): SendBodyDsl[A, M, SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]] =
+    new SendBodyDsl(self)
 
-  implicit def streamMessageFlowDsl[A, M](self: Flow[A, A, M]): StreamMessageBodyFlowDsl[A, M] =
-    new StreamMessageBodyFlowDsl(self)
+  implicit def subFlowOfFlowSendBodyDsl[A, B, M](self: SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]): SendBodyDsl[B, M, SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]] =
+    new SendBodyDsl(self)
 
-  implicit def streamMessageBodySubFlowOfSourceDsl[A, M](self: SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]): StreamMessageBodyDsl[A, M, SubFlow[A, M, Source[A, M]#Repr, Source[A, M]#Closed]] =
-    new StreamMessageBodyDsl(self)
-
-  implicit def streamMessageBodySubFlowOfFlowDsl[A, B, M](self: SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]): StreamMessageBodyDsl[B, M, SubFlow[B, M, Flow[A, B, M]#Repr, Flow[A, B, M]#Closed]] =
-    new StreamMessageBodyDsl(self)
+  implicit def replyDsl[A, M](self: Flow[A, A, M]): ReplyDsl[A, M] =
+    new ReplyDsl(self)
 
   /**
    * Creates a source of [[StreamMessage]]s consumed from the Camel endpoint identified by `uri`.

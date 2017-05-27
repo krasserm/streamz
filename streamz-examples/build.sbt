@@ -1,6 +1,7 @@
 name := "streamz-examples"
 
 libraryDependencies ++= Seq(
+  "org.apache.camel"         % "camel-jetty"      % Version.Camel,
   "org.apache.camel"         % "camel-netty4"     % Version.Camel,
   "org.apache.camel"         % "camel-stream"     % Version.Camel,
   "org.apache.logging.log4j" % "log4j-api"        % Version.Log4j,

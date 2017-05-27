@@ -37,7 +37,7 @@ private class AsyncExchangeProcessor(capacity: Int) extends AsyncProcessor {
     receivedExchanges.iterator()
 
   override def process(exchange: Exchange): Unit =
-    ???
+    throw new UnsupportedOperationException("Synchronous processing not supported")
 
   override def process(exchange: Exchange, callback: CamelAsyncCallback): Boolean = {
     receivedExchanges.put(AsyncExchange(exchange, callback))
@@ -48,10 +48,17 @@ private class AsyncExchangeProcessor(capacity: Int) extends AsyncProcessor {
 private[akka] class EndpointConsumerReplier[A, B](uri: String, capacity: Int)(implicit streamContext: StreamContext, tag: ClassTag[B])
     extends GraphStage[FlowShape[StreamMessage[A], StreamMessage[B]]] {
 
-  val in: Inlet[StreamMessage[A]] = Inlet("EndpointConsumerReplier.in")
-  val out: Outlet[StreamMessage[B]] = Outlet("EndpointConsumerReplier.out")
+  private implicit val ec: ExecutionContext =
+    ExecutionContext.fromExecutorService(streamContext.executorService)
 
-  override val shape: FlowShape[StreamMessage[A], StreamMessage[B]] = FlowShape.of(in, out)
+  val in: Inlet[StreamMessage[A]] =
+    Inlet("EndpointConsumerReplier.in")
+
+  val out: Outlet[StreamMessage[B]] =
+    Outlet("EndpointConsumerReplier.out")
+
+  override val shape: FlowShape[StreamMessage[A], StreamMessage[B]] =
+    FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape) {
@@ -76,9 +83,6 @@ private[akka] class EndpointConsumerReplier[A, B](uri: String, capacity: Int)(im
         override def onPull(): Unit =
           if (!consuming && hasCapacity) consumeAsync()
       })
-
-      private implicit def ec: ExecutionContext =
-        materializer.executionContext
 
       private def hasCapacity: Boolean =
         emittedExchanges.size < capacity

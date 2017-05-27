@@ -20,7 +20,7 @@ import org.apache.camel.impl.{ DefaultExchange, DefaultMessage }
 import org.scalatest._
 
 class StreamMessageSpec extends WordSpec with Matchers with BeforeAndAfterAll {
-  implicit val context = DefaultStreamContext()
+  implicit val context = StreamContext()
 
   override def afterAll(): Unit =
     context.stop()
