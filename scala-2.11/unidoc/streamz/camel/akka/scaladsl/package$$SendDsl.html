@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>StreamMessageDsl - streamz.camel.fs2.dsl.StreamMessageDsl</title>
-          <meta name="description" content="StreamMessageDsl - streamz.camel.fs2.dsl.StreamMessageDsl" />
-          <meta name="keywords" content="StreamMessageDsl streamz.camel.fs2.dsl.StreamMessageDsl" />
+          <title>SendDsl - streamz.camel.akka.scaladsl.SendDsl</title>
+          <meta name="description" content="SendDsl - streamz.camel.akka.scaladsl.SendDsl" />
+          <meta name="keywords" content="SendDsl streamz.camel.akka.scaladsl.SendDsl" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'streamz.camel.fs2.dsl.package$$StreamMessageDsl';
+            var hash = 'streamz.camel.akka.scaladsl.package$$SendDsl';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -29,11 +29,11 @@
         <body class="type">
       <div id="definition">
         <img alt="Class" src="../../../../lib/class_big.png" />
-        <p id="owner"><a href="../../../package.html" class="extype" name="streamz">streamz</a>.<a href="../../package.html" class="extype" name="streamz.camel">camel</a>.<a href="../package.html" class="extype" name="streamz.camel.fs2">fs2</a>.<a href="package.html" class="extype" name="streamz.camel.fs2.dsl">dsl</a></p>
-        <h1>StreamMessageDsl</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="streamz.camel.fs2.dsl">package dsl</a>
+        <p id="owner"><a href="../../../package.html" class="extype" name="streamz">streamz</a>.<a href="../../package.html" class="extype" name="streamz.camel">camel</a>.<a href="../package.html" class="extype" name="streamz.camel.akka">akka</a>.<a href="package.html" class="extype" name="streamz.camel.akka.scaladsl">scaladsl</a></p>
+        <h1>SendDsl</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="streamz.camel.akka.scaladsl">package scaladsl</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -41,15 +41,15 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier">implicit </span>
+        <span class="modifier"></span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">StreamMessageDsl</span><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">SendDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>, <span name="FO">FO &lt;: <span class="extype" name="akka.stream.scaladsl.FlowOps">FlowOps</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.M">M</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>Stream[Task, StreamMessage[A]]</code>.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Send combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>FlowOps[StreamMessage[A], M]</code>.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -70,7 +70,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="streamz.camel.fs2.dsl.StreamMessageDsl"><span>StreamMessageDsl</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="streamz.camel.akka.scaladsl.SendDsl"><span>SendDsl</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,19 +89,19 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="streamz.camel.fs2.dsl.StreamMessageDsl#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(self:fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]):streamz.camel.fs2.dsl.package.StreamMessageDsl[A]"></a>
-      <a id="&lt;init&gt;:StreamMessageDsl[A]"></a>
+              <ol><li name="streamz.camel.akka.scaladsl.SendDsl#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(self:FO):streamz.camel.akka.scaladsl.package.SendDsl[A,M,FO]"></a>
+      <a id="&lt;init&gt;:SendDsl[A,M,FO]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">StreamMessageDsl</span><span class="params">(<span name="self">self: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.StreamMessageDsl.A">A</span>]]</span>)</span>
+        <span class="name">SendDsl</span><span class="params">(<span name="self">self: <span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.FO">FO</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@&lt;init&gt;(self:fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]):streamz.camel.fs2.dsl.package.StreamMessageDsl[A]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@&lt;init&gt;(self:FO):streamz.camel.akka.scaladsl.package.SendDsl[A,M,FO]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -127,7 +127,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -144,7 +144,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@##():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@##():Int" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -161,7 +161,7 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -178,7 +178,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -195,7 +195,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@clone():Object" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -218,7 +218,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -235,7 +235,7 @@
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@equals(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -252,7 +252,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -275,7 +275,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -292,7 +292,7 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -309,7 +309,7 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -326,7 +326,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -343,7 +343,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -360,45 +360,62 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="streamz.camel.fs2.dsl.StreamMessageDsl#send" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="send(uri:String)(implicitcontext:streamz.camel.StreamContext,implicitstrategy:fs2.Strategy):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]"></a>
-      <a id="send(String)(StreamContext,Strategy):Stream[Task,StreamMessage[A]]"></a>
+    </li><li name="streamz.camel.akka.scaladsl.SendDsl#self" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="self:FO"></a>
+      <a id="self:FO"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">self</span><span class="result">: <span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.FO">FO</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@self:FO" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="streamz.camel.akka.scaladsl.SendDsl#send" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="send(uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext):SendDsl.this.self.Repr[streamz.camel.StreamMessage[A]]"></a>
+      <a id="send(String,Int)(StreamContext):FO.Repr[StreamMessage[A]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">send</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="strategy">strategy: <span class="extype" name="fs2.Strategy">Strategy</span></span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.StreamMessageDsl.A">A</span>]]</span>
+        <span class="name">send</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>)</span><span class="result">: <span class="extype" name="akka.stream.scaladsl.FlowOps.Repr">FO.Repr</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.A">A</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@send(uri:String)(implicitcontext:streamz.camel.StreamContext,implicitstrategy:fs2.Strategy):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@send(uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext):SendDsl.this.self.Repr[streamz.camel.StreamMessage[A]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#send[A](uri:String)(implicitcontext:streamz.camel.StreamContext,implicitstrategy:fs2.Strategy):fs2.Pipe[fs2.Task,streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]]" class="extmbr" name="streamz.camel.fs2.dsl#send">dsl.send</a></p></span></dd></dl></div>
-    </li><li name="streamz.camel.fs2.dsl.StreamMessageDsl#sendRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicitstrategy:fs2.Strategy,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[B]]"></a>
-      <a id="sendRequest[B](String)(StreamContext,Strategy,ClassTag[B]):Stream[Task,StreamMessage[B]]"></a>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#send[A](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#send">scaladsl.send</a></p></span></dd></dl></div>
+    </li><li name="streamz.camel.akka.scaladsl.SendDsl#sendRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sendRequest[B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):SendDsl.this.self.Repr[streamz.camel.StreamMessage[B]]"></a>
+      <a id="sendRequest[B](String,Int)(StreamContext,ClassTag[B]):FO.Repr[StreamMessage[B]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">sendRequest</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="strategy">strategy: <span class="extype" name="fs2.Strategy">Strategy</span></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.fs2.dsl.StreamMessageDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.StreamMessageDsl.sendRequest.B">B</span>]]</span>
+        <span class="name">sendRequest</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parallelism">parallelism: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.scaladsl.FlowOps.Repr">FO.Repr</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.sendRequest.B">B</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicitstrategy:fs2.Strategy,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[B]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@sendRequest[B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):SendDsl.this.self.Repr[streamz.camel.StreamMessage[B]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#sendRequest[A,B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicitstrategy:fs2.Strategy,implicittag:scala.reflect.ClassTag[B]):fs2.Pipe[fs2.Task,streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]]" class="extmbr" name="streamz.camel.fs2.dsl#sendRequest">dsl.sendRequest</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#sendRequest[A,B](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]],akka.NotUsed]" class="extmbr" name="streamz.camel.akka.scaladsl#sendRequest">scaladsl.sendRequest</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -411,7 +428,7 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -428,7 +445,7 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@toString():String" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@toString():String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -445,7 +462,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -468,7 +485,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -491,7 +508,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$StreamMessageDsl@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package$$SendDsl@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

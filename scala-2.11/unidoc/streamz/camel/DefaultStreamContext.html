@@ -92,8 +92,8 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="streamz.camel.DefaultStreamContext#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;():streamz.camel.DefaultStreamContext"></a>
+              <ol><li name="streamz.camel.DefaultStreamContext#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(executorServiceFactory:streamz.camel.StreamContext.ExecutorServiceFactory):streamz.camel.DefaultStreamContext"></a>
       <a id="&lt;init&gt;:DefaultStreamContext"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -101,14 +101,14 @@ of the <code>DefaultCamelContext</code> is bound to the lifecycle of this <code>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DefaultStreamContext</span><span class="params">()</span>
+        <span class="name">DefaultStreamContext</span><span class="params">(<span name="executorServiceFactory">executorServiceFactory: <a href="StreamContext$.html#ExecutorServiceFactory=()=&gt;java.util.concurrent.ExecutorService" class="extmbr" name="streamz.camel.StreamContext.ExecutorServiceFactory">ExecutorServiceFactory</a></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.camel.DefaultStreamContext@&lt;init&gt;():streamz.camel.DefaultStreamContext" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.camel.DefaultStreamContext@&lt;init&gt;(executorServiceFactory:streamz.camel.StreamContext.ExecutorServiceFactory):streamz.camel.DefaultStreamContext" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">executorServiceFactory</dt><dd class="cmt"><p>factory for creating this stream context's <code>executorService</code>.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -353,6 +353,24 @@ created and started. The returned consumer must be started (and stopped) by the 
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="streamz.camel.StreamContext#executorService" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="executorService:java.util.concurrent.ExecutorService"></a>
+      <a id="executorService:ExecutorService"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">executorService</span><span class="result">: <span class="extype" name="java.util.concurrent.ExecutorService">ExecutorService</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#streamz.camel.DefaultStreamContext@executorService:java.util.concurrent.ExecutorService" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Executor service used for running blocking endpoint operations.</p><div class="fullcomment"><div class="comment cmt"><p>Executor service used for running blocking endpoint operations. It is created with <code>executorServiceFactory</code>.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>

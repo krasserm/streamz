@@ -88,74 +88,57 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="streamz.camel.akka.scaladsl.StreamMessageBodyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StreamMessageBodyDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[A,M]]extendsAnyRef"></a>
-      <a id="StreamMessageBodyDsl[A,M,FO&lt;:FlowOps[A,M]]:StreamMessageBodyDsl[A,M,FO]"></a>
+              <ol><li name="streamz.camel.akka.scaladsl.ReplyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ReplyDsl[A,M]extendsAnyRef"></a>
+      <a id="ReplyDsl[A,M]:ReplyDsl[A,M]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="package$$StreamMessageBodyDsl.html"><span class="name">StreamMessageBodyDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>, <span name="FO">FO &lt;: <span class="extype" name="akka.stream.scaladsl.FlowOps">FlowOps</span>[<span class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyDsl.M">M</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="package$$ReplyDsl.html"><span class="name">ReplyDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@StreamMessageBodyDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[A,M]]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@ReplyDsl[A,M]extendsAnyRef" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body streams of type <code>FlowOps[A, M]</code>.</p>
-    </li><li name="streamz.camel.akka.scaladsl.StreamMessageBodyFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StreamMessageBodyFlowDsl[A,M]extendsAnyRef"></a>
-      <a id="StreamMessageBodyFlowDsl[A,M]:StreamMessageBodyFlowDsl[A,M]"></a>
+      <p class="shortcomment cmt">Reply combinator for streams of type <code>Flow[A, A, M]</code>.</p>
+    </li><li name="streamz.camel.akka.scaladsl.SendBodyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SendBodyDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[A,M]]extendsAnyRef"></a>
+      <a id="SendBodyDsl[A,M,FO&lt;:FlowOps[A,M]]:SendBodyDsl[A,M,FO]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="package$$StreamMessageBodyFlowDsl.html"><span class="name">StreamMessageBodyFlowDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="package$$SendBodyDsl.html"><span class="name">SendBodyDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>, <span name="FO">FO &lt;: <span class="extype" name="akka.stream.scaladsl.FlowOps">FlowOps</span>[<span class="extype" name="streamz.camel.akka.scaladsl.SendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.SendBodyDsl.M">M</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@StreamMessageBodyFlowDsl[A,M]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@SendBodyDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[A,M]]extendsAnyRef" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="streamz.camel.akka.scaladsl.StreamMessageDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StreamMessageDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[streamz.camel.StreamMessage[A],M]]extendsAnyRef"></a>
-      <a id="StreamMessageDsl[A,M,FO&lt;:FlowOps[StreamMessage[A],M]]:StreamMessageDsl[A,M,FO]"></a>
+      <p class="shortcomment cmt">Send combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body streams of type <code>FlowOps[A, M]</code>.</p>
+    </li><li name="streamz.camel.akka.scaladsl.SendDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SendDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[streamz.camel.StreamMessage[A],M]]extendsAnyRef"></a>
+      <a id="SendDsl[A,M,FO&lt;:FlowOps[StreamMessage[A],M]]:SendDsl[A,M,FO]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="package$$StreamMessageDsl.html"><span class="name">StreamMessageDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>, <span name="FO">FO &lt;: <span class="extype" name="akka.stream.scaladsl.FlowOps">FlowOps</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.StreamMessageDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.StreamMessageDsl.M">M</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="package$$SendDsl.html"><span class="name">SendDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>, <span name="FO">FO &lt;: <span class="extype" name="akka.stream.scaladsl.FlowOps">FlowOps</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.SendDsl.M">M</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@StreamMessageDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[streamz.camel.StreamMessage[A],M]]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@SendDsl[A,M,FO&lt;:akka.stream.scaladsl.FlowOps[streamz.camel.StreamMessage[A],M]]extendsAnyRef" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>FlowOps[StreamMessage[A], M]</code>.</p>
-    </li><li name="streamz.camel.akka.scaladsl.StreamMessageFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StreamMessageFlowDsl[A,M]extendsAnyRef"></a>
-      <a id="StreamMessageFlowDsl[A,M]:StreamMessageFlowDsl[A,M]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="package$$StreamMessageFlowDsl.html"><span class="name">StreamMessageFlowDsl</span></a><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@StreamMessageFlowDsl[A,M]extendsAnyRef" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
+      <p class="shortcomment cmt">Send combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>FlowOps[StreamMessage[A], M]</code>.</p>
     </li></ol>
             </div>
 
@@ -163,7 +146,41 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="streamz.camel.akka.scaladsl#receive" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="streamz.camel.akka.scaladsl#flowSendBodyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="flowSendBodyDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,B,M]):streamz.camel.akka.scaladsl.package.SendBodyDsl[B,M,akka.stream.scaladsl.Flow[A,B,M]]"></a>
+      <a id="flowSendBodyDsl[A,B,M](Flow[A,B,M]):SendBodyDsl[B,M,Flow[A,B,M]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">flowSendBodyDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$SendBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendBodyDsl">SendBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.flowSendBodyDsl.M">M</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@flowSendBodyDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,B,M]):streamz.camel.akka.scaladsl.package.SendBodyDsl[B,M,akka.stream.scaladsl.Flow[A,B,M]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="streamz.camel.akka.scaladsl#flowSendDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="flowSendDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]):streamz.camel.akka.scaladsl.package.SendDsl[B,M,akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]]"></a>
+      <a id="flowSendDsl[A,B,M](Flow[A,StreamMessage[B],M]):SendDsl[B,M,Flow[A,StreamMessage[B],M]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">flowSendDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.A">A</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$SendDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendDsl">SendDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.A">A</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.flowSendDsl.M">M</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@flowSendDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]):streamz.camel.akka.scaladsl.package.SendDsl[B,M,akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="streamz.camel.akka.scaladsl#receive" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="receive[A](uri:String)(implicitstreamContext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[A]):akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],akka.NotUsed]"></a>
       <a id="receive[A](String)(StreamContext,ClassTag[A]):Source[StreamMessage[A],NotUsed]"></a>
       <h4 class="signature">
@@ -251,6 +268,23 @@ to type <code>B</code> using a Camel type converter. The flow completes with an 
 with the endpoint fails.</p><p>Use this method for processing inbound <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchanges.
 </p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">capacity</dt><dd class="cmt"><p>maximum number of active requests i.e. maximum number of consumed messages with
                 pending reply messages.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+    </li><li name="streamz.camel.akka.scaladsl#replyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="replyDsl[A,M](self:akka.stream.scaladsl.Flow[A,A,M]):streamz.camel.akka.scaladsl.package.ReplyDsl[A,M]"></a>
+      <a id="replyDsl[A,M](Flow[A,A,M]):ReplyDsl[A,M]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">replyDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.replyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.replyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.replyDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$ReplyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.ReplyDsl">ReplyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.replyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.replyDsl.M">M</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@replyDsl[A,M](self:akka.stream.scaladsl.Flow[A,A,M]):streamz.camel.akka.scaladsl.package.ReplyDsl[A,M]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="streamz.camel.akka.scaladsl#send" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="send[A](uri:String,parallelism:Int)(implicitcontext:streamz.camel.StreamContext):akka.stream.Graph[akka.stream.FlowShape[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]],akka.NotUsed]"></a>
       <a id="send[A](String,Int)(StreamContext):Graph[FlowShape[StreamMessage[A],StreamMessage[A]],NotUsed]"></a>
@@ -339,172 +373,104 @@ identified by <code>uri</code> and continues the flow with the output message re
 output message is converted to type <code>B</code> using a Camel type converter. The flow completes
 with an error if the message exchange with the endpoint fails.
 </p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd><dt class="param">parallelism</dt><dd class="cmt"><p>number of parallel requests.  Message order preserved for any <code>parallelism</code> value.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageBodyFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageBodyFlowDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,B,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[B,M,akka.stream.scaladsl.Flow[A,B,M]]"></a>
-      <a id="streamMessageBodyFlowDsl[A,B,M](Flow[A,B,M]):StreamMessageBodyDsl[B,M,Flow[A,B,M]]"></a>
+    </li><li name="streamz.camel.akka.scaladsl#sourceSendBodyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sourceSendBodyDsl[A,M](self:akka.stream.scaladsl.Source[A,M]):streamz.camel.akka.scaladsl.package.SendBodyDsl[A,M,akka.stream.scaladsl.Source[A,M]]"></a>
+      <a id="sourceSendBodyDsl[A,M](Source[A,M]):SendBodyDsl[A,M,Source[A,M]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">streamMessageBodyFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyDsl">StreamMessageBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodyFlowDsl.M">M</span>]]</span>
+        <span class="name">sourceSendBodyDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="streamz.camel.akka.scaladsl.sourceSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.sourceSendBodyDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$SendBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendBodyDsl">SendBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.sourceSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.sourceSendBodyDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="streamz.camel.akka.scaladsl.sourceSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.sourceSendBodyDsl.M">M</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageBodyFlowDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,B,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[B,M,akka.stream.scaladsl.Flow[A,B,M]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@sourceSendBodyDsl[A,M](self:akka.stream.scaladsl.Source[A,M]):streamz.camel.akka.scaladsl.package.SendBodyDsl[A,M,akka.stream.scaladsl.Source[A,M]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageBodySourceDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageBodySourceDsl[A,M](self:akka.stream.scaladsl.Source[A,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[A,M,akka.stream.scaladsl.Source[A,M]]"></a>
-      <a id="streamMessageBodySourceDsl[A,M](Source[A,M]):StreamMessageBodyDsl[A,M,Source[A,M]]"></a>
+    </li><li name="streamz.camel.akka.scaladsl#sourceSendDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="sourceSendDsl[A,M](self:akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.SendDsl[A,M,akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]]"></a>
+      <a id="sourceSendDsl[A,M](Source[StreamMessage[A],M]):SendDsl[A,M,Source[StreamMessage[A],M]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">streamMessageBodySourceDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySourceDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyDsl">StreamMessageBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySourceDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySourceDsl.M">M</span>]]</span>
+        <span class="name">sourceSendDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.sourceSendDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.sourceSendDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$SendDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendDsl">SendDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.sourceSendDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.sourceSendDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.sourceSendDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.sourceSendDsl.M">M</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageBodySourceDsl[A,M](self:akka.stream.scaladsl.Source[A,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[A,M,akka.stream.scaladsl.Source[A,M]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@sourceSendDsl[A,M](self:akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.SendDsl[A,M,akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageBodySubFlowOfFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageBodySubFlowOfFlowDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[B,M,akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]"></a>
-      <a id="streamMessageBodySubFlowOfFlowDsl[A,B,M](SubFlow[B,M,[+O]Flow[A,O,M],Sink[A,M]]):StreamMessageBodyDsl[B,M,SubFlow[B,M,[+O]Flow[A,O,M],Sink[A,M]]]"></a>
+    </li><li name="streamz.camel.akka.scaladsl#subFlowOfFlowSendBodyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="subFlowOfFlowSendBodyDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.SendBodyDsl[B,M,akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]"></a>
+      <a id="subFlowOfFlowSendBodyDsl[A,B,M](SubFlow[B,M,[+O]Flow[A,O,M],Sink[A,M]]):SendBodyDsl[B,M,SubFlow[B,M,[+O]Flow[A,O,M],Sink[A,M]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">streamMessageBodySubFlowOfFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$StreamMessageBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyDsl">StreamMessageBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfFlowDsl.M">M</span>]]]</span>
+        <span class="name">subFlowOfFlowSendBodyDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$SendBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendBodyDsl">SendBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendBodyDsl.M">M</span>]]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageBodySubFlowOfFlowDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[B,M,akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@subFlowOfFlowSendBodyDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.SendBodyDsl[B,M,akka.stream.scaladsl.SubFlow[B,M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageBodySubFlowOfSourceDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageBodySubFlowOfSourceDsl[A,M](self:akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[A,M,akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]"></a>
-      <a id="streamMessageBodySubFlowOfSourceDsl[A,M](SubFlow[A,M,[+O]Source[O,M],RunnableGraph[M]]):StreamMessageBodyDsl[A,M,SubFlow[A,M,[+O]Source[O,M],RunnableGraph[M]]]"></a>
+    </li><li name="streamz.camel.akka.scaladsl#subFlowOfFlowSendDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="subFlowOfFlowSendDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.SendDsl[B,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]"></a>
+      <a id="subFlowOfFlowSendDsl[A,B,M](SubFlow[StreamMessage[B],M,[+O]Flow[A,O,M],Sink[A,M]]):SendDsl[B,M,SubFlow[StreamMessage[B],M,[+O]Flow[A,O,M],Sink[A,M]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">streamMessageBodySubFlowOfSourceDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$StreamMessageBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyDsl">StreamMessageBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageBodySubFlowOfSourceDsl.M">M</span>]]]</span>
+        <span class="name">subFlowOfFlowSendDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$SendDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendDsl">SendDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfFlowSendDsl.M">M</span>]]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageBodySubFlowOfSourceDsl[A,M](self:akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.StreamMessageBodyDsl[A,M,akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@subFlowOfFlowSendDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.SendDsl[B,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[A,A,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyFlowDsl[A,M]"></a>
-      <a id="streamMessageFlowDsl[A,M](Flow[A,A,M]):StreamMessageBodyFlowDsl[A,M]"></a>
+    </li><li name="streamz.camel.akka.scaladsl#subFlowOfSourceSendBodyDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="subFlowOfSourceSendBodyDsl[A,M](self:akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.SendBodyDsl[A,M,akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]"></a>
+      <a id="subFlowOfSourceSendBodyDsl[A,M](SubFlow[A,M,[+O]Source[O,M],RunnableGraph[M]]):SendBodyDsl[A,M,SubFlow[A,M,[+O]Source[O,M],RunnableGraph[M]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">streamMessageFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageBodyFlowDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageBodyFlowDsl">StreamMessageBodyFlowDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>
+        <span class="name">subFlowOfSourceSendBodyDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$SendBodyDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendBodyDsl">SendBodyDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendBodyDsl.M">M</span>]]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[A,A,M]):streamz.camel.akka.scaladsl.package.StreamMessageBodyFlowDsl[A,M]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@subFlowOfSourceSendBodyDsl[A,M](self:akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.SendBodyDsl[A,M,akka.stream.scaladsl.SubFlow[A,M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.StreamMessageFlowDsl[A,M]"></a>
-      <a id="streamMessageFlowDsl[A,M](Flow[StreamMessage[A],StreamMessage[A],M]):StreamMessageFlowDsl[A,M]"></a>
+    </li><li name="streamz.camel.akka.scaladsl#subFlowOfSourceSendDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="subFlowOfSourceSendDsl[A,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.SendDsl[A,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]"></a>
+      <a id="subFlowOfSourceSendDsl[A,M](SubFlow[StreamMessage[A],M,[+O]Source[O,M],RunnableGraph[M]]):SendDsl[A,M,SubFlow[StreamMessage[A],M,[+O]Source[O,M],RunnableGraph[M]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">streamMessageFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>], <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageFlowDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageFlowDsl">StreamMessageFlowDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>
+        <span class="name">subFlowOfSourceSendDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$SendDsl.html" class="extype" name="streamz.camel.akka.scaladsl.SendDsl">SendDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.subFlowOfSourceSendDsl.M">M</span>]]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageFlowDsl[A,M](self:akka.stream.scaladsl.Flow[streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.StreamMessageFlowDsl[A,M]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageFlowDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[B,M,akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]]"></a>
-      <a id="streamMessageFlowDsl[A,B,M](Flow[A,StreamMessage[B],M]):StreamMessageDsl[B,M,Flow[A,StreamMessage[B],M]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">streamMessageFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageDsl">StreamMessageDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.A">A</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageFlowDsl.M">M</span>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageFlowDsl[A,B,M](self:akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[B,M,akka.stream.scaladsl.Flow[A,streamz.camel.StreamMessage[B],M]]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageSourceDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageSourceDsl[A,M](self:akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[A,M,akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]]"></a>
-      <a id="streamMessageSourceDsl[A,M](Source[StreamMessage[A],M]):StreamMessageDsl[A,M,Source[StreamMessage[A],M]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">streamMessageSourceDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSourceDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSourceDsl.M">M</span>]</span>)</span><span class="result">: <a href="package$$StreamMessageDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageDsl">StreamMessageDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSourceDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSourceDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSourceDsl.M">M</span>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageSourceDsl[A,M](self:akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[A,M,akka.stream.scaladsl.Source[streamz.camel.StreamMessage[A],M]]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageSubFlowOfFlowDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageSubFlowOfFlowDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[B,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]"></a>
-      <a id="streamMessageSubFlowOfFlowDsl[A,B,M](SubFlow[StreamMessage[B],M,[+O]Flow[A,O,M],Sink[A,M]]):StreamMessageDsl[B,M,SubFlow[StreamMessage[B],M,[+O]Flow[A,O,M],Sink[A,M]]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">streamMessageSubFlowOfFlowDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$StreamMessageDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageDsl">StreamMessageDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.B">B</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.B">B</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.A">A</span>, <span class="extype" name="akka.stream.scaladsl.Flow.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.Sink">Sink</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfFlowDsl.M">M</span>]]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageSubFlowOfFlowDsl[A,B,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[B,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[B],M,[+O]akka.stream.scaladsl.Flow[A,O,M],akka.stream.scaladsl.Sink[A,M]]]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="streamz.camel.akka.scaladsl#streamMessageSubFlowOfSourceDsl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="streamMessageSubFlowOfSourceDsl[A,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[A,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]"></a>
-      <a id="streamMessageSubFlowOfSourceDsl[A,M](SubFlow[StreamMessage[A],M,[+O]Source[O,M],RunnableGraph[M]]):StreamMessageDsl[A,M,SubFlow[StreamMessage[A],M,[+O]Source[O,M],RunnableGraph[M]]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">streamMessageSubFlowOfSourceDsl</span><span class="tparams">[<span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="self">self: <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.M">M</span>]]</span>)</span><span class="result">: <a href="package$$StreamMessageDsl.html" class="extype" name="streamz.camel.akka.scaladsl.StreamMessageDsl">StreamMessageDsl</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.A">A</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.M">M</span>, <span class="extype" name="akka.stream.scaladsl.SubFlow">SubFlow</span>[<a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.A">A</span>], <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.M">M</span>, [+O]<span class="extype" name="akka.stream.scaladsl.Source">Source</span>[<span class="extype" name="akka.stream.scaladsl.Source.Repr.O">O</span>, <span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.M">M</span>], <span class="extype" name="akka.stream.scaladsl.RunnableGraph">RunnableGraph</span>[<span class="extype" name="streamz.camel.akka.scaladsl.streamMessageSubFlowOfSourceDsl.M">M</span>]]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@streamMessageSubFlowOfSourceDsl[A,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.StreamMessageDsl[A,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.akka.scaladsl.package@subFlowOfSourceSendDsl[A,M](self:akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]):streamz.camel.akka.scaladsl.package.SendDsl[A,M,akka.stream.scaladsl.SubFlow[streamz.camel.StreamMessage[A],M,[+O]akka.stream.scaladsl.Source[O,M],akka.stream.scaladsl.RunnableGraph[M]]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
