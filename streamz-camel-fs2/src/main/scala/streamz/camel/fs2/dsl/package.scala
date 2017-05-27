@@ -30,7 +30,7 @@ package object dsl {
   /**
    * Camel endpoint combinators for [[StreamMessage]] streams of type `Stream[Task, StreamMessage[A]]`.
    */
-  implicit class StreamMessageDsl[A](self: Stream[Task, StreamMessage[A]]) {
+  implicit class SendDsl[A](self: Stream[Task, StreamMessage[A]]) {
     /**
      * @see [[dsl.send]]
      */
@@ -47,7 +47,7 @@ package object dsl {
   /**
    * Camel endpoint combinators for [[StreamMessage]] body streams of type `Stream[Task, A]`.
    */
-  implicit class StreamMessageBodyDsl[A](self: Stream[Task, A]) {
+  implicit class SendBodyDsl[A](self: Stream[Task, A]) {
     /**
      * @see [[dsl.sendBody]]
      */
