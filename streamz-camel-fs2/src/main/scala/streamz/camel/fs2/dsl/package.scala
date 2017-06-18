@@ -148,8 +148,11 @@ package object dsl {
             context.consumerTemplate.doneUoW(ce)
           case Success(ce) =>
             Try(StreamMessage.from[A](ce.getIn)) match {
-              case Success(m) => callback(Right(m))
-              case Failure(e) => callback(Left(e))
+              case Success(m) =>
+                callback(Right(m))
+              case Failure(e) =>
+                callback(Left(e))
+                ce.setException(e)
             }
             context.consumerTemplate.doneUoW(ce)
           case Failure(ex) =>
