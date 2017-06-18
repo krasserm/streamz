@@ -72,10 +72,14 @@ private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: Str
         consumerTemplate.doneUoW(ce)
         ConsumeFailure(ce.getException)
       case ce =>
-        consumerTemplate.doneUoW(ce)
         Try(StreamMessage.from[A](ce.getIn)) match {
-          case Success(m) => ConsumeSuccess(m)
-          case Failure(e) => ConsumeFailure(e)
+          case Success(m) =>
+            consumerTemplate.doneUoW(ce)
+            ConsumeSuccess(m)
+          case Failure(e) =>
+            ce.setException(e)
+            consumerTemplate.doneUoW(ce)
+            ConsumeFailure(e)
         }
     }.recover {
       case ex => ConsumeFailure(ex)

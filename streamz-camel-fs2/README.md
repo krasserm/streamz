@@ -9,7 +9,7 @@ The DSL is provided by the `streamz-camel-fs2` artifact which is available for S
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.8"
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.8.1"
 
 <a name="dsl"></a>
 ### DSL
