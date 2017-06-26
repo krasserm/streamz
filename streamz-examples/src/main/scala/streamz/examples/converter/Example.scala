@@ -16,13 +16,12 @@
 
 package streamz.examples.converter
 
-import akka.{ Done, NotUsed }
 import akka.actor.{ ActorRefFactory, ActorSystem }
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{ Flow => AkkaFlow, Keep, Sink => AkkaSink, Source => AkkaSource }
-
-import fs2.{ Pipe, Pure, Sink, Stream, Task, pipe }
-
+import akka.stream.scaladsl.{ Keep, Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource }
+import akka.{ Done, NotUsed }
+import cats.effect.IO
+import fs2.{ Pipe, Pure, Sink, Stream }
 import streamz.converter._
 
 import scala.collection.immutable.Seq
@@ -45,17 +44,17 @@ object Example extends App {
   def f(i: Int) = List(s"$i-1", s"$i-2")
 
   val aSink1: AkkaSink[Int, Future[Done]] = AkkaSink.foreach[Int](println)
-  val fSink1: Sink[Task, Int] = aSink1.toSink()
+  val fSink1: Sink[IO, Int] = aSink1.toSink()
 
   val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
-  val fStream1: Stream[Task, Int] = aSource1.toStream()
+  val fStream1: Stream[IO, Int] = aSource1.toStream()
 
   val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
-  val fPipe1: Pipe[Task, Int, String] = aFlow1.toPipe()
+  val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe()
 
-  fStream1.to(fSink1).run.unsafeRun() // prints numbers
-  assert(fStream1.runLog.unsafeRun() == numbers)
-  assert(fStream1.through(fPipe1).runLog.unsafeRun() == numbers.flatMap(f))
+  fStream1.to(fSink1).run.unsafeRunSync() // prints numbers
+  assert(fStream1.runLog.unsafeRunSync() == numbers)
+  assert(fStream1.through(fPipe1).runLog.unsafeRunSync() == numbers.flatMap(f))
 
   // --------------------------------
   //  FS2 to Akka Stream conversions
@@ -63,13 +62,13 @@ object Example extends App {
 
   def g(i: Int) = i + 10
 
-  val fSink2: Sink[Pure, Int] = s => pipe.lift(g)(s).map(println)
+  val fSink2: Sink[Pure, Int] = s => s.map(g).map(println)
   val aSink2: AkkaSink[Int, Future[Done]] = AkkaSink.fromGraph(fSink2.toSink)
 
   val fStream2: Stream[Pure, Int] = Stream.emits(numbers)
   val aSource2: AkkaSource[Int, NotUsed] = AkkaSource.fromGraph(fStream2.toSource)
 
-  val fpipe2: Pipe[Pure, Int, Int] = pipe.lift[Pure, Int, Int](g)
+  val fpipe2: Pipe[Pure, Int, Int] = s => s.map(g)
   val aFlow2: AkkaFlow[Int, Int, NotUsed] = AkkaFlow.fromGraph(fpipe2.toFlow)
 
   aSource2.toMat(aSink2)(Keep.right).run() // prints numbers

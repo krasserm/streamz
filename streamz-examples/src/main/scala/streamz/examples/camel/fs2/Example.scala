@@ -16,28 +16,28 @@
 
 package streamz.examples.camel.fs2
 
-import fs2.{ Strategy, Stream, Task, text }
+import cats.effect.IO
+import fs2.{ Stream, text }
 import streamz.camel.fs2.dsl._
 import streamz.examples.camel.ExampleContext
 
 object Example extends ExampleContext with App {
-  implicit val strategy: Strategy =
-    Strategy.fromExecutionContext(scala.concurrent.ExecutionContext.global) // needed for merge
+  import scala.concurrent.ExecutionContext.Implicits.global // needed for merge
 
-  val tcpLineStream: Stream[Task, String] =
+  val tcpLineStream: Stream[IO, String] =
     receiveBody[String](tcpEndpointUri)
 
-  val fileLineStream: Stream[Task, String] =
+  val fileLineStream: Stream[IO, String] =
     receiveBody[String](fileEndpointUri).through(text.lines)
 
-  val linePrefixStream: Stream[Task, String] =
+  val linePrefixStream: Stream[IO, String] =
     Stream.iterate(1)(_ + 1).sendRequest[String](serviceEndpointUri)
 
-  val stream: Stream[Task, String] =
+  val stream: Stream[IO, String] =
     tcpLineStream
       .merge(fileLineStream)
       .zipWith(linePrefixStream)((l, n) => n concat l)
       .send(printerEndpointUri)
 
-  stream.run.unsafeRun
+  stream.run.unsafeRunSync()
 }

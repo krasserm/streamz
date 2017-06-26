@@ -16,15 +16,15 @@
 
 package streamz.examples.camel.fs2
 
-import fs2.{ Stream, Task }
-
-import streamz.camel.{ StreamMessage, StreamContext }
+import cats.effect.IO
+import fs2.Stream
+import streamz.camel.{ StreamContext, StreamMessage }
 import streamz.camel.fs2.dsl._
 
 object Snippets {
   implicit val context = StreamContext()
 
-  val s: Stream[Task, StreamMessage[Int]] =
+  val s: Stream[IO, StreamMessage[Int]] =
     // receive stream message from endpoint
     receive[String]("seda:q1")
       // in-only message exchange with endpoint and continue stream with in-message
@@ -32,17 +32,17 @@ object Snippets {
       // in-out message exchange with endpoint and continue stream with out-message
       .sendRequest[Int]("bean:service?method=weight")
 
-  // create task from stream
-  val t: Task[Unit] = s.run
+  // create IO from stream
+  val t: IO[Unit] = s.run
 
-  // run task (side effects only here) ...
-  t.unsafeRun
+  // run IO (side effects only here) ...
+  t.unsafeRunSync()
 
-  val s1: Stream[Task, StreamMessage[String]] = receive[String]("seda:q1")
-  val s2: Stream[Task, StreamMessage[String]] = s1.send("seda:q2")
-  val s3: Stream[Task, StreamMessage[Int]] = s2.sendRequest[Int]("bean:service?method=weight")
+  val s1: Stream[IO, StreamMessage[String]] = receive[String]("seda:q1")
+  val s2: Stream[IO, StreamMessage[String]] = s1.send("seda:q2")
+  val s3: Stream[IO, StreamMessage[Int]] = s2.sendRequest[Int]("bean:service?method=weight")
 
-  val s1b: Stream[Task, String] = receiveBody[String]("seda:q1")
-  val s2b: Stream[Task, String] = s1b.send("seda:q2")
-  val s3b: Stream[Task, Int] = s2b.sendRequest[Int]("bean:service?method=weight")
+  val s1b: Stream[IO, String] = receiveBody[String]("seda:q1")
+  val s2b: Stream[IO, String] = s1b.send("seda:q2")
+  val s3b: Stream[IO, Int] = s2b.sendRequest[Int]("bean:service?method=weight")
 }
