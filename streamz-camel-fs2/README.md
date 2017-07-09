@@ -9,7 +9,7 @@ The DSL is provided by the `streamz-camel-fs2` artifact which is available for S
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.8.1"
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.9-M1"
 
 <a name="dsl"></a>
 ### DSL
@@ -50,15 +50,19 @@ After usage, a `StreamContext` should be stopped with `streamContext.stop()`.
 An FS2 stream that emits messages consumed from a Camel endpoint can be created with `receive`. Endpoints are referenced by their [endpoint URI](http://camel.apache.org/uris.html). For example,
 
 ```scala
-import streamz.camel.StreamMessage
+import cats.effect.IO
+import fs2.Stream
+import streamz.camel.StreamContext 
+import streamz.camel.StreamMessage 
+import streamz.camel.fs2.dsl._
 
-val s1: Stream[Task, StreamMessage[String]] = receive[String]("seda:q1")
+val s1: Stream[IO, StreamMessage[String]] = receive[String]("seda:q1")
 ```
 
 creates an FS2 stream that consumes messages from the [SEDA endpoint](http://camel.apache.org/seda.html) `seda:q1` and converts them to `StreamMessage[String]`s. A [`StreamMessage[A]`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamMessage.html) contains a message `body` of type `A` and message `headers`. Calling `receive` with a `String` type parameter creates an FS2 stream that converts consumed message bodies to type `String` before emitting them as `StreamMessage[String]`. Type conversion internally uses a Camel [type converter](http://camel.apache.org/type-converter.html). An FS2 stream that only emits the converted message bodies can be created with `receiveBody`:
 
 ```scala
-val s1b: Stream[Task, String] = receiveBody[String]("seda:q1")
+val s1b: Stream[IO, String] = receiveBody[String]("seda:q1")
 ```
 
 This is equivalent to `receive[String]("seda:q1").map(_.body)`.
@@ -74,15 +78,15 @@ This is equivalent to `receive[String]("seda:q1").map(_.body)`.
 For sending a `StreamMessage` to a Camel endpoint, the `send` combinator should be used:
 
 ```scala
-val s2: Stream[Task, StreamMessage[String]] = s1.send("seda:q2")
+val s2: Stream[IO, StreamMessage[String]] = s1.send("seda:q2")
 ```
 
 This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. 
 
-The `send` combinator is not only available for streams of type `Stream[Task, StreamMessage[A]]` but more generally for any stream of type `Stream[Task, A]`.
+The `send` combinator is not only available for streams of type `Stream[IO, StreamMessage[A]]` but more generally for any stream of type `Stream[IO, A]`.
 
 ```scala
-val s2b: Stream[Task, String] = s1b.send("seda:q2")
+val s2b: Stream[IO, String] = s1b.send("seda:q2")
 ```
 
 If `A` is not a `StreamMessage`, `send` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped `A`.
@@ -92,15 +96,15 @@ If `A` is not a `StreamMessage`, `send` automatically wraps the message into a `
 For sending a request `StreamMessage` to an endpoint and obtaining a reply, the `sendRequest` combinator should be used:
 
 ```scala
-val s3: Stream[Task, StreamMessage[Int]] = s2.sendRequest[Int]("bean:service?method=weight")
+val s3: Stream[IO, StreamMessage[Int]] = s2.sendRequest[Int]("bean:service?method=weight")
 ```
 
 This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `sendRequest` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available (`Double`, for example). 
 
-The `sendRequest` combinator is not only available for streams of type `Stream[Task, StreamMessage[A]]` but more generally for any stream of type `Stream[Task, A]`:
+The `sendRequest` combinator is not only available for streams of type `Stream[IO, StreamMessage[A]]` but more generally for any stream of type `Stream[IO, A]`:
 
 ```scala
-val s3b: Stream[Task, Int] = s2b.sendRequest[Int]("bean:service?method=weight")
+val s3b: Stream[IO, Int] = s2b.sendRequest[Int]("bean:service?method=weight")
 ```
 
 If `A` is not a `StreamMessage`, `sendRequest` automatically wraps the message into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped message body `B` of the output `StreamMessage[B]`.

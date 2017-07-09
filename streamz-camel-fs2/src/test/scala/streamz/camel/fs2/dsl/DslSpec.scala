@@ -57,17 +57,17 @@ class DslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   "receive" must {
     "consume from an endpoint" in {
       1 to 3 foreach { i => producerTemplate.sendBody("seda:q1", i) }
-      receiveBody[Int]("seda:q1").take(3).runLog.unsafeRun should be(Seq(1, 2, 3))
+      receiveBody[Int]("seda:q1").take(3).runLog.unsafeRunSync() should be(Seq(1, 2, 3))
     }
     "complete with an error if type conversion fails" in {
       producerTemplate.sendBody("seda:q2", "a")
-      intercept[TypeConversionException](receiveBody[Int]("seda:q2").run.unsafeRun)
+      intercept[TypeConversionException](receiveBody[Int]("seda:q2").run.unsafeRunSync())
     }
   }
 
   "send" must {
     "send a message to an endpoint and continue with the sent message" in {
-      val result = Stream(1, 2, 3).send("seda:q3").take(3).runLog.unsafeRunAsyncFuture
+      val result = Stream(1, 2, 3).send("seda:q3").take(3).runLog.unsafeToFuture()
       1 to 3 foreach { i => consumerTemplate.receiveBody("seda:q3") should be(i) }
       Await.result(result, 3.seconds) should be(Seq(1, 2, 3))
     }
@@ -75,13 +75,13 @@ class DslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
   "sendRequest" must {
     "send a request message to an endpoint and continue with the response message" in {
-      Stream(1, 2, 3).sendRequest[Int]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq(2, 3, 4))
+      Stream(1, 2, 3).sendRequest[Int]("bean:service?method=plusOne").runLog.unsafeRunSync() should be(Seq(2, 3, 4))
     }
     "convert response message types using a Camel type converter" in {
-      Stream(1, 2, 3).sendRequest[String]("bean:service?method=plusOne").runLog.unsafeRun should be(Seq("2", "3", "4"))
+      Stream(1, 2, 3).sendRequest[String]("bean:service?method=plusOne").runLog.unsafeRunSync() should be(Seq("2", "3", "4"))
     }
     "complete with an error if the request fails" in {
-      intercept[Exception](Stream(-1, 2, 3).sendRequest[Int]("bean:service?method=plusOne").run.unsafeRun).getMessage should be("test")
+      intercept[Exception](Stream(-1, 2, 3).sendRequest[Int]("bean:service?method=plusOne").run.unsafeRunSync()).getMessage should be("test")
     }
   }
 }

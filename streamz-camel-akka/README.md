@@ -9,7 +9,7 @@ The DSL is provided by the `streamz-camel-akka` artifact which is available for 
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.8.1"
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.9-M1"
 
 <a name="scala-dsl"></a>
 ### Scala DSL
