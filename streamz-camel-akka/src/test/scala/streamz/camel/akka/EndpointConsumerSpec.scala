@@ -16,41 +16,21 @@
 
 package streamz.camel.akka
 
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.actor.ActorPublisherMessage.Request
-import akka.stream.scaladsl._
-import akka.stream.testkit.TestSubscriber
+import akka.stream.scaladsl.{ Keep, Source }
 import akka.stream.testkit.scaladsl.TestSink
-import akka.testkit.{ TestKit, TestProbe }
-import org.apache.camel.{ ExchangePattern, Producer }
-import org.scalatest._
-import streamz.camel.akka.EndpointConsumer.ConsumeSuccess
+import akka.stream.testkit.TestSubscriber
+import akka.testkit.TestKit
+import org.apache.camel.ExchangePattern
+import org.scalatest.concurrent.Eventually
+import org.scalatest.{ BeforeAndAfterAll, Matchers, WordSpecLike }
 import streamz.camel.{ StreamContext, StreamMessage }
 
+import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
-object EndpointConsumerSpec {
-  class TestEndpointConsumer[A](uri: String, probe: ActorRef)(implicit streamContext: StreamContext, tag: ClassTag[A]) extends EndpointConsumer[A](uri) {
-    override def waiting: Receive = {
-      case r: Request =>
-        probe ! r
-        super.waiting(r)
-    }
-
-    override def consuming: Receive = {
-      case s: ConsumeSuccess =>
-        super.consuming(s)
-        if (totalDemand > 0) probe ! "continue" else probe ! "return"
-      case m if super.consuming.isDefinedAt(m) =>
-        super.consuming(m)
-    }
-  }
-}
-
-class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll {
-  import EndpointConsumerSpec._
-
+class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll with Eventually {
   implicit val materializer = ActorMaterializer()
   implicit val context = StreamContext()
 
@@ -62,82 +42,73 @@ class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLik
     TestKit.shutdownActorSystem(system)
   }
 
-  def endpointProducer(uri: String): Producer = {
-    val endpoint = camelContext.getEndpoint(uri)
-    val producer = endpoint.createProducer()
-
-    endpoint.start()
-    producer.start()
-
-    producer
+  def awaitEndpointRegistration(uri: String): Unit = {
+    eventually { camelContext.getEndpoint(uri) should not be null }
   }
 
-  def actorPublisherAndTestSink[A](uri: String, probe: TestProbe = TestProbe())(implicit tag: ClassTag[A]): (ActorRef, TestSubscriber.Probe[StreamMessage[A]]) =
-    Source.actorPublisher(Props(new TestEndpointConsumer[A](uri, probe.ref))).toMat(TestSink.probe[StreamMessage[A]])(Keep.both).run()
+  def testSink[A](uri: String)(implicit tag: ClassTag[A]): TestSubscriber.Probe[StreamMessage[A]] = {
+    val sink = Source.fromGraph(new EndpointConsumer[A](uri)).toMat(TestSink.probe[StreamMessage[A]])(Keep.right).run()
+    awaitEndpointRegistration(uri)
+    sink
+  }
 
   "An EndpointConsumer" when {
     "consume a message from an endpoint on demand and return to waiting state if there is no further demand" in {
       val uri = "seda:q1"
+      val sink = testSink[String](uri)
 
-      val probe = TestProbe()
-      val producer = endpointProducer(uri)
-      val (publisher, sink) = actorPublisherAndTestSink[String](uri, probe)
-
-      val message = StreamMessage(body = "test", headers = Map("k1" -> "v1", "k2" -> "v2"))
+      val message = StreamMessage("test", Map("k1" -> "v1", "k2" -> "v2"))
       val exchange = createExchange(message, ExchangePattern.InOnly)
+      val resf = producerTemplate.asyncSend(uri, exchange)
 
-      producer.process(exchange)
+      sink.request(2)
 
-      sink.request(1)
-      probe.expectMsg(Request(1))
-      sink.expectNext(message)
-      probe.expectMsg("return")
+      val req = sink.expectNext()
+      req.body should be("test")
+      req.headers("k1") should be("v1")
+      req.headers("k2") should be("v2")
+
+      sink.expectNoMsg
+
+      resf.get.getIn.getBody should be("test")
+      resf.get.getIn.getHeader("k1") should be("v1")
+      resf.get.getIn.getHeader("k2") should be("v2")
     }
     "consume a message from an endpoint on demand and consume the next message if there is further demand" in {
       val uri = "seda:q2"
+      val sink = testSink[String](uri)
 
-      val probe = TestProbe()
-      val producer = endpointProducer(uri)
-      val (publisher, sink) = actorPublisherAndTestSink[String](uri, probe)
-
-      val message = StreamMessage(body = "test", headers = Map("k1" -> "v1", "k2" -> "v2"))
+      val message = StreamMessage("test")
       val exchange = createExchange(message, ExchangePattern.InOnly)
 
-      producer.process(exchange)
-      producer.process(exchange)
-
       sink.request(2)
-      probe.expectMsg(Request(2))
-      sink.expectNext(message)
-      probe.expectMsg("continue")
-      sink.expectNext(message)
-      probe.expectMsg("return")
+
+      val f1 = producerTemplate.asyncSend(uri, exchange)
+      sink.expectNext().body should be("test")
+
+      val f2 = producerTemplate.asyncSend(uri, exchange)
+      sink.expectNext().body should be("test")
+
+      f1.get.getIn.getBody should be("test")
+      f2.get.getIn.getBody should be("test")
     }
     "error the stream if a message exchange with the endpoint failed" in {
       val uri = "seda:q3"
+      val sink = testSink[String](uri)
 
-      val producer = endpointProducer(uri)
-      val (publisher, sink) = actorPublisherAndTestSink[String](uri)
-
-      val message = StreamMessage(body = "test")
-      val exchange = createExchange(message, ExchangePattern.InOnly)
-
+      val exchange = createExchange(StreamMessage("test"), ExchangePattern.InOnly)
       exchange.setException(new Exception("boom"))
+      producerTemplate.asyncSend(uri, exchange)
 
-      producer.process(exchange)
       sink.request(1)
       sink.expectError().getMessage should be("boom")
     }
     "error the stream if a message exchange is not in-only" in {
       val uri = "seda:q4"
+      val sink = testSink[String](uri)
 
-      val producer = endpointProducer(uri)
-      val (publisher, sink) = actorPublisherAndTestSink[String](uri)
-
-      val message = StreamMessage(body = "test")
-      val exchange = createExchange(message, ExchangePattern.InOut)
-
-      producerTemplate.asyncRequestBody(uri, "test")
+      val exchange = createExchange(StreamMessage("test"), ExchangePattern.InOut)
+      producerTemplate.asyncSend(uri, exchange)
 
       sink.request(1)
       sink.expectError().getMessage should be("Exchange pattern InOnly expected but was InOut")

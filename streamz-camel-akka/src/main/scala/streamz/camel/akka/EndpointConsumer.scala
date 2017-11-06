@@ -16,73 +16,62 @@
 
 package streamz.camel.akka
 
-import akka.actor.Props
-import akka.pattern.pipe
-import akka.stream.actor.ActorPublisher
-import akka.stream.actor.ActorPublisherMessage.Request
-import org.apache.camel.ExchangePattern
+import akka.stream._
+import akka.stream.stage._
+import org.apache.camel._
 import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.reflect.ClassTag
 import scala.util.{ Failure, Success, Try }
 
-private[akka] object EndpointConsumer {
-  case object ConsumeTimeout
-  case class ConsumeSuccess(m: Any)
-  case class ConsumeFailure(t: Throwable)
-
-  def props[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]): Props =
-    Props(new EndpointConsumer[A](uri))
-}
-
-private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A]) extends ActorPublisher[StreamMessage[A]] {
-  import EndpointConsumer._
+private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A])
+    extends GraphStage[SourceShape[StreamMessage[A]]] {
 
   private implicit val ec: ExecutionContext =
     ExecutionContext.fromExecutorService(streamContext.executorService)
 
-  def waiting: Receive = {
-    case r: Request =>
-      consumeAsync()
-      context.become(consuming)
-  }
+  val out: Outlet[StreamMessage[A]] =
+    Outlet("EndpointConsumer.out")
 
-  def consuming: Receive = {
-    case ConsumeSuccess(m) =>
-      onNext(m.asInstanceOf[StreamMessage[A]])
-      if (!isCanceled && totalDemand > 0) consumeAsync() else context.become(waiting)
-    case ConsumeTimeout =>
-      if (!isCanceled) consumeAsync()
-    case ConsumeFailure(e) =>
-      onError(e)
-  }
+  override val shape: SourceShape[StreamMessage[A]] =
+    SourceShape(out)
 
-  def receive = waiting
+  override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
+    new GraphStageLogic(shape) {
+      import streamContext.consumerTemplate
 
-  private def consumeAsync()(implicit tag: ClassTag[A]): Unit = {
-    import streamContext.consumerTemplate
+      private val consumedCallback = getAsyncCallback(consumed)
 
-    Future(consumerTemplate.receive(uri, 500)).map {
-      case null =>
-        ConsumeTimeout
-      case ce if ce.getPattern != ExchangePattern.InOnly =>
-        ConsumeFailure(new IllegalArgumentException(s"Exchange pattern ${ExchangePattern.InOnly} expected but was ${ce.getPattern}"))
-      case ce if ce.getException ne null =>
-        consumerTemplate.doneUoW(ce)
-        ConsumeFailure(ce.getException)
-      case ce =>
-        Try(StreamMessage.from[A](ce.getIn)) match {
-          case Success(m) =>
+      setHandler(out, new OutHandler {
+        override def onPull(): Unit =
+          consumeAsync()
+      })
+
+      private def consumeAsync(): Unit = {
+        Future(consumerTemplate.receive(uri, 500)).foreach(consumedCallback.invoke)
+      }
+
+      private def consumed(exchange: Exchange): Unit = {
+        exchange match {
+          case null =>
+            if (!isClosed(out)) consumeAsync()
+          case ce if ce.getPattern != ExchangePattern.InOnly =>
+            failStage(new IllegalArgumentException(s"Exchange pattern ${ExchangePattern.InOnly} expected but was ${ce.getPattern}"))
+          case ce if ce.getException ne null =>
             consumerTemplate.doneUoW(ce)
-            ConsumeSuccess(m)
-          case Failure(e) =>
-            ce.setException(e)
-            consumerTemplate.doneUoW(ce)
-            ConsumeFailure(e)
+            failStage(ce.getException)
+          case ce =>
+            Try(StreamMessage.from[A](ce.getIn)) match {
+              case Success(m) =>
+                consumerTemplate.doneUoW(ce)
+                push(out, m)
+              case Failure(e) =>
+                ce.setException(e)
+                consumerTemplate.doneUoW(ce)
+                failStage(e)
+            }
         }
-    }.recover {
-      case ex => ConsumeFailure(ex)
-    }.pipeTo(self)
-  }
+      }
+    }
 }
