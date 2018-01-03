@@ -164,7 +164,7 @@ class StreamContext(val camelContext: CamelContext, executorServiceFactory: Stre
    */
   def createExchange[A](message: StreamMessage[A], pattern: ExchangePattern): Exchange = {
     val exchange = new DefaultExchange(camelContext, pattern)
-    exchange.setIn(message.camelMessage)
+    exchange.setIn(message.camelMessage(camelContext))
     exchange
   }
 

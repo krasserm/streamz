@@ -145,9 +145,9 @@ trait Converter {
   private def publisherStream[A](publisher: ActorRef, stream: Stream[IO, A])(implicit executionContext: ExecutionContext): Stream[IO, Unit] = {
     def publisherIO(i: A): IO[Option[Unit]] = IO.shift >> IO.async((callback: Callback[Option[Unit]]) => publisher ! Next(i, callback))
     stream.flatMap(i => Stream.eval(publisherIO(i))).unNoneTerminate
-      .onError { ex =>
+      .handleErrorWith { ex =>
         publisher ! Error(ex)
-        Stream.fail(ex)
+        Stream.raiseError(ex)
       }
       .onFinalize {
         IO {

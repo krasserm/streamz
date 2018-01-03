@@ -16,10 +16,10 @@
 
 package streamz.camel
 
-import java.util.{ Map => JMap, Optional }
+import java.util.{ Optional, Map => JMap }
 
 import org.apache.camel.impl.DefaultMessage
-import org.apache.camel.{ Message, TypeConversionException }
+import org.apache.camel.{ CamelContext, Message, TypeConversionException }
 
 import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
@@ -105,8 +105,8 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
   def getHeaderOptionAs[B](name: String, streamContext: StreamContext, clazz: Class[B]): Optional[B] =
     Optional.ofNullable(headerOptionAs(name)(streamContext, ClassTag(clazz)).getOrElse(null.asInstanceOf[B]))
 
-  private[camel] def camelMessage: Message = {
-    val result = new DefaultMessage
+  private[camel] def camelMessage(camelContext: CamelContext): Message = {
+    val result = new DefaultMessage(camelContext)
 
     headers.foreach {
       case (k, v) => result.setHeader(k, v)

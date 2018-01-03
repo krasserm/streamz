@@ -72,7 +72,7 @@ private[akka] class EndpointConsumerReplier[A, B](uri: String, capacity: Int)(im
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
           val AsyncExchange(ce, ac) = emittedExchanges.dequeue()
-          ce.setOut(grab(in).camelMessage)
+          ce.setOut(grab(in).camelMessage(streamContext.camelContext))
           ac.done(false)
           pull(in)
           if (!consuming && isAvailable(out)) consumeAsync()
