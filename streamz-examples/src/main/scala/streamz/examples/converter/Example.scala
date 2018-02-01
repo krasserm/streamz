@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2017 the original author or authors.
+ * Copyright 2014 - 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,9 @@ object Example extends App {
   val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
   val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe()
 
-  fStream1.to(fSink1).run.unsafeRunSync() // prints numbers
-  assert(fStream1.runLog.unsafeRunSync() == numbers)
-  assert(fStream1.through(fPipe1).runLog.unsafeRunSync() == numbers.flatMap(f))
+  fStream1.to(fSink1).compile.drain.unsafeRunSync() // prints numbers
+  assert(fStream1.compile.toVector.unsafeRunSync() == numbers)
+  assert(fStream1.through(fPipe1).compile.toVector.unsafeRunSync() == numbers.flatMap(f))
 
   // --------------------------------
   //  FS2 to Akka Stream conversions

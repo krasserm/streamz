@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2017 the original author or authors.
+ * Copyright 2014 - 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ object Snippets {
       .sendRequest[Int]("bean:service?method=weight")
 
   // create IO from stream
-  val t: IO[Unit] = s.run
+  val t: IO[Unit] = s.compile.drain
 
   // run IO (side effects only here) ...
   t.unsafeRunSync()
