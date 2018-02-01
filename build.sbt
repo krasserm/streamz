@@ -34,7 +34,7 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
 //  License header settings
 // ---------------------------------------------------------------------------
 
-lazy val header = HeaderLicense.ALv2("2014 - 2017", "the original author or authors.")
+lazy val header = HeaderLicense.ALv2("2014 - 2018", "the original author or authors.")
 
 lazy val headerSettings = Seq(
   headerLicense := Some(header)
