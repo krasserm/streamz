@@ -1,11 +1,7 @@
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
-import de.heikoseeberger.sbtheader.license.Apache2_0
-
 import scalariform.formatter.preferences._
-
-import UnidocKeys._
 
 // ---------------------------------------------------------------------------
 //  Main settings
@@ -17,9 +13,9 @@ organization in ThisBuild := "com.github.krasserm"
 
 version in ThisBuild := "0.9-SNAPSHOT"
 
-crossScalaVersions in ThisBuild := Seq("2.11.11", "2.12.2")
+crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.4")
 
-scalaVersion in ThisBuild := "2.12.2"
+scalaVersion in ThisBuild := "2.12.4"
 
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
 
@@ -29,23 +25,20 @@ libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Sca
 //  Code formatter settings
 // ---------------------------------------------------------------------------
 
-SbtScalariform.scalariformSettings
-
 ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(AlignSingleLineCaseStatements, true)
   .setPreference(DanglingCloseParenthesis, Preserve)
-  .setPreference(DoubleIndentClassDeclaration, false)
+  .setPreference(DoubleIndentConstructorArguments, false)
 
 // ---------------------------------------------------------------------------
 //  License header settings
 // ---------------------------------------------------------------------------
 
-lazy val header = Apache2_0("2014 - 2017", "the original author or authors.")
+lazy val header = HeaderLicense.ALv2("2014 - 2017", "the original author or authors.")
 
-lazy val headerSettings = Seq(headers := Map(
-  "scala" -> header,
-  "java" -> header
-))
+lazy val headerSettings = Seq(
+  headerLicense := Some(header)
+)
 
 // ---------------------------------------------------------------------------
 //  Projects
@@ -53,8 +46,8 @@ lazy val headerSettings = Seq(headers := Map(
 
 lazy val root = project.in(file("."))
   .aggregate(camelContext, camelAkka, camelFs2, converter, examples)
-  .settings(unidocSettings: _*)
   .settings(unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(examples))
+  .enablePlugins(ScalaUnidocPlugin)
 
 lazy val camelContext = project.in(file("streamz-camel-context"))
   .enablePlugins(AutomateHeaderPlugin)

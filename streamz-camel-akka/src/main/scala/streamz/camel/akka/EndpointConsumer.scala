@@ -26,7 +26,7 @@ import scala.reflect.ClassTag
 import scala.util.{ Failure, Success, Try }
 
 private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: StreamContext, tag: ClassTag[A])
-    extends GraphStage[SourceShape[StreamMessage[A]]] {
+  extends GraphStage[SourceShape[StreamMessage[A]]] {
 
   private implicit val ec: ExecutionContext =
     ExecutionContext.fromExecutorService(streamContext.executorService)

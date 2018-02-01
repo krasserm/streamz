@@ -45,8 +45,7 @@ trait Converter {
         val (mat, subscriber) = AkkaSource.fromGraph(source).toMat(AkkaSink.actorSubscriber[A](AkkaStreamSubscriber.props[A]))(Keep.both).run()
         onMaterialization(mat)
         subscriber
-      }
-    )(subscriberStream[A], _ => IO.pure(()))
+      })(subscriberStream[A], _ => IO.pure(()))
 
   /**
    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Sink]]. The [[Graph]] is materialized when
@@ -58,8 +57,7 @@ trait Converter {
         val (publisher, mat) = AkkaSource.actorPublisher[A](AkkaStreamPublisher.props[A]).toMat(sink)(Keep.both).run()
         onMaterialization(mat)
         publisher
-      }
-    )(publisherStream[A](_, s), _ => IO.pure(()))
+      })(publisherStream[A](_, s), _ => IO.pure(()))
   }
 
   /**
@@ -74,8 +72,7 @@ trait Converter {
         val ((publisher, mat), subscriber) = src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
         onMaterialization(mat)
         (publisher, subscriber)
-      }
-    )(ps => transformerStream[A, B](ps._2, ps._1, s), _ => IO.pure(()))
+      })(ps => transformerStream[A, B](ps._2, ps._1, s), _ => IO.pure(()))
   }
 
   /**

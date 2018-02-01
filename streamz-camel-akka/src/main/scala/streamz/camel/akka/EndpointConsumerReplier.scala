@@ -46,7 +46,7 @@ private class AsyncExchangeProcessor(capacity: Int) extends AsyncProcessor {
 }
 
 private[akka] class EndpointConsumerReplier[A, B](uri: String, capacity: Int)(implicit streamContext: StreamContext, tag: ClassTag[B])
-    extends GraphStage[FlowShape[StreamMessage[A], StreamMessage[B]]] {
+  extends GraphStage[FlowShape[StreamMessage[A], StreamMessage[B]]] {
 
   private implicit val ec: ExecutionContext =
     ExecutionContext.fromExecutorService(streamContext.executorService)
