@@ -33,7 +33,7 @@ object Snippets {
       .sendRequest[Int]("bean:service?method=weight")
 
   // create IO from stream
-  val t: IO[Unit] = s.run
+  val t: IO[Unit] = s.compile.drain
 
   // run IO (side effects only here) ...
   t.unsafeRunSync()
