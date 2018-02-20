@@ -57,7 +57,7 @@ API docs
 
 ### Streamz 0.9
 
-Not published yet. Run `sbt unidoc` on branch `r-0.10` or `master` for generating 0.10 API docs. 
+Not published yet. Run `sbt unidoc` on branch `r-0.9` or `master` for generating 0.9 API docs. 
 
 ### Streamz 0.8.1
 
