@@ -19,21 +19,21 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-### Latest stable release
+### Latest stable release for FS2 0.10
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.9"
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.9" // uses FS2 0.10.1
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.9" // uses FS2 0.10.1
+
+### Latest stable release for FS2 0.9
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.8.1"
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.8.1" // uses FS2 0.9.5
 
     libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.8.1" // uses FS2 0.9.5
-
-### Latest milestone release
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.9-M1"
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.9-M1" // uses FS2 0.10.0-M3
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.9-M1" // uses FS2 0.10.0-M3
 
 Documentation
 -------------
