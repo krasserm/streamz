@@ -206,7 +206,7 @@ object Example extends ExampleContext with App {
       .zipWith(linePrefixStream)((l, n) => n concat l)
       .send(printerEndpointUri)
 
-  stream.run.unsafeRunSync()
+  stream.compile.drain.unsafeRunSync()
 }
 ```
 

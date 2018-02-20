@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2017 the original author or authors.
+ * Copyright 2014 - 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class StreamMessageSpec extends WordSpec with Matchers with BeforeAndAfterAll {
       message.headerAs[Int]("k1") should be(1)
     }
     "support Camel Message creation" in {
-      val camelMessage = message.camelMessage
+      val camelMessage = message.camelMessage(context.camelContext)
 
       camelMessage.getBody should be("1")
       camelMessage.getHeader("k1") should be("1")
@@ -47,7 +47,7 @@ class StreamMessageSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   "A StreamMessage" can {
     "be created from a Camel Message and a Camel type converter" in {
       val camelExchange = new DefaultExchange(context.camelContext)
-      val camelMessage = new DefaultMessage()
+      val camelMessage = new DefaultMessage(context.camelContext)
 
       camelMessage.setExchange(camelExchange)
       camelMessage.setBody(1)

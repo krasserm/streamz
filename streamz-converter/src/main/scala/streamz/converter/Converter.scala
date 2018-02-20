@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2017 the original author or authors.
+ * Copyright 2014 - 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,7 @@ trait Converter {
         val (mat, subscriber) = AkkaSource.fromGraph(source).toMat(AkkaSink.actorSubscriber[A](AkkaStreamSubscriber.props[A]))(Keep.both).run()
         onMaterialization(mat)
         subscriber
-      }
-    )(subscriberStream[A], _ => IO.pure(()))
+      })(subscriberStream[A], _ => IO.pure(()))
 
   /**
    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Sink]]. The [[Graph]] is materialized when
@@ -58,8 +57,7 @@ trait Converter {
         val (publisher, mat) = AkkaSource.actorPublisher[A](AkkaStreamPublisher.props[A]).toMat(sink)(Keep.both).run()
         onMaterialization(mat)
         publisher
-      }
-    )(publisherStream[A](_, s), _ => IO.pure(()))
+      })(publisherStream[A](_, s), _ => IO.pure(()))
   }
 
   /**
@@ -74,8 +72,7 @@ trait Converter {
         val ((publisher, mat), subscriber) = src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
         onMaterialization(mat)
         (publisher, subscriber)
-      }
-    )(ps => transformerStream[A, B](ps._2, ps._1, s), _ => IO.pure(()))
+      })(ps => transformerStream[A, B](ps._2, ps._1, s), _ => IO.pure(()))
   }
 
   /**
@@ -85,7 +82,7 @@ trait Converter {
   def fs2StreamToAkkaSource[A](stream: Stream[IO, A])(implicit executionContext: ExecutionContext): Graph[SourceShape[A], NotUsed] = {
     val source = AkkaSource.actorPublisher(AkkaStreamPublisher.props[A])
     // A sink that runs an FS2 publisherStream when consuming the publisher actor (= materialized value) of source
-    val sink = AkkaSink.foreach[ActorRef](publisherStream[A](_, stream).run.unsafeToFuture())
+    val sink = AkkaSink.foreach[ActorRef](publisherStream[A](_, stream).compile.drain.unsafeToFuture())
 
     AkkaSource.fromGraph(GraphDSL.create(source) { implicit builder => source =>
       import GraphDSL.Implicits._
@@ -104,7 +101,7 @@ trait Converter {
     // The future returned from unsafeToFuture() completes when the subscriber stream completes and is made
     // available as materialized value of this sink.
     val sink2: AkkaSink[ActorRef, Future[Done]] = AkkaFlow[ActorRef]
-      .map(subscriberStream[A](_).to(sink).run.unsafeToFuture())
+      .map(subscriberStream[A](_).to(sink).compile.drain.unsafeToFuture())
       .toMat(AkkaSink.head)(Keep.right).mapMaterializedValue(_.flatMap(_.map(_ => Done)))
 
     AkkaSink.fromGraph(GraphDSL.create(sink1, sink2)(Keep.both) { implicit builder => (sink1, sink2) =>
@@ -123,7 +120,7 @@ trait Converter {
     val sink1: AkkaSink[A, ActorRef] = AkkaSink.actorSubscriber(AkkaStreamSubscriber.props[A])
     // A sink that runs an FS2 transformerStream when consuming the publisher actor (= materialized value) of source
     // and the subscriber actor (= materialized value) of sink1
-    val sink2 = AkkaSink.foreach[(ActorRef, ActorRef)](ps => transformerStream(ps._2, ps._1, pipe).run.unsafeToFuture())
+    val sink2 = AkkaSink.foreach[(ActorRef, ActorRef)](ps => transformerStream(ps._2, ps._1, pipe).compile.drain.unsafeToFuture())
 
     AkkaFlow.fromGraph(GraphDSL.create(source, sink1)(Keep.both) { implicit builder => (source, sink1) =>
       import GraphDSL.Implicits._
@@ -145,9 +142,9 @@ trait Converter {
   private def publisherStream[A](publisher: ActorRef, stream: Stream[IO, A])(implicit executionContext: ExecutionContext): Stream[IO, Unit] = {
     def publisherIO(i: A): IO[Option[Unit]] = IO.shift >> IO.async((callback: Callback[Option[Unit]]) => publisher ! Next(i, callback))
     stream.flatMap(i => Stream.eval(publisherIO(i))).unNoneTerminate
-      .onError { ex =>
+      .handleErrorWith { ex =>
         publisher ! Error(ex)
-        Stream.fail(ex)
+        Stream.raiseError(ex)
       }
       .onFinalize {
         IO {

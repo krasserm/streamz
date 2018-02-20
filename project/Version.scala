@@ -1,8 +1,8 @@
 object Version {
-  val Akka = "2.4.18"
-  val Camel = "2.19.0"
-  val Fs2 = "0.10.0-M3"
-  val Log4j = "2.5"
+  val Akka = "2.5.9"
+  val Camel = "2.20.2"
+  val Fs2 = "0.10.1"
+  val Log4j = "2.10.0"
   val JUnitInterface = "0.11"
-  val Scalatest = "3.0.1"
+  val Scalatest = "3.0.5"
 }
