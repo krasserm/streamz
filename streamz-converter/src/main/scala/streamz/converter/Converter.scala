@@ -26,7 +26,7 @@ import fs2._
 import streamz.converter.AkkaStreamPublisher._
 import streamz.converter.AkkaStreamSubscriber._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ ExecutionContext, Future, Promise }
 
 object Converter {
   type Callback[A] = Either[Throwable, A] => Unit
@@ -136,8 +136,8 @@ trait Converter {
     F: Effect[F]): Graph[SourceShape[A], NotUsed] = {
     val source = AkkaSource.actorPublisher(AkkaStreamPublisher.props[A])
     // A sink that runs an FS2 publisherStream when consuming the publisher actor (= materialized value) of source
-    val sink = AkkaSink.foreach[ActorRef] { pulisher =>
-      val publish = publisherStream[F, A](pulisher, stream).compile.drain
+    val sink = AkkaSink.foreach[ActorRef] { publisher =>
+      val publish = publisherStream[F, A](publisher, stream).compile.drain
       F.runAsync(publish)(_ => IO.unit).unsafeToFuture()
     }
 
@@ -170,9 +170,14 @@ trait Converter {
     // The future returned from unsafeToFuture() completes when the subscriber stream completes and is made
     // available as materialized value of this sink.
     val sink2: AkkaSink[ActorRef, Future[Done]] = AkkaFlow[ActorRef]
-      .map(subscriber => F.runAsync(subscriberStream[F, A](subscriber).to(sink).compile.drain)(_ => IO.unit).unsafeToFuture())
+      .map { subscriber =>
+        val runStream = subscriberStream[F, A](subscriber).to(sink).compile.drain
+        val p = Promise[Done]
+        F.runAsync(runStream)(r => IO.pure(p.complete(r.fold(scala.util.Failure(_), _ => scala.util.Success(Done))))).unsafeToFuture()
+        p.future
+      }
       .toMat(AkkaSink.head)(Keep.right)
-      .mapMaterializedValue(x => IO.fromFuture(IO(x)).flatMap(x => IO.fromFuture(IO(x))).map(_ => Done).unsafeToFuture())
+      .mapMaterializedValue { x => IO.fromFuture(IO.pure(x)).flatMap(i => IO.fromFuture(IO.pure(i))).unsafeToFuture() }
 
     AkkaSink.fromGraph(GraphDSL.create(sink1, sink2)(Keep.both) { implicit builder => (sink1, sink2) =>
       import GraphDSL.Implicits._
@@ -330,9 +335,9 @@ trait ConverterDsl extends Converter {
       fs2SinkToAkkaSinkF(sink: Sink[IO, A])
   }
 
-  implicit class FS2SinkIODsl[F[_]: Timer: Effect, A](sink: Sink[F, A]) {
+  implicit class FS2SinkIODsl[F[_], A](sink: Sink[F, A]) {
     /** @see [[Converter#fs2SinkToAkkaSink]] */
-    def toSink: Graph[SinkShape[A], Future[Done]] =
+    def toSink(implicit timer: Timer[F], F: Effect[F]): Graph[SinkShape[A], Future[Done]] =
       fs2SinkToAkkaSinkF(sink)
   }
 
@@ -343,10 +348,10 @@ trait ConverterDsl extends Converter {
       fs2PipeToAkkaFlowF(pipe: Pipe[IO, A, B])
   }
 
-  implicit class FS2PipeIODsl[F[_]: Timer: Effect, A, B](pipe: Pipe[F, A, B]) {
+  implicit class FS2PipeIODsl[F[_], A, B](pipe: Pipe[F, A, B]) {
 
     /** @see [[Converter#fs2PipeToAkkaFlow]] */
-    def toFlow: Graph[FlowShape[A, B], NotUsed] =
+    def toFlow(implicit timer: Timer[F], F: Effect[F]): Graph[FlowShape[A, B], NotUsed] =
       fs2PipeToAkkaFlowF(pipe)
   }
 }
