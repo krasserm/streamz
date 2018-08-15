@@ -60,20 +60,20 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     //
     "propagate elements and completion from source to stream" in {
       val source = AkkaSource(numbers)
-      val stream = source.toStream()
+      val stream = source.toStream[IO]()
 
       stream.compile.toVector.unsafeRunSync() should be(numbers)
     }
     "propagate errors from source to stream" in {
       val source = AkkaSource(numbers) ++ AkkaSource.failed(error)
-      val stream = source.toStream()
+      val stream = source.toStream[IO]()
 
       expectError(stream.compile.drain.unsafeRunSync())
     }
     "propagate cancellation from stream to source (on stream completion)" in {
       val probe = TestProbe()
       val source = AkkaSource(numbers).watchTermination()(Keep.right)
-      val stream = source.toStream(mat => mat.onComplete(probe.ref ! _)).take(3)
+      val stream = source.toStream[IO](mat => mat.onComplete(probe.ref ! _)).take(3)
 
       stream.compile.toVector.unsafeRunSync() should be(numbers.take(3))
       probe.expectMsg(Success(Done))
@@ -81,7 +81,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     "propagate cancellation from stream to source (on stream error)" in {
       val probe = TestProbe()
       val source = AkkaSource(numbers).watchTermination()(Keep.right)
-      val stream = source.toStream(mat => mat.onComplete(probe.ref ! _)) ++ Stream.raiseError(error)
+      val stream = source.toStream[IO](mat => mat.onComplete(probe.ref ! _)) ++ Stream.raiseError(error)
 
       expectError(stream.compile.drain.unsafeRunSync())
       probe.expectMsg(Success(Done))
@@ -95,7 +95,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     "propagate elements and completion from FS2 sink to AS sink" in {
       val probe = TestProbe()
       val akkaSink = AkkaSink.seq[Int]
-      val fs2Sink = akkaSink.toSink(mat => mat.onComplete(probe.ref ! _))
+      val fs2Sink = akkaSink.toSink[IO](mat => mat.onComplete(probe.ref ! _))
 
       Stream.emits(numbers).covary[IO].to(fs2Sink).compile.drain.unsafeRunSync()
       probe.expectMsg(Success(numbers))
@@ -103,7 +103,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     "propagate errors from FS2 sink to AS sink" in {
       val probe = TestProbe()
       val akkaSink = AkkaSink.seq[Int]
-      val fs2Sink = akkaSink.toSink(mat => mat.onComplete(probe.ref ! _))
+      val fs2Sink = akkaSink.toSink[IO](mat => mat.onComplete(probe.ref ! _))
 
       expectError(Stream.raiseError(error).covary[IO].to(fs2Sink).compile.drain.unsafeRunSync())
       probe.expectMsg(Failure(error))
@@ -111,7 +111,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     "propagate cancellation from AS sink to FS2 sink (on AS sink completion)" in {
       val probe = TestProbe()
       val akkaSink = AkkaFlow[Int].take(3).toMat(AkkaSink.seq)(Keep.right)
-      val fs2Sink = akkaSink.toSink(mat => mat.onComplete(probe.ref ! _))
+      val fs2Sink = akkaSink.toSink[IO](mat => mat.onComplete(probe.ref ! _))
 
       Stream.emits(numbers).covary[IO].to(fs2Sink).compile.drain.unsafeRunSync()
       probe.expectMsg(Success(numbers.take(3)))
@@ -119,7 +119,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     "propagate cancellation from AS sink to FS2 sink (on AS sink error)" in {
       val probe = TestProbe()
       val akkaSink = AkkaSink.foreach[Int](_ => throw error)
-      val fs2Sink = akkaSink.toSink(mat => mat.onComplete(probe.ref ! _))
+      val fs2Sink = akkaSink.toSink[IO](mat => mat.onComplete(probe.ref ! _))
 
       Stream.emits(numbers).covary[IO].to(fs2Sink).compile.drain.unsafeRunSync()
       probe.expectMsg(Failure(error))
@@ -132,7 +132,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     //
     "propagate processing from pipe to flow (1:1)" in {
       val flow = AkkaFlow[Int].map(_ + 1)
-      val pipe = flow.toPipe()
+      val pipe = flow.toPipe[IO]()
 
       Stream.emits(numbers).covary[IO].through(pipe).compile.toVector.unsafeRunSync() should be(numbers.map(_ + 1))
     }
@@ -143,14 +143,14 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
         case _ => Seq(i)
       }
       val flow = AkkaFlow[Int].mapConcat(logic)
-      val pipe = flow.toPipe()
+      val pipe = flow.toPipe[IO]()
 
       Stream.emits(numbers).covary[IO].through(pipe).compile.toVector.unsafeRunSync() should be(numbers.flatMap(logic))
     }
     "propagate errors from pipe to flow" in {
       val probe = TestProbe()
       val flow = AkkaFlow[Int].map(_ + 1).recover { case e: Exception if e.getMessage == error.getMessage => probe.ref ! Failure(error) }
-      val pipe = flow.toPipe()
+      val pipe = flow.toPipe[IO]()
 
       expectError(Stream.raiseError(error).covary[IO].through(pipe).compile.drain.unsafeRunSync())
       probe.expectMsg(Failure(error))
@@ -161,7 +161,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
         case _ => Seq(i)
       }
       val flow = AkkaFlow[Int].mapConcat(logic)
-      val pipe = flow.toPipe()
+      val pipe = flow.toPipe[IO]()
 
       expectError(Stream.emits(numbers).covary[IO].through(pipe).compile.drain.unsafeRunSync())
     }

@@ -47,7 +47,7 @@ object Example extends App {
   val fSink1: Sink[IO, Int] = aSink1.toSink()
 
   val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
-  val fStream1: Stream[IO, Int] = aSource1.toStream()
+  val fStream1: Stream[IO, Int] = aSource1.toStream[IO]()
 
   val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
   val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe()
