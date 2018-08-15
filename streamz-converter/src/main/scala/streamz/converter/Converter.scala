@@ -130,7 +130,7 @@ trait Converter {
       .map { subscriber =>
         val runStream = subscriberStream[F, A](subscriber).to(sink).compile.drain
         val p = Promise[Done]
-        F.runAsync(runStream)(r => IO.pure(p.complete(r.fold(scala.util.Failure(_), _ => scala.util.Success(Done))))).unsafeToFuture()
+        F.runAsync(runStream)(r => IO(p.complete(r.fold(scala.util.Failure(_), _ => scala.util.Success(Done))))).unsafeToFuture()
         p.future
       }
       .toMat(AkkaSink.head)(Keep.right)
