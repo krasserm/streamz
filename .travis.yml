@@ -1,14 +1,7 @@
-# -----------------------------------------------------------------------------------------------------------------
-#  TODO: set sudo: false and remove before_script when https://github.com/travis-ci/travis-ci/issues/7703 is fixed
-# -----------------------------------------------------------------------------------------------------------------
-sudo:
-  - required
-before_script:
-  - sudo chmod +x /usr/local/bin/sbt
 language:
   - scala
 scala:
   - 2.11.12
-  - 2.12.4
+  - 2.12.6
 jdk:
   - oraclejdk8
