@@ -13,7 +13,7 @@ organization in ThisBuild := "com.github.krasserm"
 
 version in ThisBuild := "0.10-SNAPSHOT"
 
-crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.4")
+crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.6")
 
 scalaVersion in ThisBuild := "2.12.6"
 
