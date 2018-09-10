@@ -172,7 +172,8 @@ package object dsl {
     s => s.map(StreamMessage(_)).through(sendRequest[A, B](uri)).map(_.body)
 
   private def consume[A](uri: String)(implicit context: StreamContext, tag: ClassTag[A]): Stream[IO, StreamMessage[A]] = {
-    implicit val executionContext = ExecutionContext.fromExecutor(context.executorService)
+    //    implicit val executionContext = ExecutionContext.fromExecutor(context.executorService)
+    implicit val contextShift = IO.contextShift(ExecutionContext.fromExecutor(context.executorService))
     Stream.repeatEval {
       IO.shift >> IO.async[StreamMessage[A]] { callback =>
         Try(context.consumerTemplate.receive(uri, 500)) match {
@@ -198,7 +199,8 @@ package object dsl {
   }
 
   private def produce[A, B](uri: String, pattern: ExchangePattern, result: (StreamMessage[A], Exchange) => StreamMessage[B])(implicit context: StreamContext): Pipe[IO, StreamMessage[A], StreamMessage[B]] = { s =>
-    implicit val executionContext = ExecutionContext.fromExecutor(context.executorService)
+    //    implicit val executionContext = ExecutionContext.fromExecutor(context.executorService)
+    implicit val contextShift = IO.contextShift(ExecutionContext.fromExecutor(context.executorService))
     s.flatMap { message =>
       Stream.eval {
         IO.shift >> IO.async[StreamMessage[B]] { callback =>

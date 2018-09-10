@@ -22,7 +22,7 @@ import streamz.camel.fs2.dsl._
 import streamz.examples.camel.ExampleContext
 
 object Example extends ExampleContext with App {
-  import scala.concurrent.ExecutionContext.Implicits.global // needed for merge
+  implicit val contextShift = IO.contextShift(scala.concurrent.ExecutionContext.Implicits.global)
 
   val tcpLineStream: Stream[IO, String] =
     receiveBody[String](tcpEndpointUri)
