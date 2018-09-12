@@ -58,20 +58,15 @@ trait Converter {
    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Sink]]. The [[Graph]] is materialized when
    * the [[Sink]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaSinkToFs2Sink[F[_], A, M](sink: Graph[SinkShape[A], M])(
-    onMaterialization: M => Unit)(implicit
-    contextShift: ContextShift[F],
-    F: Async[F],
-    materializer: Materializer): Sink[F, A] = {
-    s =>
-      Stream.suspend {
-        val (publisher, mat) = AkkaSource
-          .actorPublisher[A](AkkaStreamPublisher.props[A])
-          .toMat(sink)(Keep.both)
-          .run()
-        onMaterialization(mat)
-        publisherStream[F, A](publisher, s)
-      }
+  def akkaSinkToFs2Sink[F[_], A, M](sink: Graph[SinkShape[A], M])(onMaterialization: M => Unit)(implicit contextShift: ContextShift[F], F: Async[F], materializer: Materializer): Sink[F, A] = { s =>
+    Stream.suspend {
+      val (publisher, mat) = AkkaSource
+        .actorPublisher[A](AkkaStreamPublisher.props[A])
+        .toMat(sink)(Keep.both)
+        .run()
+      onMaterialization(mat)
+      publisherStream[F, A](publisher, s)
+    }
   }
 
   /**
