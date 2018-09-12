@@ -176,10 +176,9 @@ trait Converter {
 
   private def publisherStream[F[_], A](publisher: ActorRef, stream: Stream[F, A])(implicit context: ContextShift[F], F: Async[F]): Stream[F, Unit] = {
     def publisherF(i: A): F[Option[Unit]] = context.shift >> F.async[Option[Unit]](callback => publisher ! Next(i, callback))
-    stream.flatMap(i => Stream.eval(publisherF(i))).unNoneTerminate
+    stream.evalMap(publisherF).unNoneTerminate
       .handleErrorWith { ex =>
-        publisher ! Error(ex)
-        Stream.raiseError[F](ex)
+        Stream.eval(F.delay(publisher ! Error(ex))) >> Stream.raiseError[F](ex)
       }
       .onFinalize {
         F.delay {
