@@ -13,11 +13,9 @@ organization in ThisBuild := "com.github.krasserm"
 
 version in ThisBuild := "0.10-SNAPSHOT"
 
-cancelable in Global := true
+crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.6")
 
-crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.4")
-
-scalaVersion in ThisBuild := "2.12.4"
+scalaVersion in ThisBuild := "2.12.6"
 
 scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
 
