@@ -200,10 +200,10 @@ trait ConverterDsl extends Converter {
       fs2StreamToAkkaSource(stream)
   }
 
-  implicit class FS2SinkPureDsl[A](sink: Sink[Pure, A])(implicit contextShift: ContextShift[IO]) {
+  implicit class FS2SinkPureDsl[A](sink: Sink[Pure, A]) {
 
     /** @see [[Converter#fs2SinkToAkkaSink]] */
-    def toSink: Graph[SinkShape[A], Future[Done]] =
+    def toSink(implicit contextShift: ContextShift[IO]): Graph[SinkShape[A], Future[Done]] =
       fs2SinkToAkkaSink(sink: Sink[IO, A])
   }
 
