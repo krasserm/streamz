@@ -214,9 +214,9 @@ trait ConverterDsl extends Converter {
       fs2SinkToAkkaSink(sink: Sink[IO, A])
   }
 
-  implicit class FS2SinkIODsl[F[_], A](sink: Sink[F, A]) {
+  implicit class FS2SinkIODsl[F[_]: ContextShift: Effect, A](sink: Sink[F, A]) {
     /** @see [[Converter#fs2SinkToAkkaSink]] */
-    def toSink(implicit contextShift: ContextShift[F], F: Effect[F]): Graph[SinkShape[A], Future[Done]] =
+    def toSink: Graph[SinkShape[A], Future[Done]] =
       fs2SinkToAkkaSink(sink)
   }
 
@@ -227,10 +227,10 @@ trait ConverterDsl extends Converter {
       fs2PipeToAkkaFlow(pipe: Pipe[IO, A, B])
   }
 
-  implicit class FS2PipeIODsl[F[_], A, B](pipe: Pipe[F, A, B]) {
+  implicit class FS2PipeIODsl[F[_]: ContextShift: Effect, A, B](pipe: Pipe[F, A, B]) {
 
     /** @see [[Converter#fs2PipeToAkkaFlow]] */
-    def toFlow(implicit contextShift: ContextShift[F], F: Effect[F]): Graph[FlowShape[A, B], NotUsed] =
+    def toFlow: Graph[FlowShape[A, B], NotUsed] =
       fs2PipeToAkkaFlow(pipe)
   }
 }
