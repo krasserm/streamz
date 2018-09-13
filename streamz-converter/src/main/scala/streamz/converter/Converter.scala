@@ -104,8 +104,9 @@ trait Converter {
     // The future returned from unsafeToFuture() completes when the subscriber stream completes and is made
     // available as materialized value of this sink.
     val sink2: AkkaSink[ActorRef, Future[Done]] = AkkaFlow[ActorRef]
-      .map(s => F.toIO(subscriberStream[F, A](s).to(sink).compile.drain).as(Done).unsafeToFuture())
-      .toMat(AkkaSink.head)(Keep.right).mapMaterializedValue(_.flatten)
+      .map(s => F.toIO(subscriberStream[F, A](s).to(sink).compile.drain).as(Done: Done).unsafeToFuture())
+      .toMat(AkkaSink.head)(Keep.right)
+      .mapMaterializedValue(ffd => IO.fromFuture(IO.pure(ffd)).flatMap(fd => IO.fromFuture(IO.pure(fd))).unsafeToFuture())
 
     AkkaSink.fromGraph(GraphDSL.create(sink1, sink2)(Keep.both) { implicit builder => (sink1, sink2) =>
       import GraphDSL.Implicits._
