@@ -16,14 +16,13 @@
 
 package streamz.camel.fs2
 
-import cats.effect.{ Async, ContextShift, IO }
+import cats.effect.{ Async, ContextShift }
 import cats.implicits._
 import fs2._
 import org.apache.camel.spi.Synchronization
 import org.apache.camel.{ Exchange, ExchangePattern, TypeConversionException }
 import streamz.camel.{ StreamContext, StreamMessage }
 
-import scala.concurrent.ExecutionContext
 import scala.reflect.ClassTag
 import scala.util._
 
@@ -31,34 +30,34 @@ package object dsl {
   /**
    * Camel endpoint combinators for [[StreamMessage]] streams of type `Stream[IO, StreamMessage[A]]`.
    */
-  implicit class SendDsl[F[_], A](self: Stream[F, StreamMessage[A]]) {
+  implicit class SendDsl[F[_]: ContextShift: Async, A](self: Stream[F, StreamMessage[A]]) {
     /**
      * @see [[dsl.send]]
      */
-    def send(uri: String)(implicit context: StreamContext, contextShift: ContextShift[F], async: Async[F]): Stream[F, StreamMessage[A]] =
+    def send(uri: String)(implicit context: StreamContext): Stream[F, StreamMessage[A]] =
       self.through(dsl.send[F, A](uri))
 
     /**
      * @see [[dsl.sendRequest]]
      */
-    def sendRequest[B](uri: String)(implicit context: StreamContext, tag: ClassTag[B], contextShift: ContextShift[F], async: Async[F]): Stream[F, StreamMessage[B]] =
+    def sendRequest[B](uri: String)(implicit context: StreamContext, tag: ClassTag[B]): Stream[F, StreamMessage[B]] =
       self.through(dsl.sendRequest[F, A, B](uri))
   }
 
   /**
    * Camel endpoint combinators for [[StreamMessage]] body streams of type `Stream[IO, A]`.
    */
-  implicit class SendBodyDsl[F[_], A](self: Stream[F, A]) {
+  implicit class SendBodyDsl[F[_]: ContextShift: Async, A](self: Stream[F, A]) {
     /**
      * @see [[dsl.sendBody]]
      */
-    def send(uri: String)(implicit context: StreamContext, contextShift: ContextShift[F], async: Async[F]): Stream[F, A] =
+    def send(uri: String)(implicit context: StreamContext): Stream[F, A] =
       self.through(dsl.sendBody[F, A](uri))
 
     /**
      * @see [[dsl.sendRequestBody]]
      */
-    def sendRequest[B](uri: String)(implicit context: StreamContext, tag: ClassTag[B], contextShift: ContextShift[F], async: Async[F]): Stream[F, B] =
+    def sendRequest[B](uri: String)(implicit context: StreamContext, tag: ClassTag[B]): Stream[F, B] =
       self.through(dsl.sendRequestBody[F, A, B](uri))
   }
 
