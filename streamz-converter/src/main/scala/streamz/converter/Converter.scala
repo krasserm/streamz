@@ -161,25 +161,19 @@ trait ConverterDsl extends Converter {
   implicit class AkkaSourceDsl[A, M](source: Graph[SourceShape[A], M]) {
 
     /** @see [[Converter#akkaSourceToFs2StreamF]] */
-    def toStream[F[_]: ContextShift: Async](onMaterialization: M => Unit = _ => ())(
-      implicit
-      materializer: Materializer): Stream[F, A] =
+    def toStream[F[_]: ContextShift: Async](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Stream[F, A] =
       akkaSourceToFs2Stream(source)(onMaterialization)
   }
 
   implicit class AkkaSinkDsl[A, M](sink: Graph[SinkShape[A], M]) {
 
-    def toSink[F[_]: ContextShift: Async](onMaterialization: M => Unit = _ => ())(
-      implicit
-      materializer: Materializer): Sink[F, A] =
+    def toSink[F[_]: ContextShift: Async](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Sink[F, A] =
       akkaSinkToFs2Sink(sink)(onMaterialization)
   }
 
   implicit class AkkaFlowDsl[A, B, M](flow: Graph[FlowShape[A, B], M]) {
 
-    def toPipe[F[_]: ContextShift: ConcurrentEffect](onMaterialization: M => Unit = _ => ())(
-      implicit
-      materializer: Materializer): Pipe[F, A, B] =
+    def toPipe[F[_]: ContextShift: ConcurrentEffect](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Pipe[F, A, B] =
       akkaFlowToFs2Pipe(flow)(onMaterialization)
   }
 
