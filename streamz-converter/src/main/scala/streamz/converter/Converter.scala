@@ -66,8 +66,7 @@ trait Converter {
     Stream.suspend {
       val src = AkkaSource.actorPublisher[A](AkkaStreamPublisher.props[A])
       val snk = AkkaSink.actorSubscriber[B](AkkaStreamSubscriber.props[B])
-      val ((publisher, mat), subscriber) =
-        src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
+      val ((publisher, mat), subscriber) = src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
       onMaterialization(mat)
       transformerStream[F, A, B](publisher, subscriber, s)
     }
@@ -80,18 +79,13 @@ trait Converter {
   def fs2StreamToAkkaSource[F[_]: ContextShift, A](stream: Stream[F, A])(implicit F: Effect[F]): Graph[SourceShape[A], NotUsed] = {
     val source = AkkaSource.actorPublisher(AkkaStreamPublisher.props[A])
     // A sink that runs an FS2 publisherStream when consuming the publisher actor (= materialized value) of source
-    val sink = AkkaSink.foreach[ActorRef] { publisher =>
-      val publish = publisherStream[F, A](publisher, stream).compile.drain
-      F.runAsync(publish)(_ => IO.unit).unsafeRunSync()
-    }
+    val sink = AkkaSink.foreach[ActorRef](p => F.toIO(publisherStream[F, A](p, stream).compile.drain).unsafeToFuture())
 
-    AkkaSource
-      .fromGraph(GraphDSL.create(source) { implicit builder => source =>
-        import GraphDSL.Implicits._
-        builder.materializedValue ~> sink
-        SourceShape(source.out)
-      })
-      .mapMaterializedValue(_ => NotUsed)
+    AkkaSource.fromGraph(GraphDSL.create(source) { implicit builder => source =>
+      import GraphDSL.Implicits._
+      builder.materializedValue ~> sink
+      SourceShape(source.out)
+    }).mapMaterializedValue(_ => NotUsed)
   }
 
   /**
@@ -104,20 +98,14 @@ trait Converter {
     // The future returned from unsafeToFuture() completes when the subscriber stream completes and is made
     // available as materialized value of this sink.
     val sink2: AkkaSink[ActorRef, Future[Done]] = AkkaFlow[ActorRef]
-      .map { subscriber =>
-        val runStream = subscriberStream[F, A](subscriber).to(sink).compile.drain
-        F.toIO(runStream).as(Done).unsafeToFuture()
-      }
-      .toMat(AkkaSink.head)(Keep.right)
-      .mapMaterializedValue(_.flatten)
+      .map(s => F.toIO(subscriberStream[F, A](s).to(sink).compile.drain).as(Done).unsafeToFuture())
+      .toMat(AkkaSink.head)(Keep.right).mapMaterializedValue(_.flatten)
 
     AkkaSink.fromGraph(GraphDSL.create(sink1, sink2)(Keep.both) { implicit builder => (sink1, sink2) =>
       import GraphDSL.Implicits._
-      builder.materializedValue ~> AkkaFlow[(ActorRef, _)]
-        .map(_._1) ~> sink2
+      builder.materializedValue ~> AkkaFlow[(ActorRef, _)].map(_._1) ~> sink2
       SinkShape(sink1.in)
-    })
-      .mapMaterializedValue(_._2)
+    }).mapMaterializedValue(_._2)
   }
 
   /**
