@@ -26,7 +26,7 @@ import fs2._
 import streamz.converter.AkkaStreamPublisher._
 import streamz.converter.AkkaStreamSubscriber._
 
-import scala.concurrent.{ Future, Promise }
+import scala.concurrent.Future
 
 object Converter {
   type Callback[A] = Either[Throwable, A] => Unit
@@ -123,12 +123,10 @@ trait Converter {
     val sink2: AkkaSink[ActorRef, Future[Done]] = AkkaFlow[ActorRef]
       .map { subscriber =>
         val runStream = subscriberStream[F, A](subscriber).to(sink).compile.drain
-        val p = Promise[Done]
-        F.runAsync(runStream)(r => IO(p.complete(r.fold(scala.util.Failure(_), _ => scala.util.Success(Done))))).unsafeRunSync()
-        p.future
+        F.toIO(runStream).as(Done).unsafeToFuture()
       }
       .toMat(AkkaSink.head)(Keep.right)
-      .mapMaterializedValue { x => IO.fromFuture(IO.pure(x)).flatMap(i => IO.fromFuture(IO.pure(i))).unsafeToFuture() }
+      .mapMaterializedValue(_.flatten)
 
     AkkaSink.fromGraph(GraphDSL.create(sink1, sink2)(Keep.both) { implicit builder => (sink1, sink2) =>
       import GraphDSL.Implicits._
@@ -158,9 +156,9 @@ trait Converter {
   }
 
   private def subscriberStream[F[_], A](subscriber: ActorRef)(implicit context: ContextShift[F], F: Async[F]): Stream[F, A] = {
-    val subscriberIO = context.shift >> F.async((callback: Callback[Option[A]]) => subscriber ! Request(callback))
+    val pull = context.shift >> F.async((callback: Callback[Option[A]]) => subscriber ! Request(callback))
     Stream
-      .repeatEval(subscriberIO)
+      .repeatEval(pull)
       .unNoneTerminate
       .onFinalize {
         F.delay {
@@ -170,8 +168,8 @@ trait Converter {
   }
 
   private def publisherStream[F[_], A](publisher: ActorRef, stream: Stream[F, A])(implicit context: ContextShift[F], F: Async[F]): Stream[F, Unit] = {
-    def publisherF(i: A): F[Option[Unit]] = context.shift >> F.async[Option[Unit]](callback => publisher ! Next(i, callback))
-    stream.evalMap(publisherF).unNoneTerminate
+    def publish(i: A): F[Option[Unit]] = context.shift >> F.async[Option[Unit]](callback => publisher ! Next(i, callback))
+    stream.evalMap(publish).unNoneTerminate
       .handleErrorWith { ex =>
         Stream.eval(F.delay(publisher ! Error(ex))) >> Stream.raiseError[F](ex)
       }
@@ -183,7 +181,7 @@ trait Converter {
       }
   }
 
-  private def transformerStream[F[_]: ContextShift: ConcurrentEffect, A, B](subscriber: ActorRef, publisher: ActorRef, stream: Stream[F, A]): Stream[F, B] =
+  private def transformerStream[F[_]: ContextShift: Concurrent, A, B](subscriber: ActorRef, publisher: ActorRef, stream: Stream[F, A]): Stream[F, B] =
     publisherStream[F, A](publisher, stream).either(subscriberStream[F, B](subscriber)).collect { case Right(elem) => elem }
 
   private def transformerStream[F[_]: ContextShift: Async, A, B](subscriber: ActorRef, publisher: ActorRef, pipe: Pipe[F, A, B]): Stream[F, Unit] =
