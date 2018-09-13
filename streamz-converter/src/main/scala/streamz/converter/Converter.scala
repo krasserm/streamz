@@ -117,7 +117,7 @@ trait Converter {
     val sink1: AkkaSink[A, ActorRef] = AkkaSink.actorSubscriber(AkkaStreamSubscriber.props[A])
     // A sink that runs an FS2 transformerStream when consuming the publisher actor (= materialized value) of source
     // and the subscriber actor (= materialized value) of sink1
-    val sink2 = AkkaSink.foreach[(ActorRef, ActorRef)](ps => F.runAsync(transformerStream(ps._2, ps._1, pipe).compile.drain)(_ => IO.unit).unsafeRunSync())
+    val sink2 = AkkaSink.foreach[(ActorRef, ActorRef)](ps => F.toIO(transformerStream(ps._2, ps._1, pipe).compile.drain).unsafeToFuture())
 
     AkkaFlow.fromGraph(GraphDSL.create(source, sink1)(Keep.both) { implicit builder => (source, sink1) =>
       import GraphDSL.Implicits._
@@ -128,9 +128,7 @@ trait Converter {
 
   private def subscriberStream[F[_], A](subscriber: ActorRef)(implicit context: ContextShift[F], F: Async[F]): Stream[F, A] = {
     val pull = context.shift >> F.async((callback: Callback[Option[A]]) => subscriber ! Request(callback))
-    Stream
-      .repeatEval(pull)
-      .unNoneTerminate
+    Stream.repeatEval(pull).unNoneTerminate
       .onFinalize {
         F.delay {
           subscriber ! PoisonPill
