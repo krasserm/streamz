@@ -23,10 +23,11 @@ import streamz.camel.fs2.dsl._
 
 object Snippets {
   implicit val context = StreamContext()
+  implicit val contextShift = IO.contextShift(scala.concurrent.ExecutionContext.global)
 
   val s: Stream[IO, StreamMessage[Int]] =
     // receive stream message from endpoint
-    receive[String]("seda:q1")
+    receive[IO, String]("seda:q1")
       // in-only message exchange with endpoint and continue stream with in-message
       .send("seda:q2")
       // in-out message exchange with endpoint and continue stream with out-message
@@ -38,11 +39,11 @@ object Snippets {
   // run IO (side effects only here) ...
   t.unsafeRunSync()
 
-  val s1: Stream[IO, StreamMessage[String]] = receive[String]("seda:q1")
+  val s1: Stream[IO, StreamMessage[String]] = receive[IO, String]("seda:q1")
   val s2: Stream[IO, StreamMessage[String]] = s1.send("seda:q2")
   val s3: Stream[IO, StreamMessage[Int]] = s2.sendRequest[Int]("bean:service?method=weight")
 
-  val s1b: Stream[IO, String] = receiveBody[String]("seda:q1")
+  val s1b: Stream[IO, String] = receiveBody[IO, String]("seda:q1")
   val s2b: Stream[IO, String] = s1b.send("seda:q2")
   val s3b: Stream[IO, Int] = s2b.sendRequest[Int]("bean:service?method=weight")
 }
