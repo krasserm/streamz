@@ -39,17 +39,9 @@ trait Converter {
    * Converts an Akka Stream [[Graph]] of [[SourceShape]] to an FS2 [[Stream]]. The [[Graph]] is materialized when
    * the [[Stream]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaSourceToFs2Stream[F[_], A, M](source: Graph[SourceShape[A], M])(
-    onMaterialization: M => Unit)(implicit
-    timer: ContextShift[F],
-    F: Async[F],
-    materializer: Materializer): Stream[F, A] =
+  def akkaSourceToFs2Stream[F[_]: ContextShift: Async, A, M](source: Graph[SourceShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer): Stream[F, A] =
     Stream.suspend {
-      val (mat, subscriber) = AkkaSource
-        .fromGraph(source)
-        .toMat(AkkaSink.actorSubscriber[A](AkkaStreamSubscriber.props[A]))(
-          Keep.both)
-        .run()
+      val (mat, subscriber) = AkkaSource.fromGraph(source).toMat(AkkaSink.actorSubscriber[A](AkkaStreamSubscriber.props[A]))(Keep.both).run()
       onMaterialization(mat)
       subscriberStream[F, A](subscriber)
     }
@@ -58,12 +50,9 @@ trait Converter {
    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Sink]]. The [[Graph]] is materialized when
    * the [[Sink]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaSinkToFs2Sink[F[_], A, M](sink: Graph[SinkShape[A], M])(onMaterialization: M => Unit)(implicit contextShift: ContextShift[F], F: Async[F], materializer: Materializer): Sink[F, A] = { s =>
+  def akkaSinkToFs2Sink[F[_]: ContextShift: Async, A, M](sink: Graph[SinkShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer): Sink[F, A] = { s =>
     Stream.suspend {
-      val (publisher, mat) = AkkaSource
-        .actorPublisher[A](AkkaStreamPublisher.props[A])
-        .toMat(sink)(Keep.both)
-        .run()
+      val (publisher, mat) = AkkaSource.actorPublisher[A](AkkaStreamPublisher.props[A]).toMat(sink)(Keep.both).run()
       onMaterialization(mat)
       publisherStream[F, A](publisher, s)
     }
@@ -73,11 +62,7 @@ trait Converter {
    * Converts an Akka Stream [[Graph]] of [[FlowShape]] to an FS2 [[Pipe]]. The [[Graph]] is materialized when
    * the [[Pipe]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaFlowToFs2Pipe[F[_], A, B, M](flow: Graph[FlowShape[A, B], M])(
-    onMaterialization: M => Unit)(
-    implicit
-    contextShift: ContextShift[F], F: ConcurrentEffect[F],
-    materializer: Materializer): Pipe[F, A, B] = { s =>
+  def akkaFlowToFs2Pipe[F[_]: ContextShift: Concurrent, A, B, M](flow: Graph[FlowShape[A, B], M])(onMaterialization: M => Unit)(implicit materializer: Materializer): Pipe[F, A, B] = { s =>
     Stream.suspend {
       val src = AkkaSource.actorPublisher[A](AkkaStreamPublisher.props[A])
       val snk = AkkaSink.actorSubscriber[B](AkkaStreamSubscriber.props[B])
@@ -92,9 +77,7 @@ trait Converter {
    * Converts an FS2 [[Stream]] to an Akka Stream [[Graph]] of [[SourceShape]]. The [[Stream]] is run when the
    * [[Graph]] is materialized.
    */
-  def fs2StreamToAkkaSource[F[_]: ContextShift, A](stream: Stream[F, A])(
-    implicit
-    F: Effect[F]): Graph[SourceShape[A], NotUsed] = {
+  def fs2StreamToAkkaSource[F[_]: ContextShift, A](stream: Stream[F, A])(implicit F: Effect[F]): Graph[SourceShape[A], NotUsed] = {
     val source = AkkaSource.actorPublisher(AkkaStreamPublisher.props[A])
     // A sink that runs an FS2 publisherStream when consuming the publisher actor (= materialized value) of source
     val sink = AkkaSink.foreach[ActorRef] { publisher =>
