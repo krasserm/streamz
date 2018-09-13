@@ -21,11 +21,11 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 
 ### Latest stable release for FS2 0.10
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.9"
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.9.1"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.9" // uses FS2 0.10.1
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.9.1" // uses FS2 0.10.5
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.9" // uses FS2 0.10.1
+    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.9.1" // uses FS2 0.10.5
 
 ### Latest stable release for FS2 0.9
 
@@ -38,7 +38,7 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 Documentation
 -------------
 
-### Streamz 0.9
+### Streamz 0.9.1
 
 - [Camel DSL for Akka Streams](streamz-camel-akka/README.md)
 - [Camel DSL for FS2](streamz-camel-fs2/README.md)
@@ -55,7 +55,7 @@ Documentation
 API docs
 --------
 
-### Streamz 0.9
+### Streamz 0.9.1
 
 Not published yet. Run `sbt unidoc` on branch `r-0.9` or `master` for generating 0.9 API docs. 
 
