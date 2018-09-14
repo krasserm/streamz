@@ -41,7 +41,7 @@ trait Converter {
    */
   def akkaSourceToFs2Stream[F[_]: ContextShift, A, M](source: Graph[SourceShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Async[F]): Stream[F, A] =
     Stream.force {
-      F.catchNonFatal {
+      F.delay {
         val (mat, subscriber) = AkkaSource.fromGraph(source).toMat(AkkaSink.actorSubscriber[A](AkkaStreamSubscriber.props[A]))(Keep.both).run()
         onMaterialization(mat)
         subscriberStream[F, A](subscriber)
@@ -54,7 +54,7 @@ trait Converter {
    */
   def akkaSinkToFs2Sink[F[_]: ContextShift, A, M](sink: Graph[SinkShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Async[F]): Sink[F, A] = { s =>
     Stream.force {
-      F.catchNonFatal {
+      F.delay {
         val (publisher, mat) = AkkaSource.actorPublisher[A](AkkaStreamPublisher.props[A]).toMat(sink)(Keep.both).run()
         onMaterialization(mat)
         publisherStream[F, A](publisher, s)
@@ -68,12 +68,12 @@ trait Converter {
    */
   def akkaFlowToFs2Pipe[F[_]: ContextShift, A, B, M](flow: Graph[FlowShape[A, B], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Concurrent[F]): Pipe[F, A, B] = { s =>
     Stream.force {
-      F.catchNonFatal {
+      F.delay {
         val src = AkkaSource.actorPublisher[A](AkkaStreamPublisher.props[A])
         val snk = AkkaSink.actorSubscriber[B](AkkaStreamSubscriber.props[B])
         val ((publisher, mat), subscriber) = src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
         onMaterialization(mat)
-        transformerStream[F, A, B](publisher, subscriber, s)
+        transformerStream[F, A, B](subscriber, publisher, s)
       }
     }
   }
