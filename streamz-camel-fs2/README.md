@@ -36,7 +36,7 @@ import org.apache.camel.CamelContext
 import streamz.camel.StreamContext
 
 // externally managed CamelContext
-val camelContext: CamelContext = ...
+val camelContext: CamelContext = ???
 
 // re-uses the externally managed CamelContext
 implicit val streamContext: StreamContext = StreamContext(camelContext)
@@ -56,16 +56,16 @@ import streamz.camel.StreamContext
 import streamz.camel.StreamMessage 
 import streamz.camel.fs2.dsl._
 
-val s1: Stream[IO, StreamMessage[String]] = receive[String]("seda:q1")
+val s1: Stream[IO, StreamMessage[String]] = receive[IO, String]("seda:q1")
 ```
 
 creates an FS2 stream that consumes messages from the [SEDA endpoint](http://camel.apache.org/seda.html) `seda:q1` and converts them to `StreamMessage[String]`s. A [`StreamMessage[A]`](http://krasserm.github.io/streamz/scala-2.12/unidoc/streamz/camel/StreamMessage.html) contains a message `body` of type `A` and message `headers`. Calling `receive` with a `String` type parameter creates an FS2 stream that converts consumed message bodies to type `String` before emitting them as `StreamMessage[String]`. Type conversion internally uses a Camel [type converter](http://camel.apache.org/type-converter.html). An FS2 stream that only emits the converted message bodies can be created with `receiveBody`:
 
 ```scala
-val s1b: Stream[IO, String] = receiveBody[String]("seda:q1")
+val s1b: Stream[IO, String] = receiveBody[IO, String]("seda:q1")
 ```
 
-This is equivalent to `receive[String]("seda:q1").map(_.body)`.
+This is equivalent to `receive[IO, String]("seda:q1").map(_.body)`.
 
 `receive` and `receiveBody` can only be used with endpoints that create [in-only message exchanges](http://camel.apache.org/exchange-pattern.html). 
 
@@ -83,7 +83,7 @@ val s2: Stream[IO, StreamMessage[String]] = s1.send("seda:q2")
 
 This initiates an in-only message [exchange](http://camel.apache.org/exchange.html) with an endpoint and continues the stream with the sent `StreamMessage`. 
 
-The `send` combinator is not only available for streams of type `Stream[IO, StreamMessage[A]]` but more generally for any stream of type `Stream[IO, A]`.
+The `send` combinator is not only available for streams of type `Stream[IO, StreamMessage[A]]` but more generally for any `Stream[F, A]` where `F: ContextShift: Async`.
 
 ```scala
 val s2b: Stream[IO, String] = s1b.send("seda:q2")
@@ -101,7 +101,7 @@ val s3: Stream[IO, StreamMessage[Int]] = s2.sendRequest[Int]("bean:service?metho
 
 This initiates an in-out message exchange with the endpoint and continues the stream with the output `StreamMessage`. Here, a [Bean endpoint](https://camel.apache.org/bean.html) is used to call the `weight(String): Int` method on an object that is registered in the `CamelContext` under the name `service`. The input message body is used as `weight` call argument, the output message body is assigned the return value. The `sendRequest` type parameter (`Int`) specifies the expected output value type. The output message body can also be converted to another type provided that an appropriate Camel type converter is available (`Double`, for example). 
 
-The `sendRequest` combinator is not only available for streams of type `Stream[IO, StreamMessage[A]]` but more generally for any stream of type `Stream[IO, A]`:
+The `sendRequest` combinator is not only available for streams of type `Stream[IO, StreamMessage[A]]` but more generally for any `Stream[F, A]` where `F: ContextShift: Async`.
 
 ```scala
 val s3b: Stream[IO, Int] = s2b.sendRequest[Int]("bean:service?method=weight")
