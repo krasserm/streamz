@@ -20,7 +20,7 @@ import akka.actor.{ ActorRefFactory, ActorSystem }
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{ Keep, Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource }
 import akka.{ Done, NotUsed }
-import cats.effect.IO
+import cats.effect.{ ContextShift, IO }
 import fs2.{ Pipe, Pure, Sink, Stream }
 import streamz.converter._
 
@@ -34,6 +34,7 @@ object Example extends App {
 
   implicit val executionContext: ExecutionContext = factory.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()(factory)
+  implicit val contextShift: ContextShift[IO] = IO.contextShift(materializer.executionContext)
 
   val numbers: Seq[Int] = 1 to 10
 
@@ -47,7 +48,7 @@ object Example extends App {
   val fSink1: Sink[IO, Int] = aSink1.toSink()
 
   val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
-  val fStream1: Stream[IO, Int] = aSource1.toStream()
+  val fStream1: Stream[IO, Int] = aSource1.toStream[IO]()
 
   val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
   val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe()
