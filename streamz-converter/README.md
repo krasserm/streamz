@@ -5,7 +5,7 @@ Stream converters convert Akka Stream `Source`s, `Flow`s and `Sink`s to FS2 `Str
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.9.1"
+    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.10-M1"
 
 artifact and can be imported with: 
 

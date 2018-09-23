@@ -19,7 +19,15 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
-### Latest stable release for FS2 0.10
+### Latest milestone release for FS2 1.0.x
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.10-M1"
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.10-M1" // uses FS2 1.0.0-M5
+
+    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.10-M1" // uses FS2 1.0.0-M5
+
+### Latest stable release for FS2 0.10.x
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.9.1"
 
@@ -27,7 +35,7 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 
     libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.9.1" // uses FS2 0.10.5
 
-### Latest stable release for FS2 0.9
+### Latest stable release for FS2 0.9.x
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.8.1"
 
@@ -38,12 +46,19 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 Documentation
 -------------
 
-### Streamz 0.9.1
+### Streamz 0.10-M1
 
 - [Camel DSL for Akka Streams](streamz-camel-akka/README.md)
 - [Camel DSL for FS2](streamz-camel-fs2/README.md)
 - [Stream converters](streamz-converter/README.md)
 - [Example application](streamz-examples/README.md)
+
+### Streamz 0.9.1
+
+- [Camel DSL for Akka Streams](https://github.com/krasserm/streamz/blob/v-0.9.1/streamz-camel-akka/README.md)
+- [Camel DSL for FS2](https://github.com/krasserm/streamz/blob/v-0.9.1/streamz-camel-fs2/README.md)
+- [Stream converters](https://github.com/krasserm/streamz/blob/v-0.9.1/streamz-converter/README.md)
+- [Example application](https://github.com/krasserm/streamz/blob/v-0.9.1/streamz-examples/README.md)
 
 ### Streamz 0.8.1
 
@@ -55,9 +70,13 @@ Documentation
 API docs
 --------
 
+### Streamz 0.10-M1
+
+Not published. Run `sbt unidoc` on branch `r-0.10` or `master` for generating 0.10 API docs. 
+
 ### Streamz 0.9.1
 
-Not published yet. Run `sbt unidoc` on branch `r-0.9` or `master` for generating 0.9 API docs. 
+Not published. Run `sbt unidoc` on branch `r-0.9` for generating 0.9 API docs. 
 
 ### Streamz 0.8.1
 
