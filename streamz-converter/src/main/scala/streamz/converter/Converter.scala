@@ -136,12 +136,19 @@ trait Converter {
   }
 
   private def publisherStream[F[_], A](publisher: SourceQueueWithComplete[A], stream: Stream[F, A])(implicit context: ContextShift[F], F: Concurrent[F]): Stream[F, Unit] = {
-    def publish(a: A): F[Unit] = F.liftIO(IO.fromFuture(IO(publisher.offer(a))).void)
+    def publish(a: A): F[Option[Unit]] = F.liftIO(IO.fromFuture(IO(publisher.offer(a)))).flatMap {
+      case QueueOfferResult.Enqueued => ().some.pure[F]
+      case QueueOfferResult.Failure(cause) => F.raiseError[Option[Unit]](cause)
+      case QueueOfferResult.QueueClosed => none[Unit].pure[F]
+      case QueueOfferResult.Dropped => F.raiseError[Option[Unit]](new IllegalArgumentException("Should never happen"))
+    }
     def watchCompletion: F[Unit] = F.liftIO(IO.fromFuture(IO(publisher.watchCompletion())).void)
-    stream.interruptWhen(watchCompletion.attempt).evalMap(publish)
+    def fail(e: Throwable): F[Unit] = F.delay(publisher.fail(e)) >> watchCompletion
+    def complete: F[Unit] = F.delay(publisher.complete()) >> watchCompletion
+    stream.interruptWhen(watchCompletion.attempt).evalMap(publish).unNoneTerminate
       .handleErrorWith { ex =>
-        Stream.eval(F.delay(publisher.fail(ex)) >> watchCompletion) >> Stream.raiseError[F](ex)
-      } ++ Stream.eval_(F.delay(publisher.complete()) >> watchCompletion)
+        Stream.eval(fail(ex)) >> Stream.raiseError[F](ex)
+      } ++ Stream.eval_(complete)
   }
 
   private def transformerStream[F[_]: ContextShift: Concurrent, A, B](subscriber: SinkQueueWithCancel[B], publisher: SourceQueueWithComplete[A], stream: Stream[F, A]): Stream[F, B] =
