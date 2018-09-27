@@ -25,12 +25,7 @@ import fs2._
 
 import scala.concurrent.Future
 
-object Converter {
-  type Callback[A] = Either[Throwable, A] => Unit
-}
-
 trait Converter {
-  import Converter._
 
   /**
    * Converts an Akka Stream [[Graph]] of [[SourceShape]] to an FS2 [[Stream]]. The [[Graph]] is materialized when
@@ -49,7 +44,7 @@ trait Converter {
    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Sink]]. The [[Graph]] is materialized when
    * the [[Sink]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaSinkToFs2Sink[F[_]: ContextShift, A, M](sink: Graph[SinkShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Concurrent[F]): Sink[F, A] = { s =>
+  def akkaSinkToFs2Sink[F[_], A, M](sink: Graph[SinkShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Concurrent[F]): Sink[F, A] = { s =>
     Stream.force {
       F.delay {
         val (publisher, mat) = AkkaSource.queue[A](0, OverflowStrategy.backpressure).toMat(sink)(Keep.both).run()
@@ -132,15 +127,16 @@ trait Converter {
 
   private def subscriberStream[F[_], A](subscriber: SinkQueueWithCancel[A])(implicit context: ContextShift[F], F: Async[F]): Stream[F, A] = {
     val pull = context.shift >> F.liftIO(IO.fromFuture(IO(subscriber.pull())))
-    Stream.repeatEval(pull).unNoneTerminate
+    val cancel = F.delay(subscriber.cancel())
+    Stream.repeatEval(pull).onFinalize(cancel).unNoneTerminate
   }
 
-  private def publisherStream[F[_], A](publisher: SourceQueueWithComplete[A], stream: Stream[F, A])(implicit context: ContextShift[F], F: Concurrent[F]): Stream[F, Unit] = {
+  private def publisherStream[F[_], A](publisher: SourceQueueWithComplete[A], stream: Stream[F, A])(implicit F: Concurrent[F]): Stream[F, Unit] = {
     def publish(a: A): F[Option[Unit]] = F.liftIO(IO.fromFuture(IO(publisher.offer(a)))).flatMap {
       case QueueOfferResult.Enqueued => ().some.pure[F]
       case QueueOfferResult.Failure(cause) => F.raiseError[Option[Unit]](cause)
       case QueueOfferResult.QueueClosed => none[Unit].pure[F]
-      case QueueOfferResult.Dropped => F.raiseError[Option[Unit]](new IllegalArgumentException("Should never happen"))
+      case QueueOfferResult.Dropped => F.raiseError[Option[Unit]](new IllegalArgumentException("This should never happen because we use OverflowStrategy.backpressure"))
     }
     def watchCompletion: F[Unit] = F.liftIO(IO.fromFuture(IO(publisher.watchCompletion())).void)
     def fail(e: Throwable): F[Unit] = F.delay(publisher.fail(e)) >> watchCompletion
