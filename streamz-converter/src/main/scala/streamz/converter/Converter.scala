@@ -128,7 +128,7 @@ trait Converter {
   private def subscriberStream[F[_], A](subscriber: SinkQueueWithCancel[A])(implicit context: ContextShift[F], F: Async[F]): Stream[F, A] = {
     val pull = context.shift >> F.liftIO(IO.fromFuture(IO(subscriber.pull())))
     val cancel = F.delay(subscriber.cancel())
-    Stream.repeatEval(pull).onFinalize(cancel).unNoneTerminate
+    Stream.repeatEval(pull).unNoneTerminate.onFinalize(cancel)
   }
 
   private def publisherStream[F[_], A](publisher: SourceQueueWithComplete[A], stream: Stream[F, A])(implicit F: Concurrent[F]): Stream[F, Unit] = {
