@@ -148,7 +148,7 @@ trait Converter {
   }
 
   private def transformerStream[F[_]: ContextShift: Concurrent, A, B](subscriber: SinkQueueWithCancel[B], publisher: SourceQueueWithComplete[A], stream: Stream[F, A]): Stream[F, B] =
-    publisherStream[F, A](publisher, stream).either(subscriberStream[F, B](subscriber)).collect { case Right(elem) => elem }
+    subscriberStream[F, B](subscriber).concurrently(publisherStream[F, A](publisher, stream))
 
   private def transformerStream[F[_]: ContextShift: Concurrent, A, B](subscriber: SinkQueueWithCancel[A], publisher: SourceQueueWithComplete[B], pipe: Pipe[F, A, B]): Stream[F, Unit] =
     subscriberStream[F, A](subscriber).through(pipe).to(s => publisherStream(publisher, s))
