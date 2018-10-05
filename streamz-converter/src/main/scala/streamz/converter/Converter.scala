@@ -31,26 +31,45 @@ trait Converter {
    * Converts an Akka Stream [[Graph]] of [[SourceShape]] to an FS2 [[Stream]]. The [[Graph]] is materialized when
    * the [[Stream]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaSourceToFs2Stream[F[_]: ContextShift, A, M](source: Graph[SourceShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Async[F]): Stream[F, A] =
+  def akkaSourceToFs2Stream[F[_]: ContextShift, A](source: Graph[SourceShape[A], NotUsed])(implicit materializer: Materializer, F: Async[F]): Stream[F, A] =
     Stream.force {
       F.delay {
-        val (mat, subscriber) = AkkaSource.fromGraph(source).toMat(AkkaSink.queue[A]())(Keep.both).run()
-        onMaterialization(mat)
+        val subscriber = AkkaSource.fromGraph(source).toMat(AkkaSink.queue[A]())(Keep.right).run()
         subscriberStream[F, A](subscriber)
       }
+    }
+
+  /**
+    * Converts an Akka Stream [[Graph]] of [[SourceShape]] to an FS2 [[Stream]]. The [[Graph]] is materialized when
+    * the [[Stream]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
+    */
+  def akkaSourceToFs2StreamMat[F[_]: ContextShift, A, M](source: Graph[SourceShape[A], M])(implicit materializer: Materializer, F: Async[F]): F[(Stream[F, A], M)] =
+    F.delay {
+      val (mat, subscriber) = AkkaSource.fromGraph(source).toMat(AkkaSink.queue[A]())(Keep.both).run()
+      (subscriberStream[F, A](subscriber), mat)
     }
 
   /**
    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Sink]]. The [[Graph]] is materialized when
    * the [[Sink]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaSinkToFs2Sink[F[_], A, M](sink: Graph[SinkShape[A], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Concurrent[F]): Sink[F, A] = { s =>
+  def akkaSinkToFs2Sink[F[_], A](sink: Graph[SinkShape[A], NotUsed])(implicit materializer: Materializer, F: Concurrent[F]): Sink[F, A] = { s =>
     Stream.force {
       F.delay {
-        val (publisher, mat) = AkkaSource.queue[A](0, OverflowStrategy.backpressure).toMat(sink)(Keep.both).run()
-        onMaterialization(mat)
+        val publisher = AkkaSource.queue[A](0, OverflowStrategy.backpressure).toMat(sink)(Keep.left).run()
         publisherStream[F, A](publisher, s)
       }
+    }
+  }
+
+  /**
+    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Sink]]. The [[Graph]] is materialized when
+    * the [[Sink]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
+    */
+  def akkaSinkToFs2SinkMat[F[_], A, M](sink: Graph[SinkShape[A], M])(implicit materializer: Materializer, F: Concurrent[F]): F[(Sink[F, A], M)] = {
+    F.delay {
+      val (publisher, mat) = AkkaSource.queue[A](0, OverflowStrategy.backpressure).toMat(sink)(Keep.both).run()
+      ((s: Stream[F, A]) => publisherStream[F, A](publisher, s), mat)
     }
   }
 
@@ -58,15 +77,27 @@ trait Converter {
    * Converts an Akka Stream [[Graph]] of [[FlowShape]] to an FS2 [[Pipe]]. The [[Graph]] is materialized when
    * the [[Pipe]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
    */
-  def akkaFlowToFs2Pipe[F[_]: ContextShift, A, B, M](flow: Graph[FlowShape[A, B], M])(onMaterialization: M => Unit)(implicit materializer: Materializer, F: Concurrent[F]): Pipe[F, A, B] = { s =>
+  def akkaFlowToFs2Pipe[F[_]: ContextShift, A, B](flow: Graph[FlowShape[A, B], NotUsed])(implicit materializer: Materializer, F: Concurrent[F]): Pipe[F, A, B] = { s =>
     Stream.force {
       F.delay {
         val src = AkkaSource.queue[A](0, OverflowStrategy.backpressure)
         val snk = AkkaSink.queue[B]()
-        val ((publisher, mat), subscriber) = src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
-        onMaterialization(mat)
+        val (publisher, subscriber) = src.viaMat(flow)(Keep.left).toMat(snk)(Keep.both).run()
         transformerStream[F, A, B](subscriber, publisher, s)
       }
+    }
+  }
+
+  /**
+    * Converts an Akka Stream [[Graph]] of [[FlowShape]] to an FS2 [[Pipe]]. The [[Graph]] is materialized when
+    * the [[Pipe]]'s [[F]] in run. The materialized value can be obtained with the `onMaterialization` callback.
+    */
+  def akkaFlowToFs2PipeMat[F[_]: ContextShift, A, B, M](flow: Graph[FlowShape[A, B], M])(implicit materializer: Materializer, F: Concurrent[F]): F[(Pipe[F, A, B], M)] = {
+    F.delay {
+      val src = AkkaSource.queue[A](0, OverflowStrategy.backpressure)
+      val snk = AkkaSink.queue[B]()
+      val ((publisher, mat), subscriber) = src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
+      ((s: Stream[F, A]) => transformerStream[F, A, B](subscriber, publisher, s), mat)
     }
   }
 
@@ -157,23 +188,66 @@ trait Converter {
 trait ConverterDsl extends Converter {
   implicit class AkkaSourceDsl[A, M](source: Graph[SourceShape[A], M]) {
 
-    /** @see [[Converter#akkaSourceToFs2StreamF]] */
-    def toStream[F[_]: ContextShift: Async](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Stream[F, A] =
-      akkaSourceToFs2Stream(source)(onMaterialization)
+    /** @see [[Converter#akkaSourceToFs2Stream]] */
+    def toStream[F[_]: ContextShift: Async](implicit materializer: Materializer, ev: M =:= NotUsed): Stream[F, A] =
+      akkaSourceToFs2Stream(source.asInstanceOf[Graph[SourceShape[A], NotUsed]])
+
+    /** @see [[Converter#akkaSourceToFs2StreamMat]] */
+    @deprecated(message = "Use `.toStream[F]` for M=NotUsed; use `.toStreamMat[F]` for other M. This version relies on side effects.", since = "0.10")
+    def toStream[F[_]: ContextShift: Async](onMaterialization: M => Unit)(implicit materializer: Materializer): Stream[F, A] =
+      Stream.force(akkaSourceToFs2StreamMat(source).map { case (akkaStream, mat) =>
+        onMaterialization(mat)
+        akkaStream
+      })
+
+    /** @see [[Converter#akkaSourceToFs2StreamMat]] */
+    def toStreamMat[F[_]: ContextShift: Async](implicit materializer: Materializer): F[(Stream[F, A], M)] =
+      akkaSourceToFs2StreamMat(source)
   }
 
   implicit class AkkaSinkDsl[A, M](sink: Graph[SinkShape[A], M]) {
 
     /** @see [[Converter#akkaSinkToFs2Sink]] */
-    def toSink[F[_]: ContextShift: Concurrent](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Sink[F, A] =
-      akkaSinkToFs2Sink(sink)(onMaterialization)
+    def toSink[F[_]: ContextShift: Concurrent](implicit materializer: Materializer, ev: M =:= NotUsed): Sink[F, A] =
+      akkaSinkToFs2Sink(sink.asInstanceOf[Graph[SinkShape[A], NotUsed]])
+
+
+    /** @see [[Converter#akkaSinkToFs2SinkMat]] */
+    @deprecated(message = "Use `.toSink[F]` for M=NotUsed; use `.toSinkMat[F]` for other M. This version relies on side effects.", since = "0.10")
+    def toSink[F[_]: ContextShift: Concurrent](onMaterialization: M => Unit)(implicit materializer: Materializer): Sink[F, A] = {
+      (s: Stream[F, A]) => Stream.force {
+        akkaSinkToFs2SinkMat(sink).map { case (fs2Sink, mat) =>
+          onMaterialization(mat)
+          s.to(fs2Sink)
+        }
+      }
+    }
+
+    /** @see [[Converter#akkaSinkToFs2SinkMat]] */
+    def toSinkMat[F[_]: ContextShift: Concurrent](implicit materializer: Materializer): F[(Sink[F, A], M)] =
+      akkaSinkToFs2SinkMat(sink)
   }
 
   implicit class AkkaFlowDsl[A, B, M](flow: Graph[FlowShape[A, B], M]) {
 
     /** @see [[Converter#akkaFlowToFs2Pipe]] */
-    def toPipe[F[_]: ContextShift: ConcurrentEffect](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Pipe[F, A, B] =
-      akkaFlowToFs2Pipe(flow)(onMaterialization)
+    def toPipe[F[_]: ContextShift: ConcurrentEffect](implicit materializer: Materializer, ev: M =:= NotUsed): Pipe[F, A, B] =
+      akkaFlowToFs2Pipe(flow.asInstanceOf[Graph[FlowShape[A, B], NotUsed]])
+
+    /** @see [[Converter#akkaFlowToFs2PipeMat]] */
+    @deprecated(message = "Use `.toPipe[F]` for M=NotUsed; use `.toPipeMat[F]` for other M. This version relies on side effects.", since = "0.10")
+    def toPipe[F[_]: ContextShift: ConcurrentEffect](onMaterialization: M => Unit)(implicit materializer: Materializer): Pipe[F, A, B] = {
+      (s: Stream[F, A]) => Stream.force {
+        akkaFlowToFs2PipeMat(flow).map { case (fs2Pipe, mat) =>
+          onMaterialization(mat)
+          s.through(fs2Pipe)
+        }
+      }
+    }
+
+    /** @see [[Converter#akkaFlowToFs2PipeMat]] */
+    def toPipeMat[F[_]: ContextShift: ConcurrentEffect](implicit materializer: Materializer): F[(Pipe[F, A, B], M)] =
+      akkaFlowToFs2PipeMat(flow)
   }
 
   implicit class FS2StreamNothingDsl[A](stream: Stream[Nothing, A]) {

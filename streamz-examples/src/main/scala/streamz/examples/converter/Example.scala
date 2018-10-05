@@ -45,15 +45,18 @@ object Example extends App {
   def f(i: Int) = List(s"$i-1", s"$i-2")
 
   val aSink1: AkkaSink[Int, Future[Done]] = AkkaSink.foreach[Int](println)
-  val fSink1: Sink[IO, Int] = aSink1.toSink()
+  val fSink1: IO[(Sink[IO, Int], Future[Done])] = aSink1.toSinkMat[IO]
 
   val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
-  val fStream1: Stream[IO, Int] = aSource1.toStream[IO]()
+  val fStream1: Stream[IO, Int] = aSource1.toStream[IO]
 
   val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
-  val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe()
+  val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe[IO]
 
-  fStream1.to(fSink1).compile.drain.unsafeRunSync() // prints numbers
+  Stream.force(fSink1.map { case (snk, mat) =>
+    // ignoring the `mat: Future[Done]` in this example
+    fStream1.to(snk)
+  }).compile.drain.unsafeRunSync() // prints numbers
   assert(fStream1.compile.toVector.unsafeRunSync() == numbers)
   assert(fStream1.through(fPipe1).compile.toVector.unsafeRunSync() == numbers.flatMap(f))
 
