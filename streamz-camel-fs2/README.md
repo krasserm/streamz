@@ -10,6 +10,12 @@ The DSL is provided by the `streamz-camel-fs2` artifact which is available for S
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.10-M1"
+    
+### Configuration
+
+The consumer receive timeout on Camel endpoints defaults to 500 ms. If you need to change that, you can do so in `application.conf`:
+
+    streamz.camel.consumer.receive.timeout = 10s
 
 <a name="dsl"></a>
 ### DSL

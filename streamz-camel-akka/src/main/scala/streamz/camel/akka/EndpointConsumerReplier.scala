@@ -51,6 +51,8 @@ private[akka] class EndpointConsumerReplier[A, B](uri: String, capacity: Int)(im
   private implicit val ec: ExecutionContext =
     ExecutionContext.fromExecutorService(streamContext.executorService)
 
+  private val timeout: Long = streamContext.config.getDuration("streamz.camel.consumer.receive.timeout", TimeUnit.MILLISECONDS)
+
   val in: Inlet[StreamMessage[A]] =
     Inlet("EndpointConsumerReplier.in")
 
@@ -88,7 +90,7 @@ private[akka] class EndpointConsumerReplier[A, B](uri: String, capacity: Int)(im
         emittedExchanges.size < capacity
 
       private def consumeAsync(): Unit = {
-        Future(processor.receivedExchanges.poll(500, TimeUnit.MILLISECONDS)).foreach(consumedCallback.invoke)
+        Future(processor.receivedExchanges.poll(timeout, TimeUnit.MILLISECONDS)).foreach(consumedCallback.invoke)
         consuming = true
       }
 

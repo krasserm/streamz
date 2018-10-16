@@ -16,6 +16,8 @@
 
 package streamz.camel.akka
 
+import java.util.concurrent.TimeUnit
+
 import akka.stream._
 import akka.stream.stage._
 import org.apache.camel._
@@ -30,6 +32,8 @@ private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: Str
 
   private implicit val ec: ExecutionContext =
     ExecutionContext.fromExecutorService(streamContext.executorService)
+
+  private val timeout: Long = streamContext.config.getDuration("streamz.camel.consumer.receive.timeout", TimeUnit.MILLISECONDS)
 
   val out: Outlet[StreamMessage[A]] =
     Outlet("EndpointConsumer.out")
@@ -49,7 +53,7 @@ private[akka] class EndpointConsumer[A](uri: String)(implicit streamContext: Str
       })
 
       private def consumeAsync(): Unit = {
-        Future(consumerTemplate.receive(uri, 500)).foreach(consumedCallback.invoke)
+        Future(consumerTemplate.receive(uri, timeout)).foreach(consumedCallback.invoke)
       }
 
       private def consumed(exchange: Exchange): Unit = {
