@@ -11,6 +11,12 @@ The DSL is provided by the `streamz-camel-akka` artifact which is available for 
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.10-M1"
 
+### Configuration
+
+The consumer receive timeout on Camel endpoints defaults to 500 ms. If you need to change that, you can do so in `application.conf`:
+
+    streamz.camel.consumer.receive.timeout = 10s
+
 <a name="scala-dsl"></a>
 ### Scala DSL
 

@@ -19,6 +19,7 @@ package streamz.camel
 import java.util.concurrent.{ ExecutorService, LinkedBlockingQueue, ThreadPoolExecutor, TimeUnit }
 import java.util.function.Supplier
 
+import com.typesafe.config.{ Config, ConfigFactory }
 import org.apache.camel._
 import org.apache.camel.impl.{ DefaultCamelContext, DefaultExchange }
 
@@ -128,7 +129,11 @@ object StreamContext {
  *                     and stopping the `CamelContext` after stopping this `StreamContext`.
  * @param executorServiceFactory factory for creating this stream context's `executorService`.
  */
-class StreamContext(val camelContext: CamelContext, executorServiceFactory: StreamContext.ExecutorServiceFactory = StreamContext.DefaultExecutorServiceFactory) {
+class StreamContext(
+  val camelContext: CamelContext,
+  executorServiceFactory: StreamContext.ExecutorServiceFactory = StreamContext.DefaultExecutorServiceFactory,
+  val config: Config = ConfigFactory.load()) {
+
   /**
    * Executor service used for running blocking endpoint operations. It is created with `executorServiceFactory`.
    */
