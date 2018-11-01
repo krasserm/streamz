@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>FS2PipeTaskDsl - streamz.converter.ConverterDsl.FS2PipeTaskDsl</title>
-          <meta name="description" content="FS2PipeTaskDsl - streamz.converter.ConverterDsl.FS2PipeTaskDsl" />
-          <meta name="keywords" content="FS2PipeTaskDsl streamz.converter.ConverterDsl.FS2PipeTaskDsl" />
+          <title>FS2SinkIODsl - streamz.converter.ConverterDsl.FS2SinkIODsl</title>
+          <meta name="description" content="FS2SinkIODsl - streamz.converter.ConverterDsl.FS2SinkIODsl" />
+          <meta name="keywords" content="FS2SinkIODsl streamz.converter.ConverterDsl.FS2SinkIODsl" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../index.html';
-            var hash = 'streamz.converter.ConverterDsl$FS2PipeTaskDsl';
+            var hash = 'streamz.converter.ConverterDsl$FS2SinkIODsl';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -30,10 +30,10 @@
       <div id="definition">
         <img alt="Class" src="../../lib/class_big.png" />
         <p id="owner"><a href="../package.html" class="extype" name="streamz">streamz</a>.<a href="package.html" class="extype" name="streamz.converter">converter</a>.<a href="ConverterDsl.html" class="extype" name="streamz.converter.ConverterDsl">ConverterDsl</a></p>
-        <h1>FS2PipeTaskDsl</h1><h3><span class="morelinks"><div>Related Doc:
+        <h1>FS2SinkIODsl</h1><h3><span class="morelinks"><div>Related Doc:
             <a href="ConverterDsl.html" class="extype" name="streamz.converter.ConverterDsl">package ConverterDsl</a>
           </div></span></h3><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -45,7 +45,7 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">FS2PipeTaskDsl</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">FS2SinkIODsl</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
@@ -69,7 +69,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="streamz.converter.ConverterDsl.FS2PipeTaskDsl"><span>FS2PipeTaskDsl</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="streamz.converter.ConverterDsl.FS2SinkIODsl"><span>FS2SinkIODsl</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -88,19 +88,19 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="streamz.converter.ConverterDsl.FS2PipeTaskDsl#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(pipe:fs2.Pipe[fs2.Task,A,B])(implicitexecutionContext:scala.concurrent.ExecutionContext):ConverterDsl.this.FS2PipeTaskDsl[A,B]"></a>
-      <a id="&lt;init&gt;:FS2PipeTaskDsl[A,B]"></a>
+              <ol><li name="streamz.converter.ConverterDsl.FS2SinkIODsl#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(sink:fs2.Sink[F,A])(implicitevidence$18:cats.effect.ContextShift[F],implicitevidence$19:cats.effect.Effect[F]):ConverterDsl.this.FS2SinkIODsl[F,A]"></a>
+      <a id="&lt;init&gt;:FS2SinkIODsl[F,A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FS2PipeTaskDsl</span><span class="params">(<span name="pipe">pipe: <span class="extype" name="fs2.Pipe">Pipe</span>[<span class="extype" name="fs2.Task">Task</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipeTaskDsl.A">A</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipeTaskDsl.B">B</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="executionContext">executionContext: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span>
+        <span class="name">FS2SinkIODsl</span><span class="params">(<span name="sink">sink: <span class="extype" name="fs2.Sink">Sink</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2SinkIODsl.F">F</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2SinkIODsl.A">A</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2SinkIODsl.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="cats.effect.Effect">Effect</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2SinkIODsl.F">F</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@&lt;init&gt;(pipe:fs2.Pipe[fs2.Task,A,B])(implicitexecutionContext:scala.concurrent.ExecutionContext):ConverterDsl.this.FS2PipeTaskDsl[A,B]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@&lt;init&gt;(sink:fs2.Sink[F,A])(implicitevidence$18:cats.effect.ContextShift[F],implicitevidence$19:cats.effect.Effect[F]):ConverterDsl.this.FS2SinkIODsl[F,A]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -126,7 +126,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -143,7 +143,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@##():Int" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@##():Int" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -160,7 +160,7 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -177,7 +177,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -194,7 +194,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@clone():Object" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@clone():Object" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -217,7 +217,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -234,7 +234,7 @@
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@equals(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -251,7 +251,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@finalize():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -274,7 +274,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -291,7 +291,7 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@hashCode():Int" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -308,7 +308,7 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -325,7 +325,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -342,7 +342,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@notify():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@notify():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -359,7 +359,7 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -376,28 +376,28 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="streamz.converter.ConverterDsl.FS2PipeTaskDsl#toFlow" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toFlow(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a>
-      <a id="toFlow(ExecutionContext):Graph[FlowShape[A,B],NotUsed]"></a>
+    </li><li name="streamz.converter.ConverterDsl.FS2SinkIODsl#toSink" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toSink:akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]"></a>
+      <a id="toSink:Graph[SinkShape[A],Future[Done]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toFlow</span><span class="params">(<span class="implicit">implicit </span><span name="executionContext">executionContext: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2PipeTaskDsl.A">A</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipeTaskDsl.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">toSink</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2SinkIODsl.A">A</span>], <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="akka.Done">Done</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@toFlow(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@toSink:akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#fs2PipeToAkkaFlow[A,B](pipe:fs2.Pipe[fs2.Task,A,B])(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" class="extmbr" name="streamz.converter.Converter#fs2PipeToAkkaFlow">Converter#fs2PipeToAkkaFlow</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#fs2SinkToAkkaSink[F[_],A](sink:fs2.Sink[F,A])(implicitevidence$4:cats.effect.ContextShift[F],implicitF:cats.effect.Effect[F]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" class="extmbr" name="streamz.converter.Converter#fs2SinkToAkkaSink">Converter#fs2SinkToAkkaSink</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -410,7 +410,7 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@toString():String" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@toString():String" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -427,7 +427,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@wait():Unit" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@wait():Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -450,7 +450,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -473,7 +473,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipeTaskDsl@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkIODsl@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

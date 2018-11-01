@@ -65,9 +65,7 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../../../../index.html">
-              <span class="name">root</span>
-            </a>
+        <a title="" href="../../../../index.html"><span class="name">root</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../../index.html" class="extype" name="_root_">root</a></dd></dl></div>
@@ -83,9 +81,7 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../../../index.html">
-              <span class="name">streamz</span>
-            </a>
+        <a title="" href="../../../index.html"><span class="name">streamz</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../../index.html" class="extype" name="_root_">root</a></dd></dl></div>
@@ -101,9 +97,7 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../../index.html">
-              <span class="name">camel</span>
-            </a>
+        <a title="" href="../../index.html"><span class="name">camel</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../../index.html" class="extype" name="streamz">streamz</a></dd></dl></div>
@@ -119,9 +113,7 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="../index.html">
-              <span class="name">fs2</span>
-            </a>
+        <a title="" href="../index.html"><span class="name">fs2</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="streamz.camel">camel</a></dd></dl></div>
@@ -137,24 +129,26 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="index.html">
-              <span class="name">dsl</span>
-            </a>
+        <a title="" href="index.html"><span class="name">dsl</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="streamz.camel.fs2">fs2</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="package$$SendBodyDsl.html" title="Camel endpoint combinators for StreamMessage body streams of type Stream[Task, A]."></a>
-                        <a href="package$$SendBodyDsl.html" title="Camel endpoint combinators for StreamMessage body streams of type Stream[Task, A].">
-                          SendBodyDsl
-                        </a>
+                        <a class="class" href="package$$SendBodyDsl.html" title="Camel endpoint combinators for StreamMessage body streams of type Stream[IO, A]."></a>
+                        <a href="package$$SendBodyDsl.html" title="Camel endpoint combinators for StreamMessage body streams of type Stream[IO, A].">SendBodyDsl</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="" title="Camel endpoint combinators for StreamMessage streams of type Stream[Task, StreamMessage[A]]."></a>
-                        <a href="" title="Camel endpoint combinators for StreamMessage streams of type Stream[Task, StreamMessage[A]].">
-                          SendDsl
-                        </a>
+                        <a class="class" href="package$$SendBodyDslPure.html" title="Camel endpoint combinators for StreamMessage body streams of type Stream[Pure, A]."></a>
+                        <a href="package$$SendBodyDslPure.html" title="Camel endpoint combinators for StreamMessage body streams of type Stream[Pure, A].">SendBodyDslPure</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="" title="Camel endpoint combinators for StreamMessage streams of type Stream[IO, StreamMessage[A]]."></a>
+                        <a href="" title="Camel endpoint combinators for StreamMessage streams of type Stream[IO, StreamMessage[A]].">SendDsl</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="package$$SendDslPure.html" title="Camel endpoint combinators for StreamMessage streams of type Stream[Pure, StreamMessage[A]]."></a>
+                        <a href="package$$SendDslPure.html" title="Camel endpoint combinators for StreamMessage streams of type Stream[Pure, StreamMessage[A]].">SendDslPure</a>
                       </li>
               </ul>
             </div>
@@ -178,12 +172,12 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">SendDsl</span><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">SendDsl</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>Stream[Task, StreamMessage[A]]</code>.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>Stream[IO, StreamMessage[A]]</code>.
 </p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
@@ -235,9 +229,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="streamz.camel.fs2.dsl.SendDsl#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(self:fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]):streamz.camel.fs2.dsl.package.SendDsl[A]"></a><a id="&lt;init&gt;:SendDsl[A]"></a>
+      <a id="&lt;init&gt;(self:fs2.Stream[F,streamz.camel.StreamMessage[A]])(implicitevidence$1:cats.effect.ContextShift[F],implicitevidence$2:cats.effect.Async[F]):streamz.camel.fs2.dsl.package.SendDsl[F,A]"></a><a id="&lt;init&gt;:SendDsl[F,A]"></a>
       <span class="permalink">
-      <a href="../../../../streamz/camel/fs2/dsl/package$$SendDsl.html#&lt;init&gt;(self:fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]):streamz.camel.fs2.dsl.package.SendDsl[A]" title="Permalink">
+      <a href="../../../../streamz/camel/fs2/dsl/package$$SendDsl.html#&lt;init&gt;(self:fs2.Stream[F,streamz.camel.StreamMessage[A]])(implicitevidence$1:cats.effect.ContextShift[F],implicitevidence$2:cats.effect.Async[F]):streamz.camel.fs2.dsl.package.SendDsl[F,A]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -246,7 +240,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SendDsl</span><span class="params">(<span name="self">self: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.A">A</span>]]</span>)</span>
+        <span class="name">SendDsl</span><span class="params">(<span name="self">self: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.F">F</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.A">A</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="cats.effect.Async">Async</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.F">F</span>]</span>)</span>
       </span>
       
       
@@ -339,7 +333,9 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
@@ -393,7 +389,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
@@ -415,7 +411,10 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <span class="permalink">
@@ -431,7 +430,10 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -479,7 +481,10 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
@@ -495,11 +500,14 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="streamz.camel.fs2.dsl.SendDsl#send" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]"></a><a id="send(String)(StreamContext):Stream[Task,StreamMessage[A]]"></a>
+      <a id="send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[F,streamz.camel.StreamMessage[A]]"></a><a id="send(String)(StreamContext):Stream[F,StreamMessage[A]]"></a>
       <span class="permalink">
-      <a href="../../../../streamz/camel/fs2/dsl/package$$SendDsl.html#send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[A]]" title="Permalink">
+      <a href="../../../../streamz/camel/fs2/dsl/package$$SendDsl.html#send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[F,streamz.camel.StreamMessage[A]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -508,14 +516,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">send</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.A">A</span>]]</span>
+        <span class="name">send</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.F">F</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.A">A</span>]]</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="index.html#send[A](uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Pipe[fs2.Task,streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]]" class="extmbr" name="streamz.camel.fs2.dsl#send">dsl.send</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="index.html#send[F[_],A](uri:String)(implicitevidence$13:cats.effect.ContextShift[F],implicitevidence$14:cats.effect.Async[F],implicitcontext:streamz.camel.StreamContext):fs2.Pipe[F,streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]]" class="extmbr" name="streamz.camel.fs2.dsl#send">dsl.send</a></p></span></dd></dl></div>
     </li><li name="streamz.camel.fs2.dsl.SendDsl#sendRequest" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[B]]"></a><a id="sendRequest[B](String)(StreamContext,ClassTag[B]):Stream[Task,StreamMessage[B]]"></a>
+      <a id="sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[F,streamz.camel.StreamMessage[B]]"></a><a id="sendRequest[B](String)(StreamContext,ClassTag[B]):Stream[F,StreamMessage[B]]"></a>
       <span class="permalink">
-      <a href="../../../../streamz/camel/fs2/dsl/package$$SendDsl.html#sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[fs2.Task,streamz.camel.StreamMessage[B]]" title="Permalink">
+      <a href="../../../../streamz/camel/fs2/dsl/package$$SendDsl.html#sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[F,streamz.camel.StreamMessage[B]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -524,10 +532,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">sendRequest</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.sendRequest.B">B</span>]]</span>
+        <span class="name">sendRequest</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.F">F</span>, <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a>[<span class="extype" name="streamz.camel.fs2.dsl.SendDsl.sendRequest.B">B</span>]]</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="index.html#sendRequest[A,B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Pipe[fs2.Task,streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]]" class="extmbr" name="streamz.camel.fs2.dsl#sendRequest">dsl.sendRequest</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="index.html#sendRequest[F[_],A,B](uri:String)(implicitevidence$17:cats.effect.ContextShift[F],implicitevidence$18:cats.effect.Async[F],implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Pipe[F,streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[B]]" class="extmbr" name="streamz.camel.fs2.dsl#sendRequest">dsl.sendRequest</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
@@ -620,6 +628,8 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>

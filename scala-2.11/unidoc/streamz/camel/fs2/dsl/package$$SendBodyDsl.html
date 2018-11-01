@@ -45,11 +45,11 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">SendBodyDsl</span><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">SendBodyDsl</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body streams of type <code>Stream[Task, A]</code>.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body streams of type <code>Stream[IO, A]</code>.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -90,18 +90,18 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="streamz.camel.fs2.dsl.SendBodyDsl#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(self:fs2.Stream[fs2.Task,A]):streamz.camel.fs2.dsl.package.SendBodyDsl[A]"></a>
-      <a id="&lt;init&gt;:SendBodyDsl[A]"></a>
+      <a id="&lt;init&gt;(self:fs2.Stream[F,A])(implicitevidence$3:cats.effect.ContextShift[F],implicitevidence$4:cats.effect.Async[F]):streamz.camel.fs2.dsl.package.SendBodyDsl[F,A]"></a>
+      <a id="&lt;init&gt;:SendBodyDsl[F,A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SendBodyDsl</span><span class="params">(<span name="self">self: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.A">A</span>]</span>)</span>
+        <span class="name">SendBodyDsl</span><span class="params">(<span name="self">self: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.F">F</span>, <span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.A">A</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="cats.effect.Async">Async</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.F">F</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$SendBodyDsl@&lt;init&gt;(self:fs2.Stream[fs2.Task,A]):streamz.camel.fs2.dsl.package.SendBodyDsl[A]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$SendBodyDsl@&lt;init&gt;(self:fs2.Stream[F,A])(implicitevidence$3:cats.effect.ContextShift[F],implicitevidence$4:cats.effect.Async[F]):streamz.camel.fs2.dsl.package.SendBodyDsl[F,A]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -366,39 +366,39 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="streamz.camel.fs2.dsl.SendBodyDsl#send" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[fs2.Task,A]"></a>
-      <a id="send(String)(StreamContext):Stream[Task,A]"></a>
+      <a id="send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[F,A]"></a>
+      <a id="send(String)(StreamContext):Stream[F,A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">send</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.A">A</span>]</span>
+        <span class="name">send</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.F">F</span>, <span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.A">A</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$SendBodyDsl@send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[fs2.Task,A]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$SendBodyDsl@send(uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Stream[F,A]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#sendBody[A](uri:String)(implicitcontext:streamz.camel.StreamContext):fs2.Pipe[fs2.Task,A,A]" class="extmbr" name="streamz.camel.fs2.dsl#sendBody">dsl.sendBody</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#sendBody[F[_],A](uri:String)(implicitevidence$15:cats.effect.ContextShift[F],implicitevidence$16:cats.effect.Async[F],implicitcontext:streamz.camel.StreamContext):fs2.Pipe[F,A,A]" class="extmbr" name="streamz.camel.fs2.dsl#sendBody">dsl.sendBody</a></p></span></dd></dl></div>
     </li><li name="streamz.camel.fs2.dsl.SendBodyDsl#sendRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[fs2.Task,B]"></a>
-      <a id="sendRequest[B](String)(StreamContext,ClassTag[B]):Stream[Task,B]"></a>
+      <a id="sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[F,B]"></a>
+      <a id="sendRequest[B](String)(StreamContext,ClassTag[B]):Stream[F,B]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">sendRequest</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="fs2.Task">Task</span>, <span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.sendRequest.B">B</span>]</span>
+        <span class="name">sendRequest</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="uri">uri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="context">context: <a href="../../StreamContext.html" class="extype" name="streamz.camel.StreamContext">StreamContext</a></span>, <span name="tag">tag: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.sendRequest.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="fs2.Stream">Stream</span>[<span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.F">F</span>, <span class="extype" name="streamz.camel.fs2.dsl.SendBodyDsl.sendRequest.B">B</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$SendBodyDsl@sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[fs2.Task,B]" title="Permalink" target="_top">
+      <a href="../../../../index.html#streamz.camel.fs2.dsl.package$$SendBodyDsl@sendRequest[B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Stream[F,B]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#sendRequestBody[A,B](uri:String)(implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Pipe[fs2.Task,A,B]" class="extmbr" name="streamz.camel.fs2.dsl#sendRequestBody">dsl.sendRequestBody</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="package.html#sendRequestBody[F[_],A,B](uri:String)(implicitevidence$19:cats.effect.ContextShift[F],implicitevidence$20:cats.effect.Async[F],implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Pipe[F,A,B]" class="extmbr" name="streamz.camel.fs2.dsl#sendRequestBody">dsl.sendRequestBody</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>

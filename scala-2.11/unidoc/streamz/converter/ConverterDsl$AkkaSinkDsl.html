@@ -382,22 +382,22 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="streamz.converter.ConverterDsl.AkkaSinkDsl#toSink" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toSink(onMaterialization:M=&gt;Unit)(implicitexecutionContext:scala.concurrent.ExecutionContext,implicitmaterializer:akka.stream.Materializer):fs2.Sink[fs2.Task,A]"></a>
-      <a id="toSink((M)⇒Unit)(ExecutionContext,Materializer):Sink[Task,A]"></a>
+      <a id="toSink[F[_]](onMaterialization:M=&gt;Unit)(implicitevidence$12:cats.effect.ContextShift[F],implicitevidence$13:cats.effect.Concurrent[F],implicitmaterializer:akka.stream.Materializer):fs2.Sink[F,A]"></a>
+      <a id="toSink[F[_]]((M)⇒Unit)(ContextShift[F],Concurrent[F],Materializer):Sink[F,A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toSink</span><span class="params">(<span name="onMaterialization">onMaterialization: (<span class="extype" name="streamz.converter.ConverterDsl.AkkaSinkDsl.M">M</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span> = <span class="symbol">_ =&gt; ()</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="executionContext">executionContext: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="materializer">materializer: <span class="extype" name="akka.stream.Materializer">Materializer</span></span>)</span><span class="result">: <span class="extype" name="fs2.Sink">Sink</span>[<span class="extype" name="fs2.Task">Task</span>, <span class="extype" name="streamz.converter.ConverterDsl.AkkaSinkDsl.A">A</span>]</span>
+        <span class="name">toSink</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="params">(<span name="onMaterialization">onMaterialization: (<span class="extype" name="streamz.converter.ConverterDsl.AkkaSinkDsl.M">M</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span> = <span class="symbol">_ =&gt; ()</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.converter.ConverterDsl.AkkaSinkDsl.toSink.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="cats.effect.Concurrent">Concurrent</span>[<span class="extype" name="streamz.converter.ConverterDsl.AkkaSinkDsl.toSink.F">F</span>]</span>, <span name="materializer">materializer: <span class="extype" name="akka.stream.Materializer">Materializer</span></span>)</span><span class="result">: <span class="extype" name="fs2.Sink">Sink</span>[<span class="extype" name="streamz.converter.ConverterDsl.AkkaSinkDsl.toSink.F">F</span>, <span class="extype" name="streamz.converter.ConverterDsl.AkkaSinkDsl.A">A</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$AkkaSinkDsl@toSink(onMaterialization:M=&gt;Unit)(implicitexecutionContext:scala.concurrent.ExecutionContext,implicitmaterializer:akka.stream.Materializer):fs2.Sink[fs2.Task,A]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$AkkaSinkDsl@toSink[F[_]](onMaterialization:M=&gt;Unit)(implicitevidence$12:cats.effect.ContextShift[F],implicitevidence$13:cats.effect.Concurrent[F],implicitmaterializer:akka.stream.Materializer):fs2.Sink[F,A]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#akkaSinkToFs2Sink[A,M](sink:akka.stream.Graph[akka.stream.SinkShape[A],M])(onMaterialization:M=&gt;Unit)(implicitexecutionContext:scala.concurrent.ExecutionContext,implicitmaterializer:akka.stream.Materializer):fs2.Sink[fs2.Task,A]" class="extmbr" name="streamz.converter.Converter#akkaSinkToFs2Sink">Converter#akkaSinkToFs2Sink</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#akkaSinkToFs2Sink[F[_],A,M](sink:akka.stream.Graph[akka.stream.SinkShape[A],M])(onMaterialization:M=&gt;Unit)(implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Sink[F,A]" class="extmbr" name="streamz.converter.Converter#akkaSinkToFs2Sink">Converter#akkaSinkToFs2Sink</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

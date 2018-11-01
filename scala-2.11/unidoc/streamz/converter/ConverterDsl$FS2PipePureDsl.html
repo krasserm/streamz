@@ -89,7 +89,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="streamz.converter.ConverterDsl.FS2PipePureDsl#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(pipe:fs2.Pipe[fs2.Pure,A,B])(implicitexecutionContext:scala.concurrent.ExecutionContext):ConverterDsl.this.FS2PipePureDsl[A,B]"></a>
+      <a id="&lt;init&gt;(pipe:fs2.Pipe[fs2.Pure,A,B]):ConverterDsl.this.FS2PipePureDsl[A,B]"></a>
       <a id="&lt;init&gt;:FS2PipePureDsl[A,B]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -97,10 +97,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FS2PipePureDsl</span><span class="params">(<span name="pipe">pipe: <span class="extype" name="fs2.Pipe">Pipe</span>[<span class="extype" name="fs2.Pure">Pure</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.A">A</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.B">B</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="executionContext">executionContext: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span>
+        <span class="name">FS2PipePureDsl</span><span class="params">(<span name="pipe">pipe: <span class="extype" name="fs2.Pipe">Pipe</span>[<span class="extype" name="fs2.Pure">Pure</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.A">A</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.B">B</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipePureDsl@&lt;init&gt;(pipe:fs2.Pipe[fs2.Pure,A,B])(implicitexecutionContext:scala.concurrent.ExecutionContext):ConverterDsl.this.FS2PipePureDsl[A,B]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipePureDsl@&lt;init&gt;(pipe:fs2.Pipe[fs2.Pure,A,B]):ConverterDsl.this.FS2PipePureDsl[A,B]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -382,22 +382,22 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="streamz.converter.ConverterDsl.FS2PipePureDsl#toFlow" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toFlow(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a>
-      <a id="toFlow(ExecutionContext):Graph[FlowShape[A,B],NotUsed]"></a>
+      <a id="toFlow(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a>
+      <a id="toFlow(ContextShift[IO]):Graph[FlowShape[A,B],NotUsed]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toFlow</span><span class="params">(<span class="implicit">implicit </span><span name="executionContext">executionContext: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.A">A</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+        <span class="name">toFlow</span><span class="params">(<span class="implicit">implicit </span><span name="contextShift">contextShift: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="cats.effect.IO">IO</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.FlowShape">FlowShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.A">A</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2PipePureDsl.B">B</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipePureDsl@toFlow(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2PipePureDsl@toFlow(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#fs2PipeToAkkaFlow[A,B](pipe:fs2.Pipe[fs2.Task,A,B])(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" class="extmbr" name="streamz.converter.Converter#fs2PipeToAkkaFlow">Converter#fs2PipeToAkkaFlow</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#fs2PipeToAkkaFlow[F[_],A,B](pipe:fs2.Pipe[F,A,B])(implicitevidence$5:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" class="extmbr" name="streamz.converter.Converter#fs2PipeToAkkaFlow">Converter#fs2PipeToAkkaFlow</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

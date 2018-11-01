@@ -89,7 +89,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="streamz.converter.ConverterDsl.FS2SinkPureDsl#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(sink:fs2.Sink[fs2.Pure,A])(implicitexecutionContext:scala.concurrent.ExecutionContext):ConverterDsl.this.FS2SinkPureDsl[A]"></a>
+      <a id="&lt;init&gt;(sink:fs2.Sink[fs2.Pure,A]):ConverterDsl.this.FS2SinkPureDsl[A]"></a>
       <a id="&lt;init&gt;:FS2SinkPureDsl[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -97,10 +97,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FS2SinkPureDsl</span><span class="params">(<span name="sink">sink: <span class="extype" name="fs2.Sink">Sink</span>[<span class="extype" name="fs2.Pure">Pure</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2SinkPureDsl.A">A</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="executionContext">executionContext: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span>
+        <span class="name">FS2SinkPureDsl</span><span class="params">(<span name="sink">sink: <span class="extype" name="fs2.Sink">Sink</span>[<span class="extype" name="fs2.Pure">Pure</span>, <span class="extype" name="streamz.converter.ConverterDsl.FS2SinkPureDsl.A">A</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkPureDsl@&lt;init&gt;(sink:fs2.Sink[fs2.Pure,A])(implicitexecutionContext:scala.concurrent.ExecutionContext):ConverterDsl.this.FS2SinkPureDsl[A]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkPureDsl@&lt;init&gt;(sink:fs2.Sink[fs2.Pure,A]):ConverterDsl.this.FS2SinkPureDsl[A]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -382,22 +382,22 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="streamz.converter.ConverterDsl.FS2SinkPureDsl#toSink" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toSink(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]"></a>
-      <a id="toSink(ExecutionContext):Graph[SinkShape[A],Future[Done]]"></a>
+      <a id="toSink(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]"></a>
+      <a id="toSink(ContextShift[IO]):Graph[SinkShape[A],Future[Done]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toSink</span><span class="params">(<span class="implicit">implicit </span><span name="executionContext">executionContext: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2SinkPureDsl.A">A</span>], <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="akka.Done">Done</span>]]</span>
+        <span class="name">toSink</span><span class="params">(<span class="implicit">implicit </span><span name="contextShift">contextShift: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="cats.effect.IO">IO</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2SinkPureDsl.A">A</span>], <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="akka.Done">Done</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkPureDsl@toSink(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" title="Permalink" target="_top">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2SinkPureDsl@toSink(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#fs2SinkToAkkaSink[A](sink:fs2.Sink[fs2.Task,A])(implicitexecutionContext:scala.concurrent.ExecutionContext):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" class="extmbr" name="streamz.converter.Converter#fs2SinkToAkkaSink">Converter#fs2SinkToAkkaSink</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#fs2SinkToAkkaSink[F[_],A](sink:fs2.Sink[F,A])(implicitevidence$4:cats.effect.ContextShift[F],implicitF:cats.effect.Effect[F]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" class="extmbr" name="streamz.converter.Converter#fs2SinkToAkkaSink">Converter#fs2SinkToAkkaSink</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
