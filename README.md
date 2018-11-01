@@ -21,11 +21,11 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 
 ### Latest milestone release for FS2 1.0.x
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.10-M1"
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.10-M2"
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.10-M1" // uses FS2 1.0.0-M5
+    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.10-M2" // uses FS2 1.0.0
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.10-M1" // uses FS2 1.0.0-M5
+    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.10-M2" // uses FS2 1.0.0
 
 ### Latest stable release for FS2 0.10.x
 
@@ -46,7 +46,7 @@ Streamz artifacts are available for Scala 2.11 and 2.12 at:
 Documentation
 -------------
 
-### Streamz 0.10-M1
+### Streamz 0.10-M2
 
 - [Camel DSL for Akka Streams](streamz-camel-akka/README.md)
 - [Camel DSL for FS2](streamz-camel-fs2/README.md)
@@ -70,9 +70,10 @@ Documentation
 API docs
 --------
 
-### Streamz 0.10-M1
+### Streamz 0.10-M2
 
-Not published. Run `sbt unidoc` on branch `r-0.10` or `master` for generating 0.10 API docs. 
+- [API docs for Scala 2.12](http://krasserm.github.io/streamz/scala-2.12/unidoc/index.html)
+- [API docs for Scala 2.11](http://krasserm.github.io/streamz/scala-2.11/unidoc/index.html)
 
 ### Streamz 0.9.1
 
@@ -80,8 +81,7 @@ Not published. Run `sbt unidoc` on branch `r-0.9` for generating 0.9 API docs.
 
 ### Streamz 0.8.1
 
-- [API docs for Scala 2.12](http://krasserm.github.io/streamz/scala-2.12/unidoc/index.html)
-- [API docs for Scala 2.11](http://krasserm.github.io/streamz/scala-2.11/unidoc/index.html)
+Not published. Run `sbt unidoc` on branch `r-0.8` for generating 0.8 API docs. 
 
 External examples
 -----------------
