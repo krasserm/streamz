@@ -16,6 +16,8 @@
 
 package streamz.camel.fs2
 
+import java.util.concurrent.TimeUnit
+
 import cats.effect.{ Async, ContextShift }
 import cats.implicits._
 import fs2._
@@ -171,9 +173,10 @@ package object dsl {
     s => s.map(StreamMessage(_)).through(sendRequest[F, A, B](uri)).map(_.body)
 
   private def consume[F[_], A](uri: String)(implicit context: StreamContext, tag: ClassTag[A], contextShift: ContextShift[F], F: Async[F]): Stream[F, StreamMessage[A]] = {
+    val timeout = context.config.getDuration("streamz.camel.consumer.receive.timeout", TimeUnit.MILLISECONDS)
     Stream.repeatEval {
       contextShift.shift >> F.async[StreamMessage[A]] { callback =>
-        Try(context.consumerTemplate.receive(uri, 500)) match {
+        Try(context.consumerTemplate.receive(uri, timeout)) match {
           case Success(null) =>
             callback(Right(null))
           case Success(ce) if ce.getException != null =>
