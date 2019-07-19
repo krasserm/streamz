@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,11 +65,11 @@ object Snippets extends App {
   val s2bv: Source[String, NotUsed] = s1b.via(sendBody("seda:q2"))
   val s3bv: Source[Int, NotUsed] = s2b.via(sendRequestBody[String, Int]("bean:service?method=weight"))
 
-  val f1: Flow[String, StreamMessage[String], NotUsed] = ???
+  def f1: Flow[String, StreamMessage[String], NotUsed] = ???
   val f2: Flow[String, StreamMessage[String], NotUsed] = f1.send("seda:q2")
   val f3: Flow[String, StreamMessage[Int], NotUsed] = f2.sendRequest[Int]("bean:service?method=weight")
 
-  val f1b: Flow[String, String, NotUsed] = ???
+  def f1b: Flow[String, String, NotUsed] = ???
   val f2b: Flow[String, String, NotUsed] = f1b.send("seda:q2")
   val f3b: Flow[String, Int, NotUsed] = f2b.sendRequest[Int]("bean:service?method=weight")
 }

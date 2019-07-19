@@ -11,15 +11,16 @@ name := "streamz"
 
 organization in ThisBuild := "com.github.krasserm"
 
-version in ThisBuild := "0.10-SNAPSHOT"
+version in ThisBuild := "0.11-M1"
 
-crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.6")
+crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.8", "2.13.0")
 
-scalaVersion in ThisBuild := "2.12.6"
-
-scalacOptions in ThisBuild ++= Seq("-feature", "-language:higherKinds", "-language:implicitConversions", "-deprecation")
+scalaVersion in ThisBuild := "2.12.8"
 
 libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Scalatest % "test"
+
+// No need for `sbt doc` to fail on warnings
+val docSettings = Compile / doc / scalacOptions -= "-Xfatal-warnings"
 
 // ---------------------------------------------------------------------------
 //  Code formatter settings
@@ -34,7 +35,7 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
 //  License header settings
 // ---------------------------------------------------------------------------
 
-lazy val header = HeaderLicense.ALv2("2014 - 2018", "the original author or authors.")
+lazy val header = HeaderLicense.ALv2("2014 - 2019", "the original author or authors.")
 
 lazy val headerSettings = Seq(
   headerLicense := Some(header)
@@ -46,28 +47,31 @@ lazy val headerSettings = Seq(
 
 lazy val root = project.in(file("."))
   .aggregate(camelContext, camelAkka, camelFs2, converter, examples)
-  .settings(unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(examples))
+  .settings(
+    unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(examples),
+    docSettings
+  )
   .enablePlugins(ScalaUnidocPlugin)
 
 lazy val camelContext = project.in(file("streamz-camel-context"))
   .enablePlugins(AutomateHeaderPlugin)
-  .settings(headerSettings)
+  .settings(headerSettings, docSettings)
 
 lazy val camelAkka = project.in(file("streamz-camel-akka"))
   .enablePlugins(AutomateHeaderPlugin)
-  .settings(headerSettings)
+  .settings(headerSettings, docSettings)
   .dependsOn(camelContext)
 
 lazy val camelFs2 = project.in(file("streamz-camel-fs2"))
   .enablePlugins(AutomateHeaderPlugin)
-  .settings(headerSettings)
+  .settings(headerSettings, docSettings)
   .dependsOn(camelContext)
 
 lazy val converter = project.in(file("streamz-converter"))
   .enablePlugins(AutomateHeaderPlugin)
-  .settings(headerSettings)
+  .settings(headerSettings, docSettings)
 
 lazy val examples = project.in(file("streamz-examples"))
   .enablePlugins(AutomateHeaderPlugin)
-  .settings(headerSettings)
+  .settings(headerSettings, docSettings)
   .dependsOn(camelAkka, camelFs2, converter)
