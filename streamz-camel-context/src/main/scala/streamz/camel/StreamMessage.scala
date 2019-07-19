@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package streamz.camel
 import java.util.{ Optional, Map => JMap }
 
 import org.apache.camel.impl.DefaultMessage
-import org.apache.camel.{ CamelContext, Message, TypeConversionException }
+import org.apache.camel.{ CamelContext, Message }
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
 
 /**
@@ -34,7 +34,7 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
   /**
    * Returns the `body` converted to type `B` using a Camel type converter.
    *
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def bodyAs[B](implicit streamContext: StreamContext, tag: ClassTag[B]): B =
     streamContext.convertObject(body)
@@ -43,7 +43,7 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
    * Returns the `name` header value converted to type `B` using a Camel type converter.
    *
    * @throws NoSuchElementException if the `name` header does not exist.
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def headerAs[B](name: String)(implicit streamContext: StreamContext, tag: ClassTag[B]): B =
     headerOptionAs[B](name).get
@@ -52,7 +52,7 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
    * Returns the `name` header value converted to type `B` using a Camel type converter
    * if the `name` header is defined.
    *
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def headerOptionAs[B](name: String)(implicit streamContext: StreamContext, tag: ClassTag[B]): Option[B] =
     headers.get(name).map(streamContext.convertObject[B])
@@ -78,7 +78,7 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
    *
    * Returns the `body` converted to type `B` using a Camel type converter.
    *
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def getBodyAs[B](streamContext: StreamContext, clazz: Class[B]): B =
     bodyAs(streamContext, ClassTag(clazz))
@@ -89,7 +89,7 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
    * Returns the `name` header value converted to type `B` using a Camel type converter.
    *
    * @throws NoSuchElementException if the `name` header does not exist.
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def getHeaderAs[B](name: String, streamContext: StreamContext, clazz: Class[B]): B =
     headerAs(name)(streamContext, ClassTag(clazz))
@@ -100,7 +100,7 @@ case class StreamMessage[A](body: A, headers: Map[String, Any] = Map.empty) {
    * Returns the `name` header value converted to type `B` using a Camel type converter
    * if the `name` header is defined.
    *
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def getHeaderOptionAs[B](name: String, streamContext: StreamContext, clazz: Class[B]): Optional[B] =
     Optional.ofNullable(headerOptionAs(name)(streamContext, ClassTag(clazz)).getOrElse(null.asInstanceOf[B]))
@@ -128,7 +128,7 @@ object StreamMessage {
    * Creates a [[StreamMessage]] from a Camel [[Message]] converting the message body to type `A`
    * using a Camel type converter.
    *
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   private[camel] def from[A](camelMessage: Message)(implicit tag: ClassTag[A]): StreamMessage[A] =
     new StreamMessage(camelMessage.getBody(tag.runtimeClass.asInstanceOf[Class[A]]), camelMessage.getHeaders.asScala.toMap)

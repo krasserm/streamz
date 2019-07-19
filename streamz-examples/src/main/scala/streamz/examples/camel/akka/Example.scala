@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import streamz.camel.akka.scaladsl._
 import streamz.examples.camel.ExampleContext
 
 import scala.collection.immutable.Iterable
+import scala.collection.compat._
 
 object Example extends ExampleContext with App {
   implicit val system = ActorSystem("example")
@@ -34,7 +35,7 @@ object Example extends ExampleContext with App {
     receiveBody[String](tcpEndpointUri)
 
   val fileLineSource: Source[String, NotUsed] =
-    receiveBody[String](fileEndpointUri).mapConcat(_.lines.to[Iterable])
+    receiveBody[String](fileEndpointUri).mapConcat(_.linesIterator.to(Iterable))
 
   val linePrefixSource: Source[String, NotUsed] =
     Source.fromIterator(() => Iterator.from(1)).sendRequest[String](serviceEndpointUri)

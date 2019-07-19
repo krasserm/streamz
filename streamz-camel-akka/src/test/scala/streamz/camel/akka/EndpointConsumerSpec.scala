@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,9 @@ import akka.stream.testkit.TestSubscriber
 import akka.testkit.TestKit
 import org.apache.camel.ExchangePattern
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ BeforeAndAfterAll, Matchers, WordSpecLike }
+import org.scalatest.{ Assertion, BeforeAndAfterAll, Matchers, WordSpecLike }
 import streamz.camel.{ StreamContext, StreamMessage }
 
-import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll with Eventually {
@@ -42,7 +41,7 @@ class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLik
     TestKit.shutdownActorSystem(system)
   }
 
-  def awaitEndpointRegistration(uri: String): Unit = {
+  def awaitEndpointRegistration(uri: String): Assertion = {
     eventually { camelContext.getEndpoint(uri) should not be null }
   }
 
@@ -68,7 +67,7 @@ class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLik
       req.headers("k1") should be("v1")
       req.headers("k2") should be("v2")
 
-      sink.expectNoMsg
+      sink.expectNoMessage(remainingOrDefault)
 
       resf.get.getIn.getBody should be("test")
       resf.get.getIn.getHeader("k1") should be("v1")

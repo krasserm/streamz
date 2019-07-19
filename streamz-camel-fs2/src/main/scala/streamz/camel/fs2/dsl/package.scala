@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,16 @@ import cats.effect.{ Async, ContextShift }
 import cats.implicits._
 import fs2._
 import org.apache.camel.spi.Synchronization
-import org.apache.camel.{ Exchange, ExchangePattern, TypeConversionException }
+import org.apache.camel.{ Exchange, ExchangePattern }
 import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.reflect.ClassTag
 import scala.util._
 
 package object dsl {
+
   /**
-   * Camel endpoint combinators for [[StreamMessage]] streams of type `Stream[IO, StreamMessage[A]]`.
+   * Camel endpoint combinators for [[StreamMessage]] streams of type `Stream[F, StreamMessage[A]]`.
    */
   implicit class SendDsl[F[_]: ContextShift: Async, A](self: Stream[F, StreamMessage[A]]) {
     /**
@@ -47,7 +48,7 @@ package object dsl {
   }
 
   /**
-   * Camel endpoint combinators for [[StreamMessage]] body streams of type `Stream[IO, A]`.
+   * Camel endpoint combinators for [[StreamMessage]] body streams of type `Stream[F, A]`.
    */
   implicit class SendBodyDsl[F[_]: ContextShift: Async, A](self: Stream[F, A]) {
     /**
@@ -107,7 +108,7 @@ package object dsl {
    * the stream.
    *
    * @param uri Camel endpoint URI.
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def receive[F[_]: ContextShift: Async, A](uri: String)(implicit context: StreamContext, tag: ClassTag[A]): Stream[F, StreamMessage[A]] = {
     consume(uri).filter(_ != null)
@@ -123,7 +124,7 @@ package object dsl {
    * the stream.
    *
    * @param uri Camel endpoint URI.
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def receiveBody[F[_]: ContextShift: Async, A](uri: String)(implicit context: StreamContext, tag: ClassTag[A]): Stream[F, A] =
     receive(uri).map(_.body)
@@ -155,7 +156,7 @@ package object dsl {
    * with an error if the message exchange with the endpoint fails.
    *
    * @param uri Camel endpoint URI.
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def sendRequest[F[_]: ContextShift: Async, A, B](uri: String)(implicit context: StreamContext, tag: ClassTag[B]): Pipe[F, StreamMessage[A], StreamMessage[B]] =
     produce[F, A, B](uri, ExchangePattern.InOut, (_, exchange) => StreamMessage.from[B](exchange.getOut))
@@ -167,7 +168,7 @@ package object dsl {
    * with an error if the message exchange with the endpoint fails.
    *
    * @param uri Camel endpoint URI.
-   * @throws TypeConversionException if type conversion fails.
+   * @throws org.apache.camel.TypeConversionException if type conversion fails.
    */
   def sendRequestBody[F[_]: ContextShift: Async, A, B](uri: String)(implicit context: StreamContext, tag: ClassTag[B]): Pipe[F, A, B] =
     s => s.map(StreamMessage(_)).through(sendRequest[F, A, B](uri)).map(_.body)
@@ -205,11 +206,13 @@ package object dsl {
           context.producerTemplate.asyncCallback(uri, context.createExchange(message, pattern), new Synchronization {
             override def onFailure(exchange: Exchange): Unit =
               callback(Left(exchange.getException))
+
             override def onComplete(exchange: Exchange): Unit = Try(result(message, exchange)) match {
-              case Success(r) => callback(Right(result(message, exchange)))
+              case Success(smb) => callback(Right(smb))
               case Failure(e) => callback(Left(e))
             }
           })
+          ()
         }
       }
     }

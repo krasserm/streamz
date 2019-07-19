@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,11 @@ private case class AsyncExchange(exchange: Exchange, callback: CamelAsyncCallbac
 private class AsyncExchangeProcessor(capacity: Int) extends AsyncProcessor {
   val receivedExchanges = new ArrayBlockingQueue[AsyncExchange](capacity)
 
-  def fail(t: Throwable): Unit =
+  def fail(t: Throwable): Unit = {
+    val _ = t // silence 'unused parameter' warning
     receivedExchanges.iterator()
+    ()
+  }
 
   override def process(exchange: Exchange): Unit =
     throw new UnsupportedOperationException("Synchronous processing not supported")
@@ -99,10 +102,10 @@ private[akka] class EndpointConsumerReplier[A, B](uri: String, capacity: Int)(im
         asyncExchange match {
           case null =>
             if (!isClosed(out)) consumeAsync()
-          case ae @ AsyncExchange(ce, ac) if ce.getPattern != ExchangePattern.InOut =>
+          case AsyncExchange(ce, ac) if ce.getPattern != ExchangePattern.InOut =>
             ac.done(false)
             failStage(new IllegalArgumentException(s"Exchange pattern ${ExchangePattern.InOut} expected but was ${ce.getPattern}"))
-          case ae @ AsyncExchange(ce, ac) if ce.getException ne null =>
+          case AsyncExchange(ce, ac) if ce.getException ne null =>
             ac.done(false)
             failStage(ce.getException)
           case ae @ AsyncExchange(ce, ac) =>

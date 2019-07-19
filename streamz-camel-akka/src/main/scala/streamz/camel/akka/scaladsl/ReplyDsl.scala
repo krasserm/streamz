@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package streamz.examples.camel.akka;
+package streamz.camel.akka.scaladsl
 
-public class JExampleService {
-    public String linePrefix(int lineNumber) {
-        return String.format("[%d] ", lineNumber);
-    }
+import akka.stream.scaladsl.{ Flow, Keep, RunnableGraph }
+
+/**
+ * Reply combinator for streams of type `Flow[A, A, M]`.
+ */
+class ReplyDsl[A, M](val self: Flow[A, A, M]) {
+  /**
+   * Pipes the flow's output to its input. Terminal operation on a flow created with [[receiveRequest]]
+   * or [[receiveRequestBody]] whose output type has been transformed to its input type.
+   *
+   * @see [[receiveRequest]]
+   * @see [[receiveRequestBody]]
+   */
+  def reply: RunnableGraph[M] = self.joinMat(Flow[A])(Keep.left)
 }

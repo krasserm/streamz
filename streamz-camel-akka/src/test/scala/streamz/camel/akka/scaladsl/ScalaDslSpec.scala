@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,15 @@ import scala.concurrent._
 import scala.concurrent.duration._
 
 object ScalaDslSpec {
+
   implicit class AwaitHelper[A](f: Future[A]) {
     def await: A = Await.result(f, 3.seconds)
   }
+
 }
 
 class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
+
   import ScalaDslSpec._
 
   val camelRegistry = new SimpleRegistry
@@ -52,12 +55,14 @@ class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   override protected def beforeAll(): Unit = {
     camelContext.start()
     streamContext.start()
+    ()
   }
 
   override protected def afterAll(): Unit = {
     streamContext.stop()
     camelContext.stop()
     actorSystem.terminate()
+    ()
   }
 
   class Service {
@@ -65,8 +70,10 @@ class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
       if (i == -1) throw new Exception("test") else i + 1
   }
 
-  def awaitEndpointRegistration(uri: String): Unit =
+  def awaitEndpointRegistration(uri: String): Unit = {
+    val _ = uri // Silence 'unused parameter' warning
     Thread.sleep(200)
+  }
 
   "receive" must {
     "consume from an endpoint" in {
@@ -89,7 +96,8 @@ class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
     }
     "complete with an error if type conversion fails" in {
       val uri = "direct:d2"
-      val execution = receiveRequestBody[String, Int](uri, capacity = 3).map(s => s"re-$s").alsoToMat(Sink.ignore)(Keep.right).reply.run()
+      // Run receiveRequestBody concurrently (fire and forget future)
+      receiveRequestBody[String, Int](uri, capacity = 3).map(s => s"re-$s").alsoToMat(Sink.ignore)(Keep.right).reply.run()
 
       awaitEndpointRegistration(uri)
       intercept[CamelExecutionException](producerTemplate.requestBody(uri, "a"))

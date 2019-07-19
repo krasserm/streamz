@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2018 the original author or authors.
+ * Copyright 2014 - 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import akka.stream.testkit.{ TestPublisher, TestSubscriber }
 import akka.testkit.TestKit
 import org.apache.camel.ExchangePattern
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ BeforeAndAfterAll, Matchers, WordSpecLike }
+import org.scalatest.{ Assertion, BeforeAndAfterAll, Matchers, WordSpecLike }
 import streamz.camel.{ StreamContext, StreamMessage }
 
 import scala.concurrent.duration._
@@ -42,7 +42,7 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
     TestKit.shutdownActorSystem(system)
   }
 
-  def awaitEndpointRegistration(uri: String): Unit = {
+  def awaitEndpointRegistration(uri: String): Assertion = {
     eventually { camelContext.getEndpoint(uri) should not be null }
   }
 
@@ -84,7 +84,7 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
       sub.expectNext().body should be(req(1))
 
       val f3 = producerTemplate.asyncRequestBody(uri, req(2))
-      sub.expectNoMsg(100.millis)
+      sub.expectNoMessage(100.millis)
 
       pub.sendNext(StreamMessage(res.head))
       sub.expectNext().body should be(req(2))
@@ -96,7 +96,7 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
     }
     "error the stream if a message exchange with the endpoint failed" in {
       val uri = "direct:d3"
-      val (pub, sub) = publisherAndSubscriber[String, String](uri, 3)
+      val (_, sub) = publisherAndSubscriber[String, String](uri, 3)
 
       val exchange = createExchange(StreamMessage("a"), ExchangePattern.InOut)
       exchange.setException(new Exception("boom"))
@@ -107,7 +107,7 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
     }
     "error the stream if a message exchange is not in-out" in {
       val uri = "direct:d4"
-      val (pub, sub) = publisherAndSubscriber[String, String](uri, 3)
+      val (_, sub) = publisherAndSubscriber[String, String](uri, 3)
 
       val exchange = createExchange(StreamMessage("a"), ExchangePattern.InOnly)
       producerTemplate.asyncSend(uri, exchange)
