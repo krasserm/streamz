@@ -193,7 +193,7 @@ trait ConverterDsl extends Converter {
   implicit class FS2StreamIODsl[F[_]: ContextShift: ConcurrentEffect, A](stream: Stream[F, A]) {
 
     /** @see [[Converter#fs2StreamToAkkaSourceF]] */
-    def toSource: Graph[SourceShape[A], NotUsed] =
+    def toSource(implicit contextShift: ContextShift[IO]): Graph[SourceShape[A], NotUsed] =
       fs2StreamToAkkaSource(stream)
   }
 
