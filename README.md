@@ -70,10 +70,16 @@ Documentation
 API docs
 --------
 
-### Streamz 0.10-M2
-
+## Latest version (0.11-RC1)
+- [API docs for Scala 2.13](http://krasserm.github.io/streamz/scala-2.13/unidoc/index.html)
 - [API docs for Scala 2.12](http://krasserm.github.io/streamz/scala-2.12/unidoc/index.html)
 - [API docs for Scala 2.11](http://krasserm.github.io/streamz/scala-2.11/unidoc/index.html)
+
+## Older versions
+
+### Streamz 0.10-M2
+
+Not published. Run `sbt unidoc` on tag `0.10-M2` for generating 0.10 API docs.
 
 ### Streamz 0.9.1
 
