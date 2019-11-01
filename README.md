@@ -15,33 +15,28 @@ Streamz provides combinator libraries for integrating [Functional Streams for Sc
 Dependencies
 ------------
 
-Streamz artifacts are available for Scala 2.11 and 2.12 at:
+Streamz artifacts are available for Scala 2.11, 2.12, and 2.13 at:
 
-    resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
+    resolvers += "streamz at bintray" at "http://dl.bintray.com/streamz/maven"
+    val streamzVersion = "0.11-RC1"
+
+    libraryDependencies ++= Seq(
+      "com.github.krasserm" %% "streamz-camel-akka" % streamzVersion,
+      "com.github.krasserm" %% "streamz-camel-fs2" % streamzVersion,
+      "com.github.krasserm" %% "streamz-converter" % streamzVersion,
+    )
 
 ### Latest milestone release for FS2 1.0.x
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.10-M2"
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.10-M2" // uses FS2 1.0.0
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.10-M2" // uses FS2 1.0.0
+    val streamzVersion = "0.10-M2"
 
 ### Latest stable release for FS2 0.10.x
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.9.1"
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.9.1" // uses FS2 0.10.5
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.9.1" // uses FS2 0.10.5
+    val streamzVersion = "0.9.1" 
 
 ### Latest stable release for FS2 0.9.x
 
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.8.1"
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.8.1" // uses FS2 0.9.5
-
-    libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.8.1" // uses FS2 0.9.5
+    val streamzVersion = "0.8.1"
 
 Documentation
 -------------
