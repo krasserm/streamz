@@ -381,23 +381,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="streamz.converter.ConverterDsl.FS2StreamPureDsl#toSource" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toSource(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]"></a>
-      <a id="toSource(ContextShift[IO]):Graph[SourceShape[A],NotUsed]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toSource</span><span class="params">(<span class="implicit">implicit </span><span name="contextShift">contextShift: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="cats.effect.IO">IO</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SourceShape">SourceShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2StreamPureDsl.A">A</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../index.html#streamz.converter.ConverterDsl$FS2StreamPureDsl@toSource(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]" title="Permalink" target="_top">
-        <img src="../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><span class="extype" name="Converter#fs2StreamToAkkaSourceF">Converter#fs2StreamToAkkaSourceF</span></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -489,7 +472,30 @@
 
         
 
-        
+        <div id="values" class="values members">
+              <h3>Deprecated Value Members</h3>
+              <ol><li name="streamz.converter.ConverterDsl.FS2StreamPureDsl#toSource" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toSource(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]"></a>
+      <a id="toSource(ContextShift[IO]):Graph[SourceShape[A],NotUsed]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name deprecated" title="Deprecated: (Since version 0.10) Use stream.covary[F].toSource instead">toSource</span><span class="params">(<span class="implicit">implicit </span><span name="contextShift">contextShift: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="cats.effect.IO">IO</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SourceShape">SourceShape</span>[<span class="extype" name="streamz.converter.ConverterDsl.FS2StreamPureDsl.A">A</span>], <span class="extype" name="akka.NotUsed">NotUsed</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#streamz.converter.ConverterDsl$FS2StreamPureDsl@toSource(implicitcontextShift:cats.effect.ContextShift[cats.effect.IO]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@deprecated</span>
+              
+        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 0.10)</i> Use <code>stream.covary[F].toSource</code> instead</p></dd><dt>See also</dt><dd><span class="cmt"><p><a href="Converter.html#fs2StreamToAkkaSource[F[_],A](stream:fs2.Stream[F,A])(implicitevidence$6:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]" class="extmbr" name="streamz.converter.Converter#fs2StreamToAkkaSource">Converter#fs2StreamToAkkaSource</a></p></span></dd></dl></div>
+    </li></ol>
+            </div>
         </div>
 
         <div id="inheritedMembers">

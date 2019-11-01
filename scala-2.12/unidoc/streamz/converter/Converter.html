@@ -8,17 +8,17 @@
           <meta name="keywords" content="" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
+      
       <link href="../../lib/index.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
-      <script type="text/javascript" src="../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../lib/jquery.min.js"></script>
       <script type="text/javascript" src="../../lib/jquery.panzoom.min.js"></script>
       <script type="text/javascript" src="../../lib/jquery.mousewheel.min.js"></script>
       <script type="text/javascript" src="../../lib/index.js"></script>
       <script type="text/javascript" src="../../index.js"></script>
       <script type="text/javascript" src="../../lib/scheduler.js"></script>
       <script type="text/javascript" src="../../lib/template.js"></script>
-      <script type="text/javascript" src="../../lib/tools.tooltip.js"></script>
       
       <script type="text/javascript">
         /* this variable can be used by the JS to determine the path to the root document */
@@ -56,7 +56,7 @@
                 <li name="_root_.root" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="_root_"></a><a id="root:_root_"></a>
       <span class="permalink">
-      <a href="index.html#_root_" title="Permalink">
+      <a href="../../index.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -72,7 +72,7 @@
     </li><li name="_root_.streamz" visbl="pub" class="indented1 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="streamz"></a><a id="streamz:streamz"></a>
       <span class="permalink">
-      <a href="index.html#streamz" title="Permalink">
+      <a href="../../streamz/index.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -88,7 +88,7 @@
     </li><li name="streamz.converter" visbl="pub" class="indented2 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="converter"></a><a id="converter:converter"></a>
       <span class="permalink">
-      <a href="../streamz/index.html#converter" title="Permalink">
+      <a href="../../streamz/converter/index.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -109,6 +109,10 @@
                         <span class="separator"></span>
                         <a class="class" href="ConverterDsl$AkkaSinkDsl.html" title=""></a>
                         <a href="ConverterDsl$AkkaSinkDsl.html" title="">AkkaSinkDsl</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="class" href="ConverterDsl$AkkaSinkMatDsl.html" title=""></a>
+                        <a href="ConverterDsl$AkkaSinkMatDsl.html" title="">AkkaSinkMatDsl</a>
                       </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="ConverterDsl$AkkaSourceDsl.html" title=""></a>
@@ -288,9 +292,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="streamz.converter.Converter#akkaFlowToFs2Pipe" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="akkaFlowToFs2Pipe[F[_],A,B,M](flow:akka.stream.Graph[akka.stream.FlowShape[A,B],M])(onMaterialization:M=&gt;Unit)(implicitevidence$2:cats.effect.ContextShift[F],implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Pipe[F,A,B]"></a><a id="akkaFlowToFs2Pipe[F[_],A,B,M](Graph[FlowShape[A,B],M])((M)⇒Unit)(ContextShift[F],Materializer,Concurrent[F]):Pipe[F,A,B]"></a>
+      <a id="akkaFlowToFs2Pipe[F[_],A,B,M](flow:akka.stream.Graph[akka.stream.FlowShape[A,B],M])(onMaterialization:M=&gt;Unit)(implicitevidence$5:cats.effect.ContextShift[F],implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Pipe[F,A,B]"></a><a id="akkaFlowToFs2Pipe[F[_],A,B,M](Graph[FlowShape[A,B],M])((M)⇒Unit)(ContextShift[F],Materializer,Concurrent[F]):Pipe[F,A,B]"></a>
       <span class="permalink">
-      <a href="../../streamz/converter/Converter.html#akkaFlowToFs2Pipe[F[_],A,B,M](flow:akka.stream.Graph[akka.stream.FlowShape[A,B],M])(onMaterialization:M=&gt;Unit)(implicitevidence$2:cats.effect.ContextShift[F],implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Pipe[F,A,B]" title="Permalink">
+      <a href="../../streamz/converter/Converter.html#akkaFlowToFs2Pipe[F[_],A,B,M](flow:akka.stream.Graph[akka.stream.FlowShape[A,B],M])(onMaterialization:M=&gt;Unit)(implicitevidence$5:cats.effect.ContextShift[F],implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Pipe[F,A,B]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -305,10 +309,10 @@
       <p class="shortcomment cmt">Converts an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="FlowShape">FlowShape</span> to an FS2 <span class="extype" name="Pipe">Pipe</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Converts an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="FlowShape">FlowShape</span> to an FS2 <span class="extype" name="Pipe">Pipe</span>. The <span class="extype" name="Graph">Graph</span> is materialized when
 the <span class="extype" name="Pipe">Pipe</span>'s <span class="extype" name="F">F</span> in run. The materialized value can be obtained with the <code>onMaterialization</code> callback.
 </p></div></div>
-    </li><li name="streamz.converter.Converter#akkaSinkToFs2Sink" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="akkaSinkToFs2Sink[F[_],A,M](sink:akka.stream.Graph[akka.stream.SinkShape[A],M])(onMaterialization:M=&gt;Unit)(implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Sink[F,A]"></a><a id="akkaSinkToFs2Sink[F[_],A,M](Graph[SinkShape[A],M])((M)⇒Unit)(Materializer,Concurrent[F]):Sink[F,A]"></a>
+    </li><li name="streamz.converter.Converter#akkaSinkToFs2Pipe" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="akkaSinkToFs2Pipe[F[_],A,M](sink:akka.stream.Graph[akka.stream.SinkShape[A],M])(onMaterialization:M=&gt;Unit)(implicitevidence$2:cats.effect.ContextShift[F],implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Pipe[F,A,Unit]"></a><a id="akkaSinkToFs2Pipe[F[_],A,M](Graph[SinkShape[A],M])((M)⇒Unit)(ContextShift[F],Materializer,Concurrent[F]):Pipe[F,A,Unit]"></a>
       <span class="permalink">
-      <a href="../../streamz/converter/Converter.html#akkaSinkToFs2Sink[F[_],A,M](sink:akka.stream.Graph[akka.stream.SinkShape[A],M])(onMaterialization:M=&gt;Unit)(implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Sink[F,A]" title="Permalink">
+      <a href="../../streamz/converter/Converter.html#akkaSinkToFs2Pipe[F[_],A,M](sink:akka.stream.Graph[akka.stream.SinkShape[A],M])(onMaterialization:M=&gt;Unit)(implicitevidence$2:cats.effect.ContextShift[F],implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Concurrent[F]):fs2.Pipe[F,A,Unit]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -317,11 +321,32 @@ the <span class="extype" name="Pipe">Pipe</span>'s <span class="extype" name="F"
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">akkaSinkToFs2Sink</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="sink">sink: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Sink.A">A</span>], <span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Sink.M">M</span>]</span>)</span><span class="params">(<span name="onMaterialization">onMaterialization: (<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Sink.M">M</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="materializer">materializer: <span class="extype" name="akka.stream.Materializer">Materializer</span></span>, <span name="F">F: <span class="extype" name="cats.effect.Concurrent">Concurrent</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Sink.F">F</span>]</span>)</span><span class="result">: <span class="extype" name="fs2.Sink">Sink</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Sink.F">F</span>, <span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Sink.A">A</span>]</span>
+        <span class="name">akkaSinkToFs2Pipe</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="sink">sink: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Pipe.A">A</span>], <span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Pipe.M">M</span>]</span>)</span><span class="params">(<span name="onMaterialization">onMaterialization: (<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Pipe.M">M</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Pipe.F">F</span>]</span>, <span name="materializer">materializer: <span class="extype" name="akka.stream.Materializer">Materializer</span></span>, <span name="F">F: <span class="extype" name="cats.effect.Concurrent">Concurrent</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Pipe.F">F</span>]</span>)</span><span class="result">: <span class="extype" name="fs2.Pipe">Pipe</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Pipe.F">F</span>, <span class="extype" name="streamz.converter.Converter.akkaSinkToFs2Pipe.A">A</span>, <span class="extype" name="scala.Unit">Unit</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Converts an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="SinkShape">SinkShape</span> to an FS2 <span class="extype" name="Sink">Sink</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Converts an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="SinkShape">SinkShape</span> to an FS2 <span class="extype" name="Sink">Sink</span>. The <span class="extype" name="Graph">Graph</span> is materialized when
 the <span class="extype" name="Sink">Sink</span>'s <span class="extype" name="F">F</span> in run. The materialized value can be obtained with the <code>onMaterialization</code> callback.
+</p></div></div>
+    </li><li name="streamz.converter.Converter#akkaSinkToFs2PipeMat" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="akkaSinkToFs2PipeMat[F[_],A,M](akkaSink:akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[M]])(implicitevidence$3:cats.effect.ConcurrentEffect[F],implicitevidence$4:cats.effect.ContextShift[F],implicitec:scala.concurrent.ExecutionContext,implicitm:akka.stream.Materializer):fs2.Pipe[F,A,Either[Throwable,M]]"></a><a id="akkaSinkToFs2PipeMat[F[_],A,M](Graph[SinkShape[A],Future[M]])(ConcurrentEffect[F],ContextShift[F],ExecutionContext,Materializer):Pipe[F,A,Either[Throwable,M]]"></a>
+      <span class="permalink">
+      <a href="../../streamz/converter/Converter.html#akkaSinkToFs2PipeMat[F[_],A,M](akkaSink:akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[M]])(implicitevidence$3:cats.effect.ConcurrentEffect[F],implicitevidence$4:cats.effect.ContextShift[F],implicitec:scala.concurrent.ExecutionContext,implicitm:akka.stream.Materializer):fs2.Pipe[F,A,Either[Throwable,M]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">akkaSinkToFs2PipeMat</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>, <span name="M">M</span>]</span><span class="params">(<span name="akkaSink">akkaSink: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2PipeMat.A">A</span>], <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2PipeMat.M">M</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ConcurrentEffect">ConcurrentEffect</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2PipeMat.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2PipeMat.F">F</span>]</span>, <span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="m">m: <span class="extype" name="akka.stream.Materializer">Materializer</span></span>)</span><span class="result">: <span class="extype" name="fs2.Pipe">Pipe</span>[<span class="extype" name="streamz.converter.Converter.akkaSinkToFs2PipeMat.F">F</span>, <span class="extype" name="streamz.converter.Converter.akkaSinkToFs2PipeMat.A">A</span>, <span class="extype" name="scala.Either">Either</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="streamz.converter.Converter.akkaSinkToFs2PipeMat.M">M</span>]]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Converts an akka sink with a success-status-indicating Future[M]
+materialized result into an fs2 Pipe which will fail if the Future fails.</p><div class="fullcomment"><div class="comment cmt"><p>Converts an akka sink with a success-status-indicating Future[M]
+materialized result into an fs2 Pipe which will fail if the Future fails.
+The stream returned by this will emit the Future's value one time at the end,
+then terminate.
 </p></div></div>
     </li><li name="streamz.converter.Converter#akkaSourceToFs2Stream" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="akkaSourceToFs2Stream[F[_],A,M](source:akka.stream.Graph[akka.stream.SourceShape[A],M])(onMaterialization:M=&gt;Unit)(implicitevidence$1:cats.effect.ContextShift[F],implicitmaterializer:akka.stream.Materializer,implicitF:cats.effect.Async[F]):fs2.Stream[F,A]"></a><a id="akkaSourceToFs2Stream[F[_],A,M](Graph[SourceShape[A],M])((M)⇒Unit)(ContextShift[F],Materializer,Async[F]):Stream[F,A]"></a>
@@ -372,13 +397,13 @@ the <span class="extype" name="Stream">Stream</span>'s <span class="extype" name
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
-                <span class="name">@native</span><span class="args">()</span>
-              
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<span class="extype" name="java.lang">lang</span>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
     </span>)</span>
+              
+                <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -428,7 +453,7 @@ the <span class="extype" name="Stream">Stream</span>'s <span class="extype" name
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../java/lang/index.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<span class="extype" name="java.lang">lang</span>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
@@ -436,9 +461,9 @@ the <span class="extype" name="Stream">Stream</span>'s <span class="extype" name
               
         </dd></dl></div>
     </li><li name="streamz.converter.Converter#fs2PipeToAkkaFlow" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="fs2PipeToAkkaFlow[F[_],A,B](pipe:fs2.Pipe[F,A,B])(implicitevidence$5:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a><a id="fs2PipeToAkkaFlow[F[_],A,B](Pipe[F,A,B])(ContextShift[F],ConcurrentEffect[F]):Graph[FlowShape[A,B],NotUsed]"></a>
+      <a id="fs2PipeToAkkaFlow[F[_],A,B](pipe:fs2.Pipe[F,A,B])(implicitevidence$8:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]"></a><a id="fs2PipeToAkkaFlow[F[_],A,B](Pipe[F,A,B])(ContextShift[F],ConcurrentEffect[F]):Graph[FlowShape[A,B],NotUsed]"></a>
       <span class="permalink">
-      <a href="../../streamz/converter/Converter.html#fs2PipeToAkkaFlow[F[_],A,B](pipe:fs2.Pipe[F,A,B])(implicitevidence$5:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink">
+      <a href="../../streamz/converter/Converter.html#fs2PipeToAkkaFlow[F[_],A,B](pipe:fs2.Pipe[F,A,B])(implicitevidence$8:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.FlowShape[A,B],akka.NotUsed]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -453,10 +478,10 @@ the <span class="extype" name="Stream">Stream</span>'s <span class="extype" name
       <p class="shortcomment cmt">Converts an FS2 <span class="extype" name="Pipe">Pipe</span> to an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="FlowShape">FlowShape</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Converts an FS2 <span class="extype" name="Pipe">Pipe</span> to an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="FlowShape">FlowShape</span>. The <span class="extype" name="Pipe">Pipe</span> is run when the
 <span class="extype" name="Graph">Graph</span> is materialized.
 </p></div></div>
-    </li><li name="streamz.converter.Converter#fs2SinkToAkkaSink" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="fs2SinkToAkkaSink[F[_],A](sink:fs2.Sink[F,A])(implicitevidence$4:cats.effect.ContextShift[F],implicitF:cats.effect.Effect[F]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]"></a><a id="fs2SinkToAkkaSink[F[_],A](Sink[F,A])(ContextShift[F],Effect[F]):Graph[SinkShape[A],Future[Done]]"></a>
+    </li><li name="streamz.converter.Converter#fs2PipeToAkkaSink" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fs2PipeToAkkaSink[F[_],A](sink:fs2.Pipe[F,A,Unit])(implicitevidence$7:cats.effect.ContextShift[F],implicitF:cats.effect.Effect[F]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]"></a><a id="fs2PipeToAkkaSink[F[_],A](Pipe[F,A,Unit])(ContextShift[F],Effect[F]):Graph[SinkShape[A],Future[Done]]"></a>
       <span class="permalink">
-      <a href="../../streamz/converter/Converter.html#fs2SinkToAkkaSink[F[_],A](sink:fs2.Sink[F,A])(implicitevidence$4:cats.effect.ContextShift[F],implicitF:cats.effect.Effect[F]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" title="Permalink">
+      <a href="../../streamz/converter/Converter.html#fs2PipeToAkkaSink[F[_],A](sink:fs2.Pipe[F,A,Unit])(implicitevidence$7:cats.effect.ContextShift[F],implicitF:cats.effect.Effect[F]):akka.stream.Graph[akka.stream.SinkShape[A],scala.concurrent.Future[akka.Done]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -465,16 +490,16 @@ the <span class="extype" name="Stream">Stream</span>'s <span class="extype" name
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">fs2SinkToAkkaSink</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>]</span><span class="params">(<span name="sink">sink: <span class="extype" name="fs2.Sink">Sink</span>[<span class="extype" name="streamz.converter.Converter.fs2SinkToAkkaSink.F">F</span>, <span class="extype" name="streamz.converter.Converter.fs2SinkToAkkaSink.A">A</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.converter.Converter.fs2SinkToAkkaSink.F">F</span>]</span>, <span name="F">F: <span class="extype" name="cats.effect.Effect">Effect</span>[<span class="extype" name="streamz.converter.Converter.fs2SinkToAkkaSink.F">F</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.Converter.fs2SinkToAkkaSink.A">A</span>], <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="akka.Done">Done</span>]]</span>
+        <span class="name">fs2PipeToAkkaSink</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>]</span><span class="params">(<span name="sink">sink: <span class="extype" name="fs2.Pipe">Pipe</span>[<span class="extype" name="streamz.converter.Converter.fs2PipeToAkkaSink.F">F</span>, <span class="extype" name="streamz.converter.Converter.fs2PipeToAkkaSink.A">A</span>, <span class="extype" name="scala.Unit">Unit</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="cats.effect.ContextShift">ContextShift</span>[<span class="extype" name="streamz.converter.Converter.fs2PipeToAkkaSink.F">F</span>]</span>, <span name="F">F: <span class="extype" name="cats.effect.Effect">Effect</span>[<span class="extype" name="streamz.converter.Converter.fs2PipeToAkkaSink.F">F</span>]</span>)</span><span class="result">: <span class="extype" name="akka.stream.Graph">Graph</span>[<span class="extype" name="akka.stream.SinkShape">SinkShape</span>[<span class="extype" name="streamz.converter.Converter.fs2PipeToAkkaSink.A">A</span>], <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="akka.Done">Done</span>]]</span>
       </span>
       
-      <p class="shortcomment cmt">Converts an FS2 <span class="extype" name="Sink">Sink</span> to an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="SinkShape">SinkShape</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Converts an FS2 <span class="extype" name="Sink">Sink</span> to an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="SinkShape">SinkShape</span>. The <span class="extype" name="Sink">Sink</span> is run when the
+      <p class="shortcomment cmt">Converts an FS2 <span class="extype" name="Pipe">Pipe</span> to an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="SinkShape">SinkShape</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Converts an FS2 <span class="extype" name="Pipe">Pipe</span> to an Akka Stream <span class="extype" name="Graph">Graph</span> of <span class="extype" name="SinkShape">SinkShape</span>. The <span class="extype" name="Sink">Sink</span> is run when the
 <span class="extype" name="Graph">Graph</span> is materialized.
 </p></div></div>
     </li><li name="streamz.converter.Converter#fs2StreamToAkkaSource" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="fs2StreamToAkkaSource[F[_],A](stream:fs2.Stream[F,A])(implicitevidence$3:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]"></a><a id="fs2StreamToAkkaSource[F[_],A](Stream[F,A])(ContextShift[F],ConcurrentEffect[F]):Graph[SourceShape[A],NotUsed]"></a>
+      <a id="fs2StreamToAkkaSource[F[_],A](stream:fs2.Stream[F,A])(implicitevidence$6:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]"></a><a id="fs2StreamToAkkaSource[F[_],A](Stream[F,A])(ContextShift[F],ConcurrentEffect[F]):Graph[SourceShape[A],NotUsed]"></a>
       <span class="permalink">
-      <a href="../../streamz/converter/Converter.html#fs2StreamToAkkaSource[F[_],A](stream:fs2.Stream[F,A])(implicitevidence$3:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]" title="Permalink">
+      <a href="../../streamz/converter/Converter.html#fs2StreamToAkkaSource[F[_],A](stream:fs2.Stream[F,A])(implicitevidence$6:cats.effect.ContextShift[F],implicitF:cats.effect.ConcurrentEffect[F]):akka.stream.Graph[akka.stream.SourceShape[A],akka.NotUsed]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -689,12 +714,12 @@ the <span class="extype" name="Stream">Stream</span>'s <span class="extype" name
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
-                <span class="name">@native</span><span class="args">()</span>
-              
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
     </span>)</span>
+              
+                <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
     </li>

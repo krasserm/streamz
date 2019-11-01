@@ -104,7 +104,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body streams of type <code>Stream[IO, A]</code>.</p>
+      <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body streams of type <code>Stream[F, A]</code>.</p>
     </li><li name="streamz.camel.fs2.dsl.SendBodyDslPure" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SendBodyDslPure[A]extendsAnyRef"></a>
       <a id="SendBodyDslPure[A]:SendBodyDslPure[A]"></a>
@@ -138,7 +138,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>Stream[IO, StreamMessage[A]]</code>.</p>
+      <p class="shortcomment cmt">Camel endpoint combinators for <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> streams of type <code>Stream[F, StreamMessage[A]]</code>.</p>
     </li><li name="streamz.camel.fs2.dsl.SendDslPure" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SendDslPure[A]extendsAnyRef"></a>
       <a id="SendDslPure[A]:SendDslPure[A]"></a>
@@ -184,7 +184,7 @@
 completes with an error if the message exchange with the endpoint fails.</p><p>Only <span class="extype" name="ExchangePattern.InOnly">ExchangePattern.InOnly</span> message exchanges with the endpoint are supported at the moment.
 Endpoints that create <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchanges will not receive a reply from
 the stream.
-</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="org.apache.camel.TypeConversionException"><code>org.apache.camel.TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
     </li><li name="streamz.camel.fs2.dsl#receiveBody" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="receiveBody[F[_],A](uri:String)(implicitevidence$11:cats.effect.ContextShift[F],implicitevidence$12:cats.effect.Async[F],implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[A]):fs2.Stream[F,A]"></a>
       <a id="receiveBody[F[_],A](String)(ContextShift[F],Async[F],StreamContext,ClassTag[A]):Stream[F,A]"></a>
@@ -206,7 +206,7 @@ Message are converted to type <code>A</code> using a Camel type converter. The s
 with an error if the message exchange with the endpoint fails.</p><p>Only <span class="extype" name="ExchangePattern.InOnly">ExchangePattern.InOnly</span> message exchanges with the endpoint are supported at the moment.
 Endpoints that create <span class="extype" name="ExchangePattern.InOut">ExchangePattern.InOut</span> message exchanges will not receive a reply from
 the stream.
-</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="org.apache.camel.TypeConversionException"><code>org.apache.camel.TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
     </li><li name="streamz.camel.fs2.dsl#send" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="send[F[_],A](uri:String)(implicitevidence$13:cats.effect.ContextShift[F],implicitevidence$14:cats.effect.Async[F],implicitcontext:streamz.camel.StreamContext):fs2.Pipe[F,streamz.camel.StreamMessage[A],streamz.camel.StreamMessage[A]]"></a>
       <a id="send[F[_],A](String)(ContextShift[F],Async[F],StreamContext):Pipe[F,StreamMessage[A],StreamMessage[A]]"></a>
@@ -272,7 +272,7 @@ identified by <code>uri</code> and continues the stream with the output <a href=
 identified by <code>uri</code> and continues the stream with the output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> received from the endpoint. The
 output <a href="../../StreamMessage.html" class="extype" name="streamz.camel.StreamMessage">StreamMessage</a> body is converted to type <code>B</code> using a Camel type converter. The pipe completes
 with an error if the message exchange with the endpoint fails.
-</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="org.apache.camel.TypeConversionException"><code>org.apache.camel.TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
     </li><li name="streamz.camel.fs2.dsl#sendRequestBody" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sendRequestBody[F[_],A,B](uri:String)(implicitevidence$19:cats.effect.ContextShift[F],implicitevidence$20:cats.effect.Async[F],implicitcontext:streamz.camel.StreamContext,implicittag:scala.reflect.ClassTag[B]):fs2.Pipe[F,A,B]"></a>
       <a id="sendRequestBody[F[_],A,B](String)(ContextShift[F],Async[F],StreamContext,ClassTag[B]):Pipe[F,A,B]"></a>
@@ -294,7 +294,7 @@ identified by <code>uri</code> and continues the stream with the output message 
 identified by <code>uri</code> and continues the stream with the output message received from the endpoint. The
 output message is converted to type <code>B</code> using a Camel type converter. The pipe completes
 with an error if the message exchange with the endpoint fails.
-</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="TypeConversionException"><code>TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">uri</dt><dd class="cmt"><p>Camel endpoint URI.</p></dd></dl><dl class="attributes block"> <dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="org.apache.camel.TypeConversionException"><code>org.apache.camel.TypeConversionException</code></span> if type conversion fails.</p></span></dd></dl></div>
     </li></ol>
             </div>
 
