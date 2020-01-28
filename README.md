@@ -15,7 +15,7 @@ Streamz provides combinator libraries for integrating [Functional Streams for Sc
 Dependencies
 ------------
 
-Streamz artifacts are available for Scala 2.11, 2.12, and 2.13 at:
+Streamz artifacts are available for Scala 2.12 and 2.13 at:
 
     resolvers += "streamz at bintray" at "http://dl.bintray.com/streamz/maven"
     val streamzVersion = "0.11-RC1"

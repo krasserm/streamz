@@ -12,10 +12,3 @@ libraryDependencies ++= Seq(
 // We need to silence unused-import warning on scala 2.13,
 // because scala-collection-compat library generates empty importable objects.
 scalacOptions -= "-Wunused:imports"
-scalacOptions --= {
-  if (scalaVersion.value.startsWith("2.11"))
-    // Deprecation warnings can't be disabled, so we have to remove fatal-warnings to allow use of `String#linesIterator`
-    Seq("-Xfatal-warnings")
-  else
-    Seq()
-}
