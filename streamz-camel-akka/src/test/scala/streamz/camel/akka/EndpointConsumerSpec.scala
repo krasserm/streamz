@@ -17,7 +17,7 @@
 package streamz.camel.akka
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl.{ Keep, Source }
 import akka.stream.testkit.scaladsl.TestSink
 import akka.stream.testkit.TestSubscriber
@@ -26,11 +26,10 @@ import org.apache.camel.ExchangePattern
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ Assertion, BeforeAndAfterAll, Matchers, WordSpecLike }
 import streamz.camel.{ StreamContext, StreamMessage }
-
 import scala.reflect.ClassTag
 
 class EndpointConsumerSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll with Eventually {
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = Materializer.createMaterializer(system)
   implicit val context = StreamContext()
 
   import context._

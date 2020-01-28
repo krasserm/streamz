@@ -17,7 +17,7 @@
 package streamz.camel.akka
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl.Keep
 import akka.stream.testkit.scaladsl.{ TestSink, TestSource }
 import akka.stream.testkit.{ TestPublisher, TestSubscriber }
@@ -26,15 +26,19 @@ import org.apache.camel.ExchangePattern
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ Assertion, BeforeAndAfterAll, Matchers, WordSpecLike }
 import streamz.camel.{ StreamContext, StreamMessage }
-
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll with Eventually {
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = Materializer.createMaterializer(system)
   implicit val context = StreamContext()
 
   import context._
+
+  override def beforeAll(): Unit = {
+    context.start()
+    ()
+  }
 
   override def afterAll(): Unit = {
     context.stop()
@@ -58,6 +62,7 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
       val (pub, sub) = publisherAndSubscriber[String, String](uri, 3)
 
       val exchange = context.createExchange(StreamMessage("a", Map("foo" -> "bar")), ExchangePattern.InOut)
+      Thread.sleep(1000)
       val resf = producerTemplate.asyncSend(uri, exchange)
 
       val req = sub.requestNext()

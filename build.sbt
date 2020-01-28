@@ -19,6 +19,8 @@ scalaVersion in ThisBuild := "2.12.10"
 
 libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Scalatest % "test"
 
+parallelExecution in Test := false
+
 // No need for `sbt doc` to fail on warnings
 val docSettings = Compile / doc / scalacOptions -= "-Xfatal-warnings"
 
