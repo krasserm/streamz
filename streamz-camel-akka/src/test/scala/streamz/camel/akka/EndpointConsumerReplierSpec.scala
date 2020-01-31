@@ -52,23 +52,20 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
   }
 
   "An EndpointConsumerReplier" must {
-    "consume a message from an endpoint and reply to that endpoint" in {
-      pendingUntilFixed {
-        val uri = "direct:d1"
-        val (pub, sub) = publisherAndSubscriber[String, String](uri, 3)
+    "consume a message from an endpoint and reply to that endpoint" ignore {
+      val uri = "direct:d1"
+      val (pub, sub) = publisherAndSubscriber[String, String](uri, 3)
 
-        val exchange = context.createExchange(StreamMessage("a", Map("foo" -> "bar")), ExchangePattern.InOut)
-        val resf = producerTemplate.asyncSend(uri, exchange)
+      val exchange = context.createExchange(StreamMessage("a", Map("foo" -> "bar")), ExchangePattern.InOut)
+      val resf = producerTemplate.asyncSend(uri, exchange)
 
-        val req = sub.requestNext()
-        req.body should be("a")
-        req.headers("foo") should be("bar")
+      val req = sub.requestNext()
+      req.body should be("a")
+      req.headers("foo") should be("bar")
 
-        pub.sendNext(StreamMessage("re-a", Map("foo" -> "baz")))
-        resf.get.getOut.getBody should be("re-a")
-        resf.get.getOut.getHeader("foo") should be("baz")
-        ()
-      }
+      pub.sendNext(StreamMessage("re-a", Map("foo" -> "baz")))
+      resf.get.getOut.getBody should be("re-a")
+      resf.get.getOut.getHeader("foo") should be("baz")
     }
     "limit the number of active requests to given capacity" in {
       val uri = "direct:d2"
