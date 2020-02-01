@@ -32,8 +32,8 @@ import fs2.{ Pipe, _ }
 trait Converter {
 
   /**
-   * Converts an Akka Stream [[Graph]] of [[SourceShape]] to an FS2 [[Stream]]. The [[Graph]] is materialized when
-   * the [[Stream]]'s [[F]] in run. If the materialized value needs be obtained, use [[akkaSourceToFs2StreamMat]].
+   * Converts an Akka Stream [[Graph]] of [[SourceShape]] to an FS2 [[Stream]].
+   * If the materialized value needs be obtained, use [[akkaSourceToFs2StreamMat]].
    */
   def akkaSourceToFs2Stream[F[_]: Async: ContextShift, A](source: Graph[SourceShape[A], NotUsed])(implicit materializer: Materializer): Stream[F, A] =
     Stream.force {
@@ -54,8 +54,8 @@ trait Converter {
     }
 
   /**
-   * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Pipe]]. The [[Sink]] is materialized when
-   * * the [[Pipe]]'s [[F]] in run. If the materialized value needs be obtained, use [[akkaSinkToFs2PipeMat]].
+   * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Pipe]].
+   * If the materialized value needs be obtained, use [[akkaSinkToFs2PipeMat]].
    */
   def akkaSinkToFs2Pipe[F[_]: Concurrent: ContextShift, A](sink: Graph[SinkShape[A], NotUsed])(implicit materializer: Materializer): Pipe[F, A, Unit] =
     (s: Stream[F, A]) =>
@@ -68,7 +68,7 @@ trait Converter {
 
   /**
    * Converts an Akka Stream [[Graph]] of [[SinkShape]] to an FS2 [[Pipe]]. This method returns the FS2 [[Pipe]]
-   * * and the materialized value of the [[Graph]].
+   * and the materialized value of the [[Graph]].
    */
   def akkaSinkToFs2PipeMat[F[_]: Concurrent: ContextShift, A, M](sink: Graph[SinkShape[A], M])(implicit materializer: Materializer): F[(Pipe[F, A, Unit], M)] =
     Concurrent[F].delay {
@@ -85,7 +85,8 @@ trait Converter {
   def akkaSinkToFs2PipeMat[F[_]: ConcurrentEffect: ContextShift, G[_]: MonadError[*[_], Throwable], A, M](akkaSink: Graph[SinkShape[A], Future[M]])(
     implicit
     ec: ExecutionContext,
-    m: Materializer): F[Pipe[F, A, G[M]]] = for {
+    m: Materializer): F[Pipe[F, A, G[M]]] =
+    for {
     promise <- Deferred[F, G[M]]
     fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).map {
       case (stream, mat) =>
@@ -109,8 +110,8 @@ trait Converter {
   }
 
   /**
-   * Converts an Akka Stream [[Graph]] of [[FlowShape]] to an FS2 [[Pipe]]. The [[Graph]] is materialized when
-   * the [[Pipe]]'s [[F]] in run. If the materialized value needs be obtained, use [[akkaSinkToFs2PipeMat]].
+   * Converts an Akka Stream [[Graph]] of [[FlowShape]] to an FS2 [[Pipe]].
+   * If the materialized value needs be obtained, use [[akkaSinkToFs2PipeMat]].
    */
   def akkaFlowToFs2Pipe[F[_]: Concurrent: ContextShift, A, B](flow: Graph[FlowShape[A, B], NotUsed])(implicit materializer: Materializer): Pipe[F, A, B] =
     (s: Stream[F, A]) =>
