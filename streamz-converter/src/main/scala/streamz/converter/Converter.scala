@@ -87,27 +87,27 @@ trait Converter {
     ec: ExecutionContext,
     m: Materializer): F[Pipe[F, A, G[M]]] =
     for {
-    promise <- Deferred[F, G[M]]
-    fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).map {
-      case (stream, mat) =>
-        // This callback tells the akka materialized future to store its result status into the Promise
-        mat.onComplete {
-          case Failure(ex) => promise.complete(MonadError[G, Throwable].raiseError(ex)).toIO.unsafeRunSync()
-          case Success(value) => promise.complete(MonadError[G, Throwable].pure(value)).toIO.unsafeRunSync()
-        }
-        stream
-    }
-  } yield {
-    in: Stream[F, A] =>
-      {
-        // Async wait on the promise to be completed
-        val materializedResultStream = Stream.eval(promise.get)
-        val fs2Stream: Stream[F, Unit] = fs2Sink.apply(in)
-
-        // Run the akka sink for its effects and then run stream containing the effect of getting the Promise results
-        fs2Stream.drain ++ materializedResultStream
+      promise <- Deferred[F, G[M]]
+      fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).map {
+        case (stream, mat) =>
+          // This callback tells the akka materialized future to store its result status into the Promise
+          mat.onComplete {
+            case Failure(ex) => promise.complete(MonadError[G, Throwable].raiseError(ex)).toIO.unsafeRunSync()
+            case Success(value) => promise.complete(MonadError[G, Throwable].pure(value)).toIO.unsafeRunSync()
+          }
+          stream
       }
-  }
+    } yield {
+      in: Stream[F, A] =>
+        {
+          // Async wait on the promise to be completed
+          val materializedResultStream = Stream.eval(promise.get)
+          val fs2Stream: Stream[F, Unit] = fs2Sink.apply(in)
+
+          // Run the akka sink for its effects and then run stream containing the effect of getting the Promise results
+          fs2Stream.drain ++ materializedResultStream
+        }
+    }
 
   /**
    * Converts an Akka Stream [[Graph]] of [[FlowShape]] to an FS2 [[Pipe]].
