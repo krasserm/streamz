@@ -8,4 +8,5 @@ object Version {
   val Scalatest = "3.0.8"
   val Config = "1.4.0"
   val ScalaCollectionCompat = "2.1.2"
+  val KindProjector = "0.11.0"
 }
