@@ -22,7 +22,6 @@ import scala.util.{ Failure, Success }
 import akka.stream._
 import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, _ }
 import akka.{ Done, NotUsed }
-import cats.MonadError
 import cats.effect._
 import cats.effect.concurrent.Deferred
 import cats.effect.implicits._
@@ -82,18 +81,18 @@ trait Converter {
    * The stream returned by this will emit the Future's value one time at the end,
    * then terminate.
    */
-  def akkaSinkToFs2PipeMat[F[_]: ConcurrentEffect: ContextShift, G[_]: MonadError[*[_], Throwable], A, M](akkaSink: Graph[SinkShape[A], Future[M]])(
+  def akkaSinkToFs2PipeMat[F[_]: ConcurrentEffect: ContextShift, A, M](akkaSink: Graph[SinkShape[A], Future[M]])(
     implicit
     ec: ExecutionContext,
-    m: Materializer): F[Pipe[F, A, G[M]]] =
+    m: Materializer): F[Pipe[F, A, Throwable Either M]] =
     for {
-      promise <- Deferred[F, G[M]]
+      promise <- Deferred[F, Throwable Either M]
       fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).map {
         case (stream, mat) =>
           // This callback tells the akka materialized future to store its result status into the Promise
           mat.onComplete {
-            case Failure(ex) => promise.complete(MonadError[G, Throwable].raiseError(ex)).toIO.unsafeRunSync()
-            case Success(value) => promise.complete(MonadError[G, Throwable].pure(value)).toIO.unsafeRunSync()
+            case Failure(ex) => promise.complete(ex.asLeft).toIO.unsafeRunSync()
+            case Success(value) => promise.complete(value.asRight).toIO.unsafeRunSync()
           }
           stream
       }
@@ -264,11 +263,11 @@ trait ConverterDsl extends Converter {
   implicit class AkkaSinkFutureDsl[A, M](sink: Graph[SinkShape[A], Future[M]]) {
 
     /** @see [[Converter#akkaSinkToFs2SinkMat]] */
-    def toPipeMatWithResult[F[_]: ConcurrentEffect: ContextShift, G[_]: MonadError[*[_], Throwable]](
+    def toPipeMatWithResult[F[_]: ConcurrentEffect: ContextShift](
       implicit
       ec: ExecutionContext,
-      m: Materializer): F[Pipe[F, A, G[M]]] =
-      akkaSinkToFs2PipeMat[F, G, A, M](sink)
+      m: Materializer): F[Pipe[F, A, Throwable Either M]] =
+      akkaSinkToFs2PipeMat[F, A, M](sink)
 
   }
 

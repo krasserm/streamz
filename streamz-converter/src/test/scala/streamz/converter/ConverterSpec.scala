@@ -28,7 +28,6 @@ import scala.collection.immutable.Seq
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util._
-import cats.instances.try_._
 
 object ConverterSpec {
   implicit class AwaitHelper[A](f: Future[A]) {
@@ -127,18 +126,18 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with 
     }
     "propagate early termination from AS sink to FS2 sink (using Mat Future)" in {
       val akkaSink = AkkaFlow[Int].take(3).toMat(AkkaSink.seq)(Keep.right)
-      val fs2Sink = akkaSink.toPipeMatWithResult[IO, Try].unsafeRunSync()
+      val fs2Sink = akkaSink.toPipeMatWithResult[IO].unsafeRunSync()
 
       val result = Stream.emits(numbers).through(fs2Sink).compile.lastOrError.unsafeRunSync()
-      result shouldBe Success(numbers.take(3))
+      result shouldBe Right(numbers.take(3))
 
     }
     "propagate early termination from AS sink (due to errors) to FS2 sink" in {
       val akkaSink = AkkaSink.foreach[Int](_ => throw error)
-      val fs2Sink = akkaSink.toPipeMatWithResult[IO, Try].unsafeRunSync()
+      val fs2Sink = akkaSink.toPipeMatWithResult[IO].unsafeRunSync()
 
       val result = Stream.emits(numbers).through(fs2Sink).compile.lastOrError.unsafeRunSync()
-      result shouldBe Failure(error)
+      result shouldBe Left(error)
     }
   }
 
