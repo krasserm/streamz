@@ -17,13 +17,12 @@
 package streamz.camel.akka.scaladsl
 
 import akka.actor._
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl.{ Keep, Sink, Source }
 import org.apache.camel.impl.{ DefaultCamelContext, SimpleRegistry }
 import org.apache.camel.{ CamelExecutionException, TypeConversionException }
 import org.scalatest._
 import streamz.camel.StreamContext
-
 import scala.collection.immutable.Seq
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -48,7 +47,7 @@ class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
   implicit val streamContext = new StreamContext(camelContext)
   implicit val actorSystem = ActorSystem("test")
-  implicit val actorMaterializer = ActorMaterializer()
+  implicit val actorMaterializer = Materializer.createMaterializer(actorSystem)
 
   import streamContext._
 

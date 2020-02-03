@@ -17,13 +17,13 @@
 package streamz.examples.camel.akka
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import streamz.camel.{ StreamContext, StreamMessage }
 import streamz.camel.akka.scaladsl._
 
 object Greeter extends App {
   implicit val system = ActorSystem("example")
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = Materializer.createMaterializer(system)
   implicit val context = StreamContext()
 
   // TCP greeter service. Use with e.g. "telnet localhost 5150"
