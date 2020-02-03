@@ -52,7 +52,7 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
   }
 
   "An EndpointConsumerReplier" must {
-    // Note: `ignore` because this test is flaky. 
+    // Note: `ignore` because this test is flaky.
     // See https://github.com/krasserm/streamz/issues/70 for details
     "consume a message from an endpoint and reply to that endpoint" ignore {
       val uri = "direct:d1"
