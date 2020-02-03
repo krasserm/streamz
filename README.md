@@ -41,12 +41,19 @@ Streamz artifacts are available for Scala 2.12 and 2.13 at:
 Documentation
 -------------
 
-### Streamz 0.10-M2
+### Streamz 0.11-RC1
 
 - [Camel DSL for Akka Streams](streamz-camel-akka/README.md)
 - [Camel DSL for FS2](streamz-camel-fs2/README.md)
 - [Stream converters](streamz-converter/README.md)
 - [Example application](streamz-examples/README.md)
+
+### Streamz 0.10-M2
+
+- [Camel DSL for Akka Streams](https://github.com/krasserm/streamz/blob/v-0.10-M2/streamz-camel-akka/README.md)
+- [Camel DSL for FS2](https://github.com/krasserm/streamz/blob/v-0.10-M2/streamz-camel-fs2/README.md)
+- [Stream converters](https://github.com/krasserm/streamz/blob/v-0.10-M2/streamz-converter/README.md)
+- [Example application](https://github.com/krasserm/streamz/blob/v-0.10-M2/streamz-examples/README.md)
 
 ### Streamz 0.9.1
 
