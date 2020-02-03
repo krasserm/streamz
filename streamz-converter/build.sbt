@@ -6,5 +6,3 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream"         % Version.Akka,
   "com.typesafe.akka" %% "akka-stream-testkit" % Version.Akka % "test",
   "com.typesafe.akka" %% "akka-testkit"        % Version.Akka % "test")
-
-addCompilerPlugin("org.typelevel" % "kind-projector" % Version.KindProjector cross CrossVersion.full)
