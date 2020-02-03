@@ -27,7 +27,7 @@ import cats.effect._
 import cats.effect.concurrent.Deferred
 import cats.effect.implicits._
 import cats.implicits._
-import fs2.{ Pipe, _ }
+import fs2._
 
 trait Converter {
 
