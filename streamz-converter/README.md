@@ -39,7 +39,7 @@ implicit val materializer: Materializer = Materializer.createMaterializer(system
 |`Graph[SinkShape[A], M]`            |`toSinkMat()`             |`F[Sink[IO, A]]`                       |
 |`Graph[FlowShape[A, B], NotUsed]`   |`toPipe()`                |`Pipe[IO, A, B]`                       |
 |`Graph[FlowShape[A, B], M]`         |`toPipeMat()`             |`F[Pipe[IO, A, B]]`                    |
-|`Graph[FlowShape[A, B], Future[M]]` |`toPipeMatWithResult()`   |`F[Pipe[IO, A, Throwable Either B]]`   |
+|`Graph[FlowShape[A, B], Future[M]]` |`toPipeMatWithResult()`   |`F[Pipe[IO, A, Either[Throwable, M]]]`   |
 
 **Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/converter/Example.scala)):
 

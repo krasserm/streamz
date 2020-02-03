@@ -84,9 +84,9 @@ trait Converter {
   def akkaSinkToFs2PipeMat[F[_]: ConcurrentEffect: ContextShift, A, M](akkaSink: Graph[SinkShape[A], Future[M]])(
     implicit
     ec: ExecutionContext,
-    m: Materializer): F[Pipe[F, A, Throwable Either M]] =
+    m: Materializer): F[Pipe[F, A, Either[Throwable, M]]] =
     for {
-      promise <- Deferred[F, Throwable Either M]
+      promise <- Deferred[F, Either[Throwable, M]]
       fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).flatMap {
         case (stream, mat) =>
           // This callback tells the akka materialized future to store its result status into the Promise
@@ -267,7 +267,7 @@ trait ConverterDsl extends Converter {
     def toPipeMatWithResult[F[_]: ConcurrentEffect: ContextShift](
       implicit
       ec: ExecutionContext,
-      m: Materializer): F[Pipe[F, A, Throwable Either M]] =
+      m: Materializer): F[Pipe[F, A, Either[Throwable, M]]] =
       akkaSinkToFs2PipeMat[F, A, M](sink)
 
   }
