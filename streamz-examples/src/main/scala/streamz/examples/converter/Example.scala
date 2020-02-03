@@ -17,13 +17,12 @@
 package streamz.examples.converter
 
 import akka.actor.{ ActorRefFactory, ActorSystem }
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl.{ Keep, Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource }
 import akka.{ Done, NotUsed }
 import cats.effect.{ ContextShift, IO }
 import fs2.{ Pipe, Pure, Stream }
 import streamz.converter._
-
 import scala.collection.immutable.Seq
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -33,7 +32,7 @@ object Example extends App {
   val factory: ActorRefFactory = system
 
   implicit val executionContext: ExecutionContext = factory.dispatcher
-  implicit val materializer: ActorMaterializer = ActorMaterializer()(factory)
+  implicit val materializer: Materializer = Materializer.createMaterializer(system)
   implicit val contextShift: ContextShift[IO] = IO.contextShift(materializer.executionContext)
 
   val numbers: Seq[Int] = 1 to 10

@@ -18,18 +18,16 @@ package streamz.examples.camel.akka
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl._
-
 import streamz.camel.akka.scaladsl._
 import streamz.examples.camel.ExampleContext
-
 import scala.collection.immutable.Iterable
 import scala.collection.compat._
 
 object Example extends ExampleContext with App {
   implicit val system = ActorSystem("example")
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = Materializer.createMaterializer(system)
 
   val tcpLineSource: Source[String, NotUsed] =
     receiveBody[String](tcpEndpointUri)

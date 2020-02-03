@@ -17,7 +17,7 @@
 package streamz.camel.akka
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl.Keep
 import akka.stream.testkit.scaladsl.{ TestSink, TestSource }
 import akka.stream.testkit.{ TestPublisher, TestSubscriber }
@@ -26,12 +26,11 @@ import org.apache.camel.ExchangePattern
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ Assertion, BeforeAndAfterAll, Matchers, WordSpecLike }
 import streamz.camel.{ StreamContext, StreamMessage }
-
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll with Eventually {
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = Materializer.createMaterializer(system)
   implicit val context = StreamContext()
 
   import context._
@@ -53,7 +52,9 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
   }
 
   "An EndpointConsumerReplier" must {
-    "consume a message from an endpoint and reply to that endpoint" in {
+    // Note: `ignore` because this test is flaky. 
+    // See https://github.com/krasserm/streamz/issues/70 for details
+    "consume a message from an endpoint and reply to that endpoint" ignore {
       val uri = "direct:d1"
       val (pub, sub) = publisherAndSubscriber[String, String](uri, 3)
 

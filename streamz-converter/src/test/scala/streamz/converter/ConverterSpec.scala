@@ -18,13 +18,12 @@ package streamz.converter
 
 import akka.Done
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, _ }
 import akka.testkit._
 import cats.effect.IO
 import fs2.{ CompositeFailure, _ }
 import org.scalatest._
-
 import scala.collection.immutable.Seq
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -43,7 +42,7 @@ object ConverterSpec {
 class ConverterSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll {
   import ConverterSpec._
 
-  private implicit val materializer = ActorMaterializer()
+  private implicit val materializer = Materializer.createMaterializer(system)
   private implicit val dispatcher = system.dispatcher
   private implicit val contextShift = IO.contextShift(scala.concurrent.ExecutionContext.global)
 

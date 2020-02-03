@@ -18,15 +18,14 @@ package streamz.examples.camel.akka
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl._
-
 import streamz.camel.{ StreamContext, StreamMessage }
 import streamz.camel.akka.scaladsl._
 
 object Snippets extends App {
   implicit val system = ActorSystem("example")
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = Materializer.createMaterializer(system)
   implicit val context = StreamContext()
 
   val s: Source[StreamMessage[Int], NotUsed] =
