@@ -87,14 +87,15 @@ trait Converter {
     m: Materializer): F[Pipe[F, A, Throwable Either M]] =
     for {
       promise <- Deferred[F, Throwable Either M]
-      fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).map {
+      fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).flatMap {
         case (stream, mat) =>
           // This callback tells the akka materialized future to store its result status into the Promise
-          mat.onComplete {
-            case Failure(ex) => promise.complete(ex.asLeft).toIO.unsafeRunSync()
-            case Success(value) => promise.complete(value.asRight).toIO.unsafeRunSync()
-          }
-          stream
+          val callback = ConcurrentEffect[F].delay(
+            mat.onComplete {
+              case Failure(ex) => promise.complete(ex.asLeft).toIO.unsafeRunSync()
+              case Success(value) => promise.complete(value.asRight).toIO.unsafeRunSync()
+            })
+          callback.map(_ => stream)
       }
     } yield {
       in: Stream[F, A] =>
