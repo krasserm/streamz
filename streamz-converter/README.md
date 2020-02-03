@@ -31,15 +31,15 @@ implicit val materializer: Materializer = Materializer.createMaterializer(system
 
 **Overview**:
 
-|From                                |With                      |To                                     |
-|------------------------------------|--------------------------|---------------------------------------|
-|`Graph[SourceShape[A], NotUsed]`    |`toStream()`              |`Stream[IO, A]`                        |
-|`Graph[SourceShape[A], M]`          |`toStreamMat()`           |`F[Stream[IO, A]]`                     |
-|`Graph[SinkShape[A], NotUsed]`      |`toSink()`                |`Sink[IO, A]`                          |
-|`Graph[SinkShape[A], M]`            |`toSinkMat()`             |`F[Sink[IO, A]]`                       |
-|`Graph[FlowShape[A, B], NotUsed]`   |`toPipe()`                |`Pipe[IO, A, B]`                       |
-|`Graph[FlowShape[A, B], M]`         |`toPipeMat()`             |`F[Pipe[IO, A, B]]`                    |
-|`Graph[FlowShape[A, B], Future[M]]` |`toPipeMatWithResult()`   |`F[Pipe[IO, A, Either[Throwable, M]]]`   |
+|From                                |With                       |To                                    |
+|------------------------------------|---------------------------|--------------------------------------|
+|`Graph[SourceShape[A], NotUsed]`    |`toStream[F]`              |`Stream[F, A]`                        |
+|`Graph[SourceShape[A], M]`          |`toStreamMat[F]`           |`F[Stream[F, A]]`                     |
+|`Graph[SinkShape[A], NotUsed]`      |`toSink[F]`                |`Sink[F, A]`                          |
+|`Graph[SinkShape[A], M]`            |`toSinkMat[F]`             |`F[Sink[F, A]]`                       |
+|`Graph[FlowShape[A, B], NotUsed]`   |`toPipe[F]`                |`Pipe[F, A, B]`                       |
+|`Graph[FlowShape[A, B], M]`         |`toPipeMat[F]`             |`F[Pipe[F, A, B]]`                    |
+|`Graph[FlowShape[A, B], Future[M]]` |`toPipeMatWithResult[F]`   |`F[Pipe[F, A, Either[Throwable, M]]]` |
 
 **Examples** ([source code](https://github.com/krasserm/streamz/blob/master/streamz-examples/src/main/scala/streamz/examples/converter/Example.scala)):
 
