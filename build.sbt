@@ -11,11 +11,11 @@ name := "streamz"
 
 organization in ThisBuild := "com.github.krasserm"
 
-version in ThisBuild := "0.11-M2"
+version in ThisBuild := "0.12"
 
-crossScalaVersions in ThisBuild := Seq("2.12.10", "2.13.1")
+crossScalaVersions in ThisBuild := Seq("2.12.11", "2.13.1")
 
-scalaVersion in ThisBuild := "2.12.10"
+scalaVersion in ThisBuild := "2.12.11"
 
 libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Scalatest % "test"
 
@@ -35,7 +35,7 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
 //  License header settings
 // ---------------------------------------------------------------------------
 
-lazy val header = HeaderLicense.ALv2("2014 - 2019", "the original author or authors.")
+lazy val header = HeaderLicense.ALv2("2014 - 2020", "the original author or authors.")
 
 lazy val headerSettings = Seq(
   headerLicense := Some(header)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 - 2019 the original author or authors.
+ * Copyright 2014 - 2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with Word
   }
 
   "An EndpointConsumerReplier" must {
-    // Note: `ignore` because this test is flaky. 
+    // Note: `ignore` because this test is flaky.
     // See https://github.com/krasserm/streamz/issues/70 for details
     "consume a message from an endpoint and reply to that endpoint" ignore {
       val uri = "direct:d1"
