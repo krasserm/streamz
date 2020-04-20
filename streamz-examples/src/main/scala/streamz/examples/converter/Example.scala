@@ -44,13 +44,13 @@ object Example extends App {
   def f(i: Int) = List(s"$i-1", s"$i-2")
 
   val aSink1: AkkaSink[Int, Future[Done]] = AkkaSink.foreach[Int](println)
-  val fSink1: Pipe[IO, Int, Unit] = aSink1.toPipe[IO]()
+  val fSink1: Pipe[IO, Int, Unit] = aSink1.toPipe[IO]
 
   val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
-  val fStream1: Stream[IO, Int] = aSource1.toStream[IO]()
+  val fStream1: Stream[IO, Int] = aSource1.toStream[IO]
 
   val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
-  val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe[IO]()
+  val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe[IO]
 
   fStream1.through(fSink1).compile.drain.unsafeRunSync() // prints numbers
   assert(fStream1.compile.toVector.unsafeRunSync() == numbers)
