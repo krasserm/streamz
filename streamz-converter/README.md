@@ -1,13 +1,13 @@
 Stream converters
 -----------------
 
-Stream converters convert Akka Stream `Source`s, `Flow`s and `Sink`s to FS2 `Stream`s, `Pipe`s and `Sink`s, respectively, and vice versa. They are provided by the 
+Stream converters convert Akka Stream `Source`s, `Flow`s and `Sink`s to FS2 `Stream`s, `Pipe`s and `Sink`s, respectively, and vice versa. They are provided by the
 
     resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
 
     libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.11-RC1"
 
-artifact and can be imported with: 
+artifact and can be imported with:
 
 ```scala
 import streamz.converter._
@@ -27,7 +27,7 @@ implicit val executionContext: ExecutionContext = system.dispatcher
 implicit val materializer: Materializer = Materializer.createMaterializer(system)
 ```
 
-### Conversions from Akka Stream to FS2 
+### Conversions from Akka Stream to FS2
 
 **Overview**:
 
@@ -70,9 +70,9 @@ assert(fStream1.compile.toVector.unsafeRunSync() == numbers)
 assert(fStream1.through(fPipe1).compile.toVector.unsafeRunSync() == numbers.flatMap(f))
 ```
 
-`aSink1`, `aSource1` and `aFlow1` are materialized when the `IO`s of the FS2 streams that compose `fSink1`, `fStream1` and `fPipe1` are run. Their materialized value can be obtained via the `onMaterialization` callback that is a parameter of `toStream(onMaterialization: M => Unit)`, `toSink(onMaterialization: M => Unit)` and `toPipe(onMaterialization: M => Unit)` (not shown in the examples). 
+`aSink1`, `aSource1` and `aFlow1` are materialized when the `IO`s of the FS2 streams that compose `fSink1`, `fStream1` and `fPipe1` are run. Their materialized value can be obtained via the `onMaterialization` callback that is a parameter of `toStream(onMaterialization: M => Unit)`, `toSink(onMaterialization: M => Unit)` and `toPipe(onMaterialization: M => Unit)` (not shown in the examples).
 
-### Conversions from FS2 to Akka Stream 
+### Conversions from FS2 to Akka Stream
 
 **Overview**:
 
@@ -88,7 +88,7 @@ assert(fStream1.through(fPipe1).compile.toVector.unsafeRunSync() == numbers.flat
 import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, Keep }
 import akka.{ Done, NotUsed }
 
-import fs2.{ Pipe, Pure, Sink, Stream }
+import fs2._
 
 import scala.collection.immutable.Seq
 import scala.concurrent.{ Await, Future }
@@ -97,13 +97,13 @@ import scala.concurrent.duration._
 val numbers: Seq[Int] = 1 to 10
 def g(i: Int) = i + 10
 
-val fSink2: Pipe[Pure, Int, Unit] = s => s.map(g).map(println)
-val aSink2: AkkaSink[Int, Future[Done]] = AkkaSink.fromGraph(fSink2.toPipe)
+val fSink2: Pipe[IO, Int, Unit] = s => s.map(g).evalMap(i => IO(println(i)))
+val aSink2: AkkaSink[Int, Future[Done]] = AkkaSink.fromGraph(fSink2.toSink)
 
-val fStream2: Stream[Pure, Int] = Stream.emits(numbers)
+val fStream2: Stream[IO, Int] = Stream.emits(numbers).covary[IO]
 val aSource2: AkkaSource[Int, NotUsed] = AkkaSource.fromGraph(fStream2.toSource)
 
-val fpipe2: Pipe[Pure, Int, Int] = s => s.map(g)
+val fpipe2: Pipe[IO, Int, Int] = s => s.evalTap(i => IO(println(i)))
 val aFlow2: AkkaFlow[Int, Int, NotUsed] = AkkaFlow.fromGraph(fpipe2.toFlow)
 
 aSource2.toMat(aSink2)(Keep.right).run() // prints numbers
@@ -115,5 +115,5 @@ assert(Await.result(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run(), 
 
 ### Backpressure, cancellation, completion and errors
 
-Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-converter/src/test/scala/streamz/converter/ConverterSpec.scala)).  
+Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-converter/src/test/scala/streamz/converter/ConverterSpec.scala)).
 

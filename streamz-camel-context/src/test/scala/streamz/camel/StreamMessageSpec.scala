@@ -18,8 +18,10 @@ package streamz.camel
 
 import org.apache.camel.impl.{ DefaultExchange, DefaultMessage }
 import org.scalatest._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class StreamMessageSpec extends WordSpec with Matchers with BeforeAndAfterAll {
+class StreamMessageSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
   implicit val context = StreamContext()
 
   override def afterAll(): Unit =

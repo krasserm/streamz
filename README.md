@@ -18,7 +18,7 @@ Dependencies
 Streamz artifacts are available for Scala 2.12 and 2.13 at:
 
     resolvers += "streamz at bintray" at "http://dl.bintray.com/streamz/maven"
-    val streamzVersion = "0.11-RC1"
+    val streamzVersion = "0.13"
 
     libraryDependencies ++= Seq(
       "com.github.krasserm" %% "streamz-camel-akka" % streamzVersion,
@@ -26,13 +26,21 @@ Streamz artifacts are available for Scala 2.12 and 2.13 at:
       "com.github.krasserm" %% "streamz-converter" % streamzVersion,
     )
 
+| Streamz version | fs2 version |
+| --- | --- |
+| (not yet) | 3.0.x |
+| 0.13 | 2.x |
+| 0.10-M2 | 1.x |
+| 0.9.1 | 0.10.x |
+| 0.8.1 | 0.9.x |
+
 ### Latest milestone release for FS2 1.0.x
 
     val streamzVersion = "0.10-M2"
 
 ### Latest stable release for FS2 0.10.x
 
-    val streamzVersion = "0.9.1" 
+    val streamzVersion = "0.9.1"
 
 ### Latest stable release for FS2 0.9.x
 
@@ -41,7 +49,7 @@ Streamz artifacts are available for Scala 2.12 and 2.13 at:
 Documentation
 -------------
 
-### Streamz 0.11-RC1
+### Streamz 0.13
 
 - [Camel DSL for Akka Streams](streamz-camel-akka/README.md)
 - [Camel DSL for FS2](streamz-camel-fs2/README.md)
@@ -72,7 +80,7 @@ Documentation
 API docs
 --------
 
-## Latest version (0.11-RC1)
+## Latest version
 - [API docs for Scala 2.13](http://krasserm.github.io/streamz/scala-2.13/unidoc/index.html)
 - [API docs for Scala 2.12](http://krasserm.github.io/streamz/scala-2.12/unidoc/index.html)
 - [API docs for Scala 2.11](http://krasserm.github.io/streamz/scala-2.11/unidoc/index.html)
@@ -85,11 +93,11 @@ Not published. Run `sbt unidoc` on tag `0.10-M2` for generating 0.10 API docs.
 
 ### Streamz 0.9.1
 
-Not published. Run `sbt unidoc` on branch `r-0.9` for generating 0.9 API docs. 
+Not published. Run `sbt unidoc` on branch `r-0.9` for generating 0.9 API docs.
 
 ### Streamz 0.8.1
 
-Not published. Run `sbt unidoc` on branch `r-0.8` for generating 0.8 API docs. 
+Not published. Run `sbt unidoc` on branch `r-0.8` for generating 0.8 API docs.
 
 External examples
 -----------------

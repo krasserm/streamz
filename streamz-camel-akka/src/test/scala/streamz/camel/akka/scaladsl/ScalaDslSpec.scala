@@ -26,6 +26,8 @@ import streamz.camel.StreamContext
 import scala.collection.immutable.Seq
 import scala.concurrent._
 import scala.concurrent.duration._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 object ScalaDslSpec {
 
@@ -35,7 +37,7 @@ object ScalaDslSpec {
 
 }
 
-class ScalaDslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
+class ScalaDslSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
 
   import ScalaDslSpec._
 
