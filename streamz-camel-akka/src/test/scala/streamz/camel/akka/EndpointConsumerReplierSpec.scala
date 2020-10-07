@@ -24,12 +24,14 @@ import akka.stream.testkit.{ TestPublisher, TestSubscriber }
 import akka.testkit.TestKit
 import org.apache.camel.ExchangePattern
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ Assertion, BeforeAndAfterAll, Matchers, WordSpecLike }
+import org.scalatest.{ Assertion, BeforeAndAfterAll }
 import streamz.camel.{ StreamContext, StreamMessage }
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with WordSpecLike with Matchers with BeforeAndAfterAll with Eventually {
+class EndpointConsumerReplierSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike with Matchers with BeforeAndAfterAll with Eventually {
   implicit val materializer = Materializer.createMaterializer(system)
   implicit val context = StreamContext()
 

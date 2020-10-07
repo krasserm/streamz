@@ -8,19 +8,26 @@ import scalariform.formatter.preferences._
 // ---------------------------------------------------------------------------
 
 name := "streamz"
+ThisBuild / organization := "com.github.krasserm"
+ThisBuild / version := "0.13-RC2"
+ThisBuild / versionScheme := Some("early-semver")
+ThisBuild / licenses += "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
 
-organization in ThisBuild := "com.github.krasserm"
+ThisBuild / crossScalaVersions := Seq("2.12.12", "2.13.3")
+ThisBuild / scalaVersion := "2.13.3"
 
-version in ThisBuild := "0.12"
-
-crossScalaVersions in ThisBuild := Seq("2.12.11", "2.13.1")
-
-scalaVersion in ThisBuild := "2.12.11"
-
-libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Scalatest % "test"
+ThisBuild / libraryDependencies  ++= Seq(
+  "org.scalatest" %% "scalatest-wordspec" % Version.Scalatest % "test",
+  "org.scalatest" %% "scalatest-shouldmatchers" % Version.Scalatest % "test",
+)
 
 // No need for `sbt doc` to fail on warnings
 val docSettings = Compile / doc / scalacOptions -= "-Xfatal-warnings"
+
+ThisBuild / scalafixScalaBinaryVersion := CrossVersion.binaryScalaVersion(scalaVersion.value)
+
+ThisBuild / bintrayOrganization := Some("streamz")
+ThisBuild / bintrayReleaseOnPublish := false
 
 // ---------------------------------------------------------------------------
 //  Code formatter settings

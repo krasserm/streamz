@@ -339,26 +339,10 @@ trait ConverterDsl extends Converter {
       fs2StreamToAkkaSource(stream)
   }
 
-  implicit class FS2SinkPureDsl[A](sink: Pipe[Pure, A, Unit]) {
-
-    /** @see [[Converter#fs2PipeToAkkaSink]] */
-    @deprecated("Use `pipe.covary[F].toSink` instead", "0.10")
-    def toSink(implicit contextShift: ContextShift[IO]): Graph[SinkShape[A], Future[Done]] =
-      fs2PipeToAkkaSink(sink.covary[IO])
-  }
-
   implicit class FS2SinkIODsl[F[_]: Effect: ContextShift, A](sink: Pipe[F, A, Unit]) {
     /** @see [[Converter#fs2PipeToAkkaSink]] */
     def toSink: Graph[SinkShape[A], Future[Done]] =
       fs2PipeToAkkaSink(sink)
-  }
-
-  implicit class FS2PipePureDsl[A, B](pipe: Pipe[Pure, A, B]) {
-
-    /** @see [[Converter#fs2PipeToAkkaFlow]] */
-    @deprecated("Use `(pipe: Pipe[F, A, B]).toFlow` instead", "0.10")
-    def toFlow(implicit contextShift: ContextShift[IO]): Graph[FlowShape[A, B], NotUsed] =
-      fs2PipeToAkkaFlow(pipe: Pipe[IO, A, B])
   }
 
   implicit class FS2PipeIODsl[F[_]: ContextShift: ConcurrentEffect, A, B](pipe: Pipe[F, A, B]) {

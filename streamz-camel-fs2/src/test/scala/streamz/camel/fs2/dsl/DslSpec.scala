@@ -26,8 +26,10 @@ import streamz.camel.StreamContext
 import scala.collection.immutable.Seq
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class DslSpec extends WordSpec with Matchers with BeforeAndAfterAll {
+class DslSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
   val camelRegistry = new SimpleRegistry
   val camelContext = new DefaultCamelContext()
 
