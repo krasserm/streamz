@@ -27,6 +27,7 @@ import cats.effect.concurrent.Deferred
 import cats.effect.implicits._
 import cats.implicits._
 import fs2._
+import scala.annotation.implicitNotFound
 
 trait Converter {
 
@@ -298,8 +299,14 @@ trait ConverterDsl extends Converter {
   implicit class AkkaFlowDsl[A, B, M](flow: Graph[FlowShape[A, B], M]) {
 
     /** @see [[Converter#akkaFlowToFs2Pipe]] */
-    def toPipe[F[_]: ContextShift: ConcurrentEffect](implicit materializer: Materializer): Pipe[F, A, B] =
+    def toPipe[F[_]: ContextShift: ConcurrentEffect](
+      implicit
+      materializer: Materializer,
+      @implicitNotFound(
+        "Cannot convert `Flow[A, B, M]` to `Pipe[F, A, B]` - `M` value would be discarded.\nIf that is intended, first convert the `Flow` to `Flow[A, B, NotUsed]`.\nIf `M` should not be discarded, then use `flow.toPipeMat[F]` instead.") ev: M =:= NotUsed): Pipe[F, A, B] = {
+      val _ = ev // to suppress 'never used' warning. The warning fires on 2.12 but not on 2.13, so I can't use `nowarn`
       akkaFlowToFs2Pipe(flow.asInstanceOf[Graph[FlowShape[A, B], NotUsed]])
+    }
 
     /** @see [[Converter#akkaFlowToFs2PipeMat]] */
     def toPipeMat[F[_]: ContextShift: ConcurrentEffect](implicit materializer: Materializer): F[(Pipe[F, A, B], M)] =

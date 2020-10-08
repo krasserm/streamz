@@ -30,6 +30,7 @@ import scala.concurrent.duration._
 import scala.util._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
+import scala.annotation.nowarn
 
 object ConverterSpec {
   implicit class AwaitHelper[A](f: Future[A]) {
@@ -189,6 +190,11 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
       val pipe = flow.toPipe[IO]
 
       expectError(Stream.emits(numbers).through(pipe).compile.drain.unsafeRunSync())
+    }
+    "not compile a conversion that discards a used Mat value" in {
+      @nowarn("msg=never used")
+      val flow: AkkaFlow[Int, Int, String] = AkkaFlow[Int].mapMaterializedValue(_ => "Used!")
+      assertTypeError("""val p: fs2.Pipe[IO, Int, Int] = flow.toPipe[IO]""")
     }
   }
 
