@@ -97,6 +97,11 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
       expectError(stream.compile.drain.unsafeRunSync())
       probe.expectMsg(Success(Done))
     }
+    "not compile a conversion that discards a used Mat value" in {
+      @nowarn("msg=never used")
+      val source: AkkaSource[Int, String] = AkkaSource(numbers).mapMaterializedValue(_ => "Used!")
+      assertTypeError("""val p: fs2.Pipe[IO, Int, Int] = source.toPipe[IO]""")
+    }
   }
 
   "An AS Sink to FS2 Pipe converter" must {
@@ -141,6 +146,12 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
 
       val result = Stream.emits(numbers).through(fs2Sink).compile.lastOrError.unsafeRunSync()
       result shouldBe Left(error)
+    }
+
+    "not compile a conversion that discards a used Mat value" in {
+      @nowarn("msg=never used")
+      val sink: AkkaSink[Int, Future[Done]] = AkkaSink.foreach[Int](println)
+      assertTypeError("""val p: fs2.Pipe[IO, Int, Unit] = sink.toPipe[IO]""")
     }
   }
 

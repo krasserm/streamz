@@ -43,7 +43,7 @@ object Example extends App {
 
   def f(i: Int) = List(s"$i-1", s"$i-2")
 
-  val aSink1: AkkaSink[Int, Future[Done]] = AkkaSink.foreach[Int](println)
+  val aSink1: AkkaSink[Int, NotUsed] = AkkaFlow[Int].to(AkkaSink.foreach[Int](println))
   val fSink1: Pipe[IO, Int, Unit] = aSink1.toPipe[IO]
 
   val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
