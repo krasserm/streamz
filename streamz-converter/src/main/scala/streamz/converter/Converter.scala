@@ -245,8 +245,11 @@ trait ConverterDsl extends Converter {
   implicit class AkkaSourceDsl[A, M](source: Graph[SourceShape[A], M]) {
 
     /** @see [[Converter#akkaSourceToFs2Stream]] */
-    def toStream[F[_]: ContextShift: Async](implicit materializer: Materializer): Stream[F, A] =
+    def toStream[F[_]: ContextShift: Async](implicit materializer: Materializer, @implicitNotFound(
+      "Cannot convert `Source[A, M]` to `Stream[F, A]` - `M` value would be discarded.\nIf that is intended, first convert the `Source` to `Source[A, NotUsed]`.\nIf `M` should not be discarded, then use `source.toStreamMat[F]` instead.") ev: M =:= NotUsed): Stream[F, A] = {
+      val _ = ev // to suppress 'never used' warning. The warning fires on 2.12 but not on 2.13, so I can't use `nowarn`
       akkaSourceToFs2Stream(source.asInstanceOf[Graph[SourceShape[A], NotUsed]])
+    }
 
     /** @see [[Converter#akkaSourceToFs2StreamMat]] */
     def toStreamMat[F[_]: ContextShift: Async](implicit materializer: Materializer): F[(Stream[F, A], M)] =
@@ -276,8 +279,13 @@ trait ConverterDsl extends Converter {
   implicit class AkkaSinkDsl[A, M](sink: Graph[SinkShape[A], M]) {
 
     /** @see [[Converter#akkaSinkToFs2Sink]] */
-    def toPipe[F[_]: ContextShift: Concurrent](implicit materializer: Materializer): Pipe[F, A, Unit] =
+    def toPipe[F[_]: ContextShift: Concurrent](implicit
+      materializer: Materializer,
+      @implicitNotFound(
+        "Cannot convert `Sink[A, M]` to `Pipe[F, A, Unit]` - `M` value would be discarded.\nIf that is intended, first convert the `Sink` to `Sink[A, NotUsed]`.\nIf `M` should not be discarded, then use `sink.toPipeMat[F]` instead.") ev: M =:= NotUsed): Pipe[F, A, Unit] = {
+      val _ = ev // to suppress 'never used' warning. The warning fires on 2.12 but not on 2.13, so I can't use `nowarn`
       akkaSinkToFs2Pipe(sink.asInstanceOf[Graph[SinkShape[A], NotUsed]])
+    }
 
     /** @see [[Converter#akkaSinkToFs2SinkMat]] */
     def toPipeMat[F[_]: ContextShift: Concurrent](implicit materializer: Materializer): F[(Pipe[F, A, Unit], M)] =
