@@ -9,7 +9,7 @@ import scalariform.formatter.preferences._
 
 name := "streamz"
 ThisBuild / organization := "com.github.krasserm"
-ThisBuild / version := "0.13-RC2"
+ThisBuild / version := "0.13-RC3"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / licenses += "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
 
