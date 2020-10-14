@@ -246,7 +246,7 @@ trait ConverterDsl extends Converter {
 
     /** @see [[Converter#akkaSourceToFs2Stream]] */
     def toStream[F[_]: ContextShift: Async](implicit materializer: Materializer, @implicitNotFound(
-      "Cannot convert `Source[A, M]` to `Stream[F, A]` - `M` value would be discarded.\nIf that is intended, first convert the `Source` to `Source[A, NotUsed]`.\nIf `M` should not be discarded, then use `source.toStreamMat[F]` instead.") ev: M =:= NotUsed): Stream[F, A] = {
+      "Cannot convert `Source[A, M]` to `Stream[F, A]` - `M` value would be discarded.\nIf that is intended, first convert the `Source` to `Source[A, NotUsed]`.\nIf `M` should not be discarded, then use `source.toStreamMat[F]` instead.") ev: M <:< NotUsed): Stream[F, A] = {
       val _ = ev // to suppress 'never used' warning. The warning fires on 2.12 but not on 2.13, so I can't use `nowarn`
       akkaSourceToFs2Stream(source.asInstanceOf[Graph[SourceShape[A], NotUsed]])
     }
@@ -282,7 +282,7 @@ trait ConverterDsl extends Converter {
     def toPipe[F[_]: ContextShift: Concurrent](implicit
       materializer: Materializer,
       @implicitNotFound(
-        "Cannot convert `Sink[A, M]` to `Pipe[F, A, Unit]` - `M` value would be discarded.\nIf that is intended, first convert the `Sink` to `Sink[A, NotUsed]`.\nIf `M` should not be discarded, then use `sink.toPipeMat[F]` instead.") ev: M =:= NotUsed): Pipe[F, A, Unit] = {
+        "Cannot convert `Sink[A, M]` to `Pipe[F, A, Unit]` - `M` value would be discarded.\nIf that is intended, first convert the `Sink` to `Sink[A, NotUsed]`.\nIf `M` should not be discarded, then use `sink.toPipeMat[F]` instead.") ev: M <:< NotUsed): Pipe[F, A, Unit] = {
       val _ = ev // to suppress 'never used' warning. The warning fires on 2.12 but not on 2.13, so I can't use `nowarn`
       akkaSinkToFs2Pipe(sink.asInstanceOf[Graph[SinkShape[A], NotUsed]])
     }
@@ -311,7 +311,7 @@ trait ConverterDsl extends Converter {
       implicit
       materializer: Materializer,
       @implicitNotFound(
-        "Cannot convert `Flow[A, B, M]` to `Pipe[F, A, B]` - `M` value would be discarded.\nIf that is intended, first convert the `Flow` to `Flow[A, B, NotUsed]`.\nIf `M` should not be discarded, then use `flow.toPipeMat[F]` instead.") ev: M =:= NotUsed): Pipe[F, A, B] = {
+        "Cannot convert `Flow[A, B, M]` to `Pipe[F, A, B]` - `M` value would be discarded.\nIf that is intended, first convert the `Flow` to `Flow[A, B, NotUsed]`.\nIf `M` should not be discarded, then use `flow.toPipeMat[F]` instead.") ev: M <:< NotUsed): Pipe[F, A, B] = {
       val _ = ev // to suppress 'never used' warning. The warning fires on 2.12 but not on 2.13, so I can't use `nowarn`
       akkaFlowToFs2Pipe(flow.asInstanceOf[Graph[FlowShape[A, B], NotUsed]])
     }
