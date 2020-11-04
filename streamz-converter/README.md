@@ -3,7 +3,7 @@ Stream converters
 
 Stream converters convert Akka Stream `Source`s, `Flow`s and `Sink`s to FS2 `Stream`s, `Pipe`s and `Sink`s, respectively, and vice versa. They are provided by the
 
-    resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
+    resolvers += Resolver.bintrayRepo("streamz", "maven")
 
     libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.11-RC1"
 

@@ -7,7 +7,7 @@ Camel DSL for Akka Streams
 
 The DSL is provided by the `streamz-camel-akka` artifact which is available for Scala 2.11 and 2.12:
 
-    resolvers += "krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"
+    resolvers += Resolver.bintrayRepo("streamz", "maven")
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.10-M2"
 
