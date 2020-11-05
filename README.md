@@ -17,7 +17,7 @@ Dependencies
 
 Streamz artifacts are available for Scala 2.12 and 2.13 at:
 
-    resolvers += "streamz at bintray" at "http://dl.bintray.com/streamz/maven"
+    resolvers += Resolver.bintrayRepo("streamz", "maven")
     val streamzVersion = "0.13"
 
     libraryDependencies ++= Seq(
