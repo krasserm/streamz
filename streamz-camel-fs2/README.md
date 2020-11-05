@@ -7,7 +7,7 @@ Camel DSL for FS2
 
 The DSL is provided by the `streamz-camel-fs2` artifact which is available for Scala 2.11 and 2.12:
 
-    resolvers += Resolver.bintrayRepo("streamz", "maven")
+    resolvers += Resolver.bintrayRepo("krasserm", "maven")
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-fs2" % "0.10-M2"
     

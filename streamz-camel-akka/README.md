@@ -7,7 +7,7 @@ Camel DSL for Akka Streams
 
 The DSL is provided by the `streamz-camel-akka` artifact which is available for Scala 2.11 and 2.12:
 
-    resolvers += Resolver.bintrayRepo("streamz", "maven")
+    resolvers += Resolver.bintrayRepo("krasserm", "maven")
 
     libraryDependencies += "com.github.krasserm" %% "streamz-camel-akka" % "0.10-M2"
 
@@ -358,4 +358,3 @@ public interface JavaDsl {
 ```
 
 `sendBody` wraps a message of type `A` as message body into a `StreamMessage[A]` before sending it to the endpoint and continues the stream with the unwrapped message body `B` of the output `StreamMessage[B]`.
-

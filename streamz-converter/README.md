@@ -3,7 +3,7 @@ Stream converters
 
 Stream converters convert Akka Stream `Source`s, `Flow`s and `Sink`s to FS2 `Stream`s, `Pipe`s and `Sink`s, respectively, and vice versa. They are provided by the
 
-    resolvers += Resolver.bintrayRepo("streamz", "maven")
+    resolvers += Resolver.bintrayRepo("krasserm", "maven")
 
     libraryDependencies += "com.github.krasserm" %% "streamz-converter" % "0.11-RC1"
 
@@ -116,4 +116,3 @@ assert(Await.result(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run(), 
 ### Backpressure, cancellation, completion and errors
 
 Downstream demand and cancellation as well as upstream completion and error signals are properly mediated between Akka Stream and FS2 (see also [ConverterSpec](https://github.com/krasserm/streamz/blob/master/streamz-converter/src/test/scala/streamz/converter/ConverterSpec.scala)).
-
