@@ -18,18 +18,21 @@ package streamz.converter
 
 import akka.Done
 import akka.actor.ActorSystem
-import akka.stream.Materializer
 import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, _ }
 import akka.testkit._
 import cats.effect.IO
+import cats.effect.std.Dispatcher
 import fs2._
+import org.scalactic.source.Position
 import org.scalatest._
+
 import scala.collection.immutable.Seq
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
+
 import scala.annotation.nowarn
 
 object ConverterSpec {
@@ -43,13 +46,27 @@ object ConverterSpec {
 
 class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike with Matchers with BeforeAndAfterAll {
   import ConverterSpec._
+  import cats.effect.unsafe.implicits.global
 
-  private implicit val materializer = Materializer.createMaterializer(system)
-  private implicit val dispatcher = system.dispatcher
-  private implicit val contextShift = IO.contextShift(scala.concurrent.ExecutionContext.global)
+  private implicit val dispatcherEC = system.dispatcher
+
+  private implicit def dispatcher(implicit pos: Position): Dispatcher[IO] =
+    _dispatcher.getOrElse(fail("Dispatcher not initialized"))
+
+  private var _dispatcher: Option[Dispatcher[IO]] = None
+  private var shutdownDispatcher: IO[Unit] = IO.unit
+
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    val (d, s) = Dispatcher[IO].allocated.unsafeRunSync()
+    _dispatcher = Some(d)
+    shutdownDispatcher = s
+  }
 
   override def afterAll(): Unit = {
-    materializer.shutdown()
+    _dispatcher = None
+    shutdownDispatcher.unsafeRunSync()
+    shutdownDispatcher = IO.unit
     TestKit.shutdownActorSystem(system)
     super.afterAll()
   }
@@ -111,7 +128,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
     "propagate elements and completion from FS2 sink to AS sink" in {
       val probe = TestProbe()
       val akkaSink = AkkaSink.seq[Int]
-      val fs2Sink = akkaSink.toPipeMat[IO].map {
+      val fs2Sink = akkaSink.toPipeWithMat[IO].map {
         case (akkaStream, mat) =>
           mat.onComplete(probe.ref ! _)
           akkaStream
@@ -123,7 +140,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
     "propagate errors from FS2 sink to AS sink" in {
       val probe = TestProbe()
       val akkaSink = AkkaSink.seq[Int]
-      val fs2Sink = akkaSink.toPipeMat[IO].map {
+      val fs2Sink = akkaSink.toPipeWithMat[IO].map {
         case (akkaStream, mat) =>
           mat.onComplete(probe.ref ! _)
           akkaStream
@@ -134,7 +151,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
     }
     "propagate early termination from AS sink to FS2 sink (using Mat Future)" in {
       val akkaSink = AkkaFlow[Int].take(3).toMat(AkkaSink.seq)(Keep.right)
-      val fs2Sink = akkaSink.toPipeMatWithResult[IO].unsafeRunSync()
+      val fs2Sink = akkaSink.toPipeMatWithResult[IO]
 
       val result = Stream.emits(numbers).through(fs2Sink).compile.lastOrError.unsafeRunSync()
       result shouldBe Right(numbers.take(3))
@@ -142,7 +159,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
     }
     "propagate early termination from AS sink (due to errors) to FS2 sink" in {
       val akkaSink = AkkaSink.foreach[Int](_ => throw error)
-      val fs2Sink = akkaSink.toPipeMatWithResult[IO].unsafeRunSync()
+      val fs2Sink = akkaSink.toPipeMatWithResult[IO]
 
       val result = Stream.emits(numbers).through(fs2Sink).compile.lastOrError.unsafeRunSync()
       result shouldBe Left(error)
@@ -252,7 +269,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
 
     def seqSink(probe: TestProbe): Pipe[IO, Int, Unit] =
       s => s.fold(Seq.empty[Int])(_ :+ _).map(probe.ref ! Success(_))
-        .handleErrorWith(err => Stream.eval_(IO(probe.ref ! Failure(err))) ++ Stream.raiseError[IO](err))
+        .handleErrorWith(err => Stream.exec(IO(probe.ref ! Failure(err))) ++ Stream.raiseError[IO](err))
         .onFinalize(IO(probe.ref ! Success(Done)))
 
     "propagate elements and completion from AS sink to FS2 sink" in {

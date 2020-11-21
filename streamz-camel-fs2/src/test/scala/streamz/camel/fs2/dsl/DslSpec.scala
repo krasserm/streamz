@@ -30,6 +30,8 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class DslSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
+  import cats.effect.unsafe.implicits.global
+
   val camelRegistry = new SimpleRegistry
   val camelContext = new DefaultCamelContext()
 
@@ -37,7 +39,6 @@ class DslSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll {
   camelRegistry.put("service", new Service)
 
   implicit val streamContext = new StreamContext(camelContext)
-  implicit val contextShift = IO.contextShift(scala.concurrent.ExecutionContext.global)
 
   import streamContext._
 

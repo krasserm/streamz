@@ -20,24 +20,27 @@ import cats.effect.IO
 import fs2.{ Stream, text }
 import streamz.camel.fs2.dsl._
 import streamz.examples.camel.ExampleContext
+import cats.effect.{ ExitCode, IOApp }
 
-object Example extends ExampleContext with App {
-  implicit val contextShift = IO.contextShift(scala.concurrent.ExecutionContext.Implicits.global)
+object Example extends IOApp with ExampleContext {
 
-  val tcpLineStream: Stream[IO, String] =
-    receiveBody[IO, String](tcpEndpointUri)
+  def run(args: List[String]) = {
 
-  val fileLineStream: Stream[IO, String] =
-    receiveBody[IO, String](fileEndpointUri).through(text.lines)
+    val tcpLineStream: Stream[IO, String] =
+      receiveBody[IO, String](tcpEndpointUri)
 
-  val linePrefixStream: Stream[IO, String] =
-    Stream.iterate(1)(_ + 1).sendRequest[IO, String](serviceEndpointUri)
+    val fileLineStream: Stream[IO, String] =
+      receiveBody[IO, String](fileEndpointUri).through(text.lines)
 
-  val stream: Stream[IO, String] =
-    tcpLineStream
-      .merge(fileLineStream)
-      .zipWith(linePrefixStream)((l, n) => n concat l)
-      .send(printerEndpointUri)
+    val linePrefixStream: Stream[IO, String] =
+      Stream.iterate(1)(_ + 1).sendRequest[IO, String](serviceEndpointUri)
 
-  stream.compile.drain.unsafeRunSync()
+    val stream: Stream[IO, String] =
+      tcpLineStream
+        .merge(fileLineStream)
+        .zipWith(linePrefixStream)((l, n) => n concat l)
+        .send(printerEndpointUri)
+
+    stream.compile.drain.as(ExitCode.Success)
+  }
 }
