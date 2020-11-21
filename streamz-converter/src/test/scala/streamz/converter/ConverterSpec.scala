@@ -134,7 +134,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
     }
     "propagate early termination from AS sink to FS2 sink (using Mat Future)" in {
       val akkaSink = AkkaFlow[Int].take(3).toMat(AkkaSink.seq)(Keep.right)
-      val fs2Sink = akkaSink.toPipeMatWithResult[IO].unsafeRunSync()
+      val fs2Sink = akkaSink.toPipeMatWithResult[IO]
 
       val result = Stream.emits(numbers).through(fs2Sink).compile.lastOrError.unsafeRunSync()
       result shouldBe Right(numbers.take(3))
@@ -142,7 +142,7 @@ class ConverterSpec extends TestKit(ActorSystem("test")) with AnyWordSpecLike wi
     }
     "propagate early termination from AS sink (due to errors) to FS2 sink" in {
       val akkaSink = AkkaSink.foreach[Int](_ => throw error)
-      val fs2Sink = akkaSink.toPipeMatWithResult[IO].unsafeRunSync()
+      val fs2Sink = akkaSink.toPipeMatWithResult[IO]
 
       val result = Stream.emits(numbers).through(fs2Sink).compile.lastOrError.unsafeRunSync()
       result shouldBe Left(error)

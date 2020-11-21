@@ -4,7 +4,7 @@ addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.6.0")
 
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
 
-addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.13")
+addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.15")
 
 addSbtPlugin("com.codecommit" % "sbt-github-actions" % "0.9.3")
 

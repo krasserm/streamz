@@ -16,18 +16,16 @@
 
 package streamz.converter
 
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Failure, Success }
-
 import akka.stream._
-import akka.stream.scaladsl.{ Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, _ }
-import akka.{ Done, NotUsed }
+import akka.stream.scaladsl.{Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource, _}
+import akka.{Done, NotUsed}
 import cats.effect._
-import cats.effect.concurrent.Deferred
 import cats.effect.implicits._
 import cats.implicits._
 import fs2._
+
 import scala.annotation.implicitNotFound
+import scala.concurrent.Future
 
 trait Converter {
 
@@ -71,7 +69,7 @@ trait Converter {
    * and the materialized value of the [[Graph]].
    */
   def akkaSinkToFs2PipeMat[F[_]: Concurrent: ContextShift, A, M](sink: Graph[SinkShape[A], M])(implicit materializer: Materializer): F[(Pipe[F, A, Unit], M)] =
-    Concurrent[F].delay {
+    Sync[F].delay {
       val (publisher, mat) = AkkaSource.queue[A](0, OverflowStrategy.backpressure).toMat(sink)(Keep.both).run()
       ((s: Stream[F, A]) => publisherStream[F, A](publisher, s), mat)
     }
@@ -82,33 +80,20 @@ trait Converter {
    * The stream returned by this will emit the Future's value one time at the end,
    * then terminate.
    */
-  def akkaSinkToFs2PipeMat[F[_]: ConcurrentEffect: ContextShift, A, M](akkaSink: Graph[SinkShape[A], Future[M]])(
-    implicit
-    ec: ExecutionContext,
-    m: Materializer): F[Pipe[F, A, Either[Throwable, M]]] =
-    for {
-      promise <- Deferred[F, Either[Throwable, M]]
-      fs2Sink <- akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink).flatMap {
-        case (stream, mat) =>
-          // This callback tells the akka materialized future to store its result status into the Promise
-          val callback = ConcurrentEffect[F].delay(
-            mat.onComplete {
-              case Failure(ex) => promise.complete(ex.asLeft).toIO.unsafeRunSync()
-              case Success(value) => promise.complete(value.asRight).toIO.unsafeRunSync()
-            })
-          callback.map(_ => stream)
-      }
-    } yield {
-      in: Stream[F, A] =>
-        {
-          // Async wait on the promise to be completed
-          val materializedResultStream = Stream.eval(promise.get)
-          val fs2Stream: Stream[F, Unit] = fs2Sink.apply(in)
+  def akkaSinkToFs2PipeMat[F[_]: ContextShift, A, M](akkaSink: Graph[SinkShape[A], Future[M]])(
+    implicit F: Concurrent[F],
+    m: Materializer): Pipe[F, A, Either[Throwable, M]] =
+  { in: Stream[F, A] =>
 
-          // Run the akka sink for its effects and then run stream containing the effect of getting the Promise results
-          fs2Stream.drain ++ materializedResultStream
-        }
+    Stream.eval(akkaSinkToFs2PipeMat[F, A, Future[M]](akkaSink)).flatMap {
+      case (pipe, matResult) =>
+        // NB: `pure` here because the future is by now already spawned - we just need a handle to it
+        val getMatResult = Stream.eval(Async.fromFuture(F.pure(matResult)).attempt)
+
+        // Run `pipe` for its effects, and then terminate with the result of the materialized future
+        in.through(pipe).drain ++ getMatResult
     }
+  }
 
   /**
    * Converts an Akka Stream [[Graph]] of [[FlowShape]] to an FS2 [[Pipe]].
@@ -130,7 +115,7 @@ trait Converter {
    * and the materialized value of the [[Graph]].
    */
   def akkaFlowToFs2PipeMat[F[_]: Concurrent: ContextShift, A, B, M](flow: Graph[FlowShape[A, B], M])(implicit materializer: Materializer): F[(Pipe[F, A, B], M)] =
-    Concurrent[F].delay {
+    Sync[F].delay {
       val src = AkkaSource.queue[A](0, OverflowStrategy.backpressure)
       val snk = AkkaSink.queue[B]()
       val ((publisher, mat), subscriber) = src.viaMat(flow)(Keep.both).toMat(snk)(Keep.both).run()
@@ -169,7 +154,7 @@ trait Converter {
     val sink2: AkkaSink[SinkQueueWithCancel[A], Future[Done]] = AkkaFlow[SinkQueueWithCancel[A]]
       .map(s => subscriberStream[F, A](s).through(sink).compile.drain.toIO.as(Done: Done).unsafeToFuture())
       .toMat(AkkaSink.head)(Keep.right)
-      .mapMaterializedValue(ffd => Async.fromFuture(Async.fromFuture(Effect[F].pure(ffd))).toIO.unsafeToFuture())
+      .mapMaterializedValue(ffd => Async.fromFuture(Sync[F].delay(ffd.flatten)).toIO.unsafeToFuture())
     // fromFuture dance above is because scala 2.11 lacks Future#flatten. `pure` instead of `delay`
     // because the future value is already strict by the time we get it.
 
@@ -191,7 +176,7 @@ trait Converter {
     // and the subscriber actor (= materialized value) of sink1
     val sink2 = AkkaSink.foreach[(SourceQueueWithComplete[B], SinkQueueWithCancel[A])] { ps =>
       // Fire and forget Future so it runs in the background
-      ConcurrentEffect[F].toIO(transformerStream(ps._2, ps._1, pipe).compile.drain).unsafeToFuture()
+      Effect[F].toIO(transformerStream(ps._2, ps._1, pipe).compile.drain).unsafeToFuture()
       ()
     }
 
@@ -268,10 +253,9 @@ trait ConverterDsl extends Converter {
   implicit class AkkaSinkFutureDsl[A, M](sink: Graph[SinkShape[A], Future[M]]) {
 
     /** @see [[Converter#akkaSinkToFs2SinkMat]] */
-    def toPipeMatWithResult[F[_]: ConcurrentEffect: ContextShift](
+    def toPipeMatWithResult[F[_]: Concurrent: ContextShift](
       implicit
-      ec: ExecutionContext,
-      m: Materializer): F[Pipe[F, A, Either[Throwable, M]]] =
+      m: Materializer): Pipe[F, A, Either[Throwable, M]] =
       akkaSinkToFs2PipeMat[F, A, M](sink)
 
   }
@@ -307,7 +291,7 @@ trait ConverterDsl extends Converter {
   implicit class AkkaFlowDsl[A, B, M](flow: Graph[FlowShape[A, B], M]) {
 
     /** @see [[Converter#akkaFlowToFs2Pipe]] */
-    def toPipe[F[_]: ContextShift: ConcurrentEffect](
+    def toPipe[F[_]: ContextShift: Concurrent](
       implicit
       materializer: Materializer,
       @implicitNotFound(
@@ -317,11 +301,11 @@ trait ConverterDsl extends Converter {
     }
 
     /** @see [[Converter#akkaFlowToFs2PipeMat]] */
-    def toPipeMat[F[_]: ContextShift: ConcurrentEffect](implicit materializer: Materializer): F[(Pipe[F, A, B], M)] =
+    def toPipeMat[F[_]: ContextShift: Concurrent](implicit materializer: Materializer): F[(Pipe[F, A, B], M)] =
       akkaFlowToFs2PipeMat(flow)
 
     @deprecated(message = "Use `.toPipe[F]` for M=NotUsed; use `.toPipeMat[F]` for other M. This version relies on side effects.", since = "0.11")
-    def toPipe[F[_]: ContextShift: ConcurrentEffect](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Pipe[F, A, B] =
+    def toPipe[F[_]: ContextShift: Concurrent](onMaterialization: M => Unit = _ => ())(implicit materializer: Materializer): Pipe[F, A, B] =
       (s: Stream[F, A]) => Stream.force {
         akkaFlowToFs2PipeMat(flow).map {
           case (fs2Pipe, mat) =>
