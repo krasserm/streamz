@@ -15,12 +15,26 @@ version in ThisBuild := "0.11-M2"
 
 crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.10", "2.13.1")
 
-scalaVersion in ThisBuild := "2.12.10"
+scalaVersion in ThisBuild := "2.13.1"
 
 libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Scalatest % "test"
 
 // No need for `sbt doc` to fail on warnings
 val docSettings = Compile / doc / scalacOptions -= "-Xfatal-warnings"
+
+publishMavenStyle := true
+
+publishTo in ThisBuild := {
+  val nexus = "http://nexus.market.local/repository/maven-"
+  if (isSnapshot.value)
+    Some("snapshots".at(nexus + "snapshots/"))
+  else
+    Some("releases".at(nexus + "releases/"))
+}
+
+credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
+
+publishArtifact in Test := false
 
 // ---------------------------------------------------------------------------
 //  Code formatter settings
