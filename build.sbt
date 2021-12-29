@@ -11,16 +11,19 @@ name := "streamz"
 
 organization in ThisBuild := "com.github.krasserm"
 
-version in ThisBuild := "0.11-M2"
+version in ThisBuild := "0.12"
 
-crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.10", "2.13.1")
+crossScalaVersions in ThisBuild := Seq("2.11.12", "2.12.10", "2.13.7")
 
-scalaVersion in ThisBuild := "2.13.1"
+scalaVersion in ThisBuild := "2.13.7"
 
-libraryDependencies in ThisBuild += "org.scalatest" %% "scalatest" % Version.Scalatest % "test"
+ThisBuild / libraryDependencies  ++= Seq(
+  "org.scalatest" %% "scalatest-wordspec" % Version.Scalatest % "test",
+  "org.scalatest" %% "scalatest-shouldmatchers" % Version.Scalatest % "test",
+)
 
 // No need for `sbt doc` to fail on warnings
-val docSettings = Compile / doc / scalacOptions -= "-Xfatal-warnings"
+val docSettings = Compile / doc / scalacOptions --= Seq("-Xfatal-warnings", "-Xlint:nullary-override")
 
 publishMavenStyle := true
 
@@ -83,7 +86,11 @@ lazy val camelFs2 = project.in(file("streamz-camel-fs2"))
 
 lazy val converter = project.in(file("streamz-converter"))
   .enablePlugins(AutomateHeaderPlugin)
-  .settings(headerSettings, docSettings)
+  .settings(
+    headerSettings,
+    docSettings,
+    scalacOptions --= Seq("-Xfatal-warnings", "-Xlint:nullary-override")
+  )
 
 lazy val examples = project.in(file("streamz-examples"))
   .enablePlugins(AutomateHeaderPlugin)
