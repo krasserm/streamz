@@ -23,7 +23,6 @@ import streamz.camel.fs2.dsl._
 
 object Snippets {
   implicit val context = StreamContext()
-  implicit val contextShift = IO.contextShift(scala.concurrent.ExecutionContext.global)
 
   val s: Stream[IO, StreamMessage[Int]] =
     // receive stream message from endpoint
@@ -37,6 +36,7 @@ object Snippets {
   val t: IO[Unit] = s.compile.drain
 
   // run IO (side effects only here) ...
+  import cats.effect.unsafe.implicits.global // Normally taken as implicit param
   t.unsafeRunSync()
 
   val s1: Stream[IO, StreamMessage[String]] = receive[IO, String]("seda:q1")

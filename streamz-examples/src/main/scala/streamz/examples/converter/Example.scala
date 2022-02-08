@@ -16,65 +16,77 @@
 
 package streamz.examples.converter
 
-import akka.actor.{ ActorRefFactory, ActorSystem }
-import akka.stream.Materializer
+import akka.actor.ActorSystem
 import akka.stream.scaladsl.{ Keep, Flow => AkkaFlow, Sink => AkkaSink, Source => AkkaSource }
 import akka.{ Done, NotUsed }
-import cats.effect.{ ContextShift, IO }
+import cats.effect.{ ExitCode, IO, IOApp }
+import cats.effect.kernel.Resource
+import cats.effect.std.Dispatcher
+import cats.syntax.all._
 import fs2.{ Pipe, Pure, Stream }
 import streamz.converter._
-import scala.collection.immutable.Seq
+
 import scala.concurrent._
-import scala.concurrent.duration._
 
-object Example extends App {
-  val system: ActorSystem = ActorSystem("example")
-  val factory: ActorRefFactory = system
+object Example extends IOApp {
 
-  implicit val executionContext: ExecutionContext = factory.dispatcher
-  implicit val materializer: Materializer = Materializer.createMaterializer(system)
-  implicit val contextShift: ContextShift[IO] = IO.contextShift(materializer.executionContext)
+  val mkSystem: Resource[IO, ActorSystem] = Resource.make(IO(ActorSystem("example")))(s => IO.fromFuture(IO(s.terminate())).map(_ => ()))
 
-  val numbers: Seq[Int] = 1 to 10
+  def run(args: List[String]) = Dispatcher[IO].use { implicit dispatcher: Dispatcher[IO] =>
+    mkSystem.use { implicit system: ActorSystem =>
 
-  // --------------------------------
-  //  Akka Stream to FS2 conversions
-  // --------------------------------
+      val numbers: List[Int] = (1 to 10).toList
 
-  def f(i: Int) = List(s"$i-1", s"$i-2")
+      // --------------------------------
+      //  Akka Stream to FS2 conversions
+      // --------------------------------
 
-  val aSink1: AkkaSink[Int, NotUsed] = AkkaFlow[Int].to(AkkaSink.foreach[Int](println))
-  val fSink1: Pipe[IO, Int, Unit] = aSink1.toPipe[IO]
+      def f(i: Int) = List(s"$i-1", s"$i-2")
 
-  val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
-  val fStream1: Stream[IO, Int] = aSource1.toStream[IO]
+      val aSink1: AkkaSink[Int, NotUsed] =
+        AkkaSink.foreach[Int](println).mapMaterializedValue(_ => NotUsed)
+      val fSink1: Pipe[IO, Int, Unit] = aSink1.toPipe[IO]
 
-  val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
-  val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe[IO]
+      val aSource1: AkkaSource[Int, NotUsed] = AkkaSource(numbers)
+      val fStream1: Stream[IO, Int] = aSource1.toStream[IO]
 
-  fStream1.through(fSink1).compile.drain.unsafeRunSync() // prints numbers
-  assert(fStream1.compile.toVector.unsafeRunSync() == numbers)
-  assert(fStream1.through(fPipe1).compile.toVector.unsafeRunSync() == numbers.flatMap(f))
+      val aFlow1: AkkaFlow[Int, String, NotUsed] = AkkaFlow[Int].mapConcat(f)
+      val fPipe1: Pipe[IO, Int, String] = aFlow1.toPipe[IO]
 
-  // --------------------------------
-  //  FS2 to Akka Stream conversions
-  // --------------------------------
+      val akkaToFs2Example = for {
+        _ <- fStream1.through(fSink1).compile.drain
+        numbersResult <- fStream1.compile.toList
+        numbersPipeResult <- fStream1.through(fPipe1).compile.toList
+      } yield {
+        assert(numbersResult === numbers)
+        assert(numbersPipeResult === numbers.flatMap(f))
+      }
 
-  def g(i: Int) = i + 10
+      // --------------------------------
+      //  FS2 to Akka Stream conversions
+      // --------------------------------
 
-  val fSink2: Pipe[IO, Int, Unit] = s => s.map(g).evalMap(i => IO(println(i)))
-  val aSink2: AkkaSink[Int, Future[Done]] = AkkaSink.fromGraph(fSink2.toSink)
+      def g(i: Int) = i + 10
 
-  val fStream2: Stream[Pure, Int] = Stream.emits(numbers)
-  val aSource2: AkkaSource[Int, NotUsed] = AkkaSource.fromGraph(fStream2.covary[IO].toSource)
+      val fSink2: Pipe[IO, Int, Unit] = s => s.map(g).evalMap(i => IO(println(i)))
+      val aSink2: AkkaSink[Int, Future[Done]] = AkkaSink.fromGraph(fSink2.toSink)
 
-  val fpipe2: Pipe[IO, Int, Int] = s => s.map(g)
-  val aFlow2: AkkaFlow[Int, Int, NotUsed] = AkkaFlow.fromGraph(fpipe2.toFlow)
+      val fStream2: Stream[Pure, Int] = Stream.emits(numbers)
+      val aSource2: AkkaSource[Int, NotUsed] = AkkaSource.fromGraph(fStream2.covary[IO].toSource)
 
-  aSource2.toMat(aSink2)(Keep.right).run() // prints numbers
-  assert(Await.result(aSource2.toMat(AkkaSink.seq)(Keep.right).run(), 5.seconds) == numbers)
-  assert(Await.result(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run(), 5.seconds) == numbers.map(g))
+      val fpipe2: Pipe[IO, Int, Int] = s => s.map(g)
+      val aFlow2: AkkaFlow[Int, Int, NotUsed] = AkkaFlow.fromGraph(fpipe2.toFlow)
 
-  materializer.shutdown()
-  system.terminate()
+      val fs2ToAkkaExample = for {
+        _ <- IO.fromFuture(IO(aSource2.toMat(aSink2)(Keep.right).run())) // prints numbers
+        numbersResult <- IO.fromFuture(IO(aSource2.toMat(AkkaSink.seq)(Keep.right).run()))
+        numbersFlowResult <- IO.fromFuture(IO(aSource2.via(aFlow2).toMat(AkkaSink.seq)(Keep.right).run()))
+      } yield {
+        assert(numbersResult.toList === numbers)
+        assert(numbersFlowResult.toList === numbers.map(g))
+      }
+
+      akkaToFs2Example >> fs2ToAkkaExample.as(ExitCode.Success)
+    }
+  }
 }
